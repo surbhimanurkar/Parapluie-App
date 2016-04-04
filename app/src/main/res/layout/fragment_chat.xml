@@ -1,0 +1,155 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    android:background="@color/colorGrayBackground"
+    tools:context="com.askoliv.oliv.ChatFragment">
+
+    <ListView
+        android:id="@+id/listview_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
+        android:paddingStart="@dimen/activity_horizontal_margin_narrow"
+        android:paddingRight="@dimen/activity_horizontal_margin_narrow"
+        android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
+        android:divider="@null"
+        android:transcriptMode="alwaysScroll"
+        android:layout_above="@+id/send_message_layout" />
+
+    <LinearLayout
+        android:id="@+id/send_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
+            android:layout_above="@+id/help_questions_layout">
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardview_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="@dimen/cardview_corner_radius"
+            card_view:cardElevation="@dimen/cardview_medium_elevation"
+            card_view:cardBackgroundColor="@color/colorWhite"
+            card_view:cardUseCompatPadding="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button_send"
+            android:layout_toStartOf="@+id/button_send"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_narrow">
+
+        <RelativeLayout
+            android:id="@+id/edit_text_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_help_query"
+                    android:layout_width="@dimen/icon_small_button_size"
+                    android:layout_height="@dimen/icon_small_button_size"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:drawableLeft="@drawable/ic_faq"
+                    android:drawableStart="@drawable/ic_faq"/>
+
+                <EditText
+                    android:id="@+id/edit_text_chat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/button_help_query"
+                    android:layout_toEndOf="@+id/button_help_query"
+                    android:layout_toLeftOf="@+id/button_image"
+                    android:layout_toStartOf="@+id/button_image"
+                    android:hint="@string/hint_text_chat"
+                    android:imeActionId="@+id/send"
+                    android:imeActionLabel="@string/action_send"
+                    android:imeOptions="actionSend"
+                    style="@style/EditTextStyle"/>
+
+                <Button
+                    android:id="@+id/button_image"
+                    android:layout_width="@dimen/icon_small_button_size"
+                    android:layout_height="@dimen/icon_small_button_size"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_photo_camera_24dp"
+                    android:backgroundTint="@color/colorDisabled"/>
+
+        </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="@drawable/ic_send"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="@dimen/abc_button_padding_horizontal_material"
+            android:layout_marginRight="@dimen/abc_button_padding_horizontal_material"
+            android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/help_questions_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drop_shadow_height"
+            android:background="@drawable/drop_shadow_up" />
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/help_questions_layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorWhite"
+            android:visibility="gone"
+            android:elevation="@dimen/high_elevation">
+
+
+
+            <ListView
+                android:id="@+id/listview_help_questions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
+                android:divider="@null"
+                android:transcriptMode="alwaysScroll" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
