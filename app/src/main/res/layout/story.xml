@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin_narrow"
+    android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/story_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/story_subtitle_size"
+        android:textColor="@android:color/secondary_text_light"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Trend Alert"/>
+
+    <TextView
+        android:id="@+id/story_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/story_title_size"
+        android:textColor="@android:color/primary_text_light"
+        android:fontFamily="sans-serif-condensed"
+        android:text="What goes with boots?"/>
+
+    <TextView
+        android:id="@+id/story_text_initial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+        android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+        android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/story_text_size"
+        android:textColor="@android:color/primary_text_light"
+        android:fontFamily="sans-serif-light"
+        android:text="Boots are the comfortable mode of walking. Blah blah blh lorem ipsum.Boots are the comfortable mode of walking. Blah blah blh lorem ipsum."
+        android:singleLine="false"/>
+
+
+
+</LinearLayout>

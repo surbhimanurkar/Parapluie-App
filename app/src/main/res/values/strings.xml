@@ -14,4 +14,15 @@
     <string name="com_facebook_loginview_log_in_button">Log in</string>
     <string name="com_facebook_loginview_log_in_button_long">Sign in with Facebook</string>
 
+    <string name="title_activity_send_image">Send Image</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_select_image">Select Image</string>
+    <string name="title_dialog_select_image">Send Photo</string>
+    <string name="list_item_camera">Take Photo</string>
+    <string name="list_item_gallery">Choose from Gallery</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

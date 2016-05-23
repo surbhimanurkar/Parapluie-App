@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.askoliv.utils.Constants;
+import com.askoliv.utils.GrandHotelFont;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -143,8 +144,7 @@ public class LoginActivity extends AppCompatActivity implements
         //Styling the app title
         //getSupportActionBar().hide();
         TextView appName = (TextView) findViewById(R.id.app_name);
-        Typeface logoFont = Typeface.createFromAsset(getAssets(), Constants.APP_NAME_FONT);
-        appName.setTypeface(logoFont);
+        appName.setTypeface(GrandHotelFont.getInstance(this).getTypeFace());
         appName.setTextScaleX(0.8f);
 
 
@@ -360,7 +360,6 @@ public class LoginActivity extends AppCompatActivity implements
         signInButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         signInButton.setTypeface(null, Typeface.NORMAL);
         signInButton.setAllCaps(true);
-        return;
     }
     private void onFacebookAccessTokenChange(AccessToken token) {
         if (token != null) {

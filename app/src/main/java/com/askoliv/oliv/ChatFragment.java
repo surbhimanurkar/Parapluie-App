@@ -1,10 +1,15 @@
 package com.askoliv.oliv;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,9 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,13 +30,13 @@ import com.askoliv.adapters.HelpQuestionsAdapter;
 import com.askoliv.adapters.MessageListAdapter;
 import com.askoliv.model.Message;
 import com.askoliv.utils.Constants;
+import com.askoliv.utils.DialogListItem;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
+import com.firebase.client.ServerValue;
 import com.firebase.client.ValueEventListener;
-
-import java.util.Calendar;
 
 /**
  * Created by surbhimanurkar on 03-03-2016.
@@ -53,6 +60,7 @@ public class ChatFragment extends Fragment {
     private View helpQuestionsShadow;
     private Button helpButton;
     private EditText inputText;
+    private Button imageButton;
 
     public ChatFragment() {
         super();
@@ -106,6 +114,7 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        //Chat input text
         inputText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -115,6 +124,16 @@ public class ChatFragment extends Fragment {
                 return false;
             }
         });
+
+        //Chat image capture functionality
+        imageButton = (Button) rootView.findViewById(R.id.button_image);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageActivity();
+            }
+        });
+
         return rootView;
     }
 
@@ -178,11 +197,12 @@ public class ChatFragment extends Fragment {
         if (!input.equals("")) {
             // Create our 'model', a Chat object
             Log.d(TAG, "UID: " + mUID);
-            Message message = new Message(input, Constants.SENDER_USER, Calendar.getInstance().getTime());
+            Message message = new Message(input, Constants.SENDER_USER, ServerValue.TIMESTAMP);
             // Create a new, auto-generated child of that chat location, and save our chat data there
             mChatRef.push().setValue(message);
             inputText.setText("");
             mUserRef.child(Constants.FIREBASE_USER_KEY_RESOLVED).setValue(false);
+            mUserRef.child(Constants.FIREBASE_USER_KEY_STATUS).setValue(Constants.FIREBASE_USER_VALUE_OPEN);
         }
     }
 
@@ -209,5 +229,76 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    private void openImageActivity(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final String itemTextCamera = getResources().getString(R.string.list_item_camera);
+        final String itemTextGallery = getResources().getString(R.string.list_item_gallery);
+        final DialogListItem[] dialogListItems = {
+                new DialogListItem(itemTextCamera,R.drawable.ic_photo_camera_24dp),
+                new DialogListItem(itemTextGallery,R.drawable.ic_photo_library_24dp)
+        };
+
+        ListAdapter adapter = new ArrayAdapter<DialogListItem>(getActivity(), R.layout.custom_list_dialog, R.id.text1, dialogListItems){
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //Use super class to create the View
+                View v = super.getView(position, convertView, parent);
+                TextView tv = (TextView)v.findViewById(R.id.text1);
+                tv.setText(dialogListItems[position].getListText());
+
+                //Put the image on the TextView
+                tv.setCompoundDrawablesWithIntrinsicBounds(dialogListItems[position].getListIcon(), 0, 0, 0);
+
+                //Add margin between image and text (support various screen densities)
+                int marginSize = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                tv.setCompoundDrawablePadding(marginSize);
+
+                return v;
+            }
+        };
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int itemPosition) {
+                if(dialogListItems[itemPosition]!=null){
+                    if (dialogListItems[itemPosition].getListText().equals(itemTextCamera)) {
+                        Log.d(TAG, "Camera clicked");
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent, Constants.REQUEST_CAMERA);
+                    }else if (dialogListItems[itemPosition].getListText().equals(itemTextGallery)) {
+                        Log.d(TAG, "Gallery clicked");
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        startActivityForResult(
+                                Intent.createChooser(intent, "Select File"),
+                                Constants.REQUEST_GALLERY);
+                    }
+                }
+            }
+        });
+        View customTitleView = getActivity().getLayoutInflater().inflate(R.layout.custom_list_title, null);
+        TextView titleTextView = (TextView) customTitleView.findViewById(R.id.alertTitle);
+        titleTextView.setText(getResources().getString(R.string.title_dialog_select_image));
+        builder.setCustomTitle(customTitleView);
+        builder.show();
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if (resultCode == getActivity().RESULT_OK)
+        {
+           switch(requestCode){
+               case Constants.REQUEST_CAMERA:
+                   Log.d(TAG, "Got image from the Camera");
+                   break;
+               case Constants.REQUEST_GALLERY:
+                   Log.d(TAG, "Got image from the gallery");
+                   break;
+           }
+        }
+    }
 
 }

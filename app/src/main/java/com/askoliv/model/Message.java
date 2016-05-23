@@ -11,13 +11,13 @@ public class Message {
 
     private String message;
     private int author;
-    private Date time;
+    private Object time;
 
     private Message(){
 
     }
 
-    public Message(String message, int author, Date time) {
+    public Message(String message, int author, Object time) {
         this.message = message;
         this.author = author;
         this.time = time;
@@ -40,7 +40,7 @@ public class Message {
         this.author = author;
     }
 
-    public Date getTime() {
+    public Object getTime() {
         return time;
     }
 

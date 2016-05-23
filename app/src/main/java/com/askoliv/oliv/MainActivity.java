@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.askoliv.utils.Constants;
+import com.askoliv.utils.GrandHotelFont;
 import com.firebase.client.AuthData;
 
 public class MainActivity extends AppCompatActivity {
@@ -73,15 +74,12 @@ public class MainActivity extends AppCompatActivity {
             child = toolbar.getChildAt(i);
             if(child instanceof TextView){
                 title = (TextView) child;
+                title.setTypeface(GrandHotelFont.getInstance(this).getTypeFace());
+                title.setTextSize(TypedValue.COMPLEX_UNIT_PX,resources.getDimensionPixelSize(R.dimen.title_text_size));
+                title.setTextScaleX(0.8f);
                 break;
             }
         }
-
-        //Styling title
-        Typeface logoFont = Typeface.createFromAsset(getAssets(), Constants.APP_NAME_FONT);
-        title.setTypeface(logoFont);
-        title.setTextSize(TypedValue.COMPLEX_UNIT_PX,resources.getDimensionPixelSize(R.dimen.title_text_size));
-        title.setTextScaleX(0.8f);
 
         //Adding overflow icon
         Drawable overflowIcon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_overflow);
@@ -225,6 +223,8 @@ public class MainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             if(position == 0)
                 return new ChatFragment();
+            else if(position == 1)
+                return new StoriesFragment();
             else
                 return PlaceholderFragment.newInstance(position + 1);
         }

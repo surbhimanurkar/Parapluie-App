@@ -17,10 +17,18 @@ public class Constants {
     public static final String FIREBASE_USER_KEY_PROVIDER = "provider";
     public static final String FIREBASE_USER_KEY_USERNAME = "username";
     public static final String FIREBASE_USER_KEY_RESOLVED = "resolved";
+    public static final String FIREBASE_USER_KEY_STATUS = "status";
+    public static final String FIREBASE_USER_VALUE_OPEN = "OPEN";
     public static final String TIME = "time";
     public static final String HELP_QUESTIONS_RELEVANCE = "relevance";
+
+    //Firebase Stories Constants
+    public static final String FIREBASE_STORIES_NODE = "stories";
 
     public static final String SHARED_PREFERENCE_LOGIN = "loginPref";
     public static final String LOGIN_PREF_LOGOUT = "logout";
     public static final String APP_NAME_FONT = "fonts/GrandHotel-Regular.ttf";
+
+    public static final int REQUEST_CAMERA = 0;
+    public static final int REQUEST_GALLERY = 1;
 }

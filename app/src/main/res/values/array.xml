@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_image_list_items">
+        <item>Take Photo</item>
+        <item>Choose from Gallery</item>
+    </string-array>
+    <integer-array name="dialog_image_list_icons">
+        <item>@drawable/ic_photo_camera_24dp</item>
+        <item>@drawable/ic_photo_library_24dp</item>
+    </integer-array>
+</resources>
