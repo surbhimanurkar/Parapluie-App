@@ -7,6 +7,8 @@ import java.util.Map;
  * Single story can be represented by an object of this class
  */
 public class Story {
+
+    private String key;
     private String title;
     private String author;
     private String category;
@@ -14,19 +16,19 @@ public class Story {
     private String textInitial;
     private String textEnd;
     private Map<String, Carousel> carousel;
+    private Social social;
 
     public Story(){
 
     }
 
-    public Story(String title, String author, String category, String subtitle, String textInitial, String textEnd, Map<String, Carousel> carousel) {
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.subtitle = subtitle;
-        this.textInitial = textInitial;
-        this.textEnd = textEnd;
-        this.carousel = carousel;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Map<String, Carousel> getCarousel() {
@@ -84,4 +86,13 @@ public class Story {
     public void setTextEnd(String textEnd) {
         this.textEnd = textEnd;
     }
+
+    public Social getSocial() {
+        return social;
+    }
+
+    public void setSocial(Social social) {
+        this.social = social;
+    }
+
 }

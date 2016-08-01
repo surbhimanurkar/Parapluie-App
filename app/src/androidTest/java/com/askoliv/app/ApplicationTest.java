@@ -1,4 +1,4 @@
-package com.askoliv.oliv;
+package com.askoliv.app;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

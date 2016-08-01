@@ -16,14 +16,11 @@
         android:layout_marginLeft="@dimen/chat_side_padding"
         card_view:cardCornerRadius="@dimen/cardview_corner_radius"
         card_view:cardElevation="@dimen/cardview_medium_elevation"
-        card_view:cardBackgroundColor="@color/colorAccentLight"
-        card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="@dimen/message_text_padding">
+        card_view:cardBackgroundColor="@color/colorAccentLight">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/query"
@@ -31,12 +28,21 @@
                 android:textColor="?android:textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="@dimen/chat_card_min_width"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="@dimen/message_text_padding"
                 android:layout_marginStart="@dimen/message_text_padding"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/message_text_padding"
+                android:layout_marginRight="@dimen/message_text_padding"
+                android:layout_marginTop="@dimen/activity_vertical_margin_very_narrow"
                 android:textSize="@dimen/message_text_size"
                 android:singleLine="false"/>
+
+            <ImageView
+                android:id="@+id/queryImage"
+                android:layout_width="@dimen/chat_image_size"
+                android:layout_height="@dimen/chat_image_size"
+                android:layout_below="@id/query" />
 
             <TextView
                 android:id="@+id/query_timestamp"
@@ -44,11 +50,34 @@
                 android:textColor="@color/colorDisabled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_below="@id/query"
+                android:layout_alignRight="@id/query"
+                android:layout_alignEnd="@id/query"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
                 android:textSize="@dimen/message_timestamp_size"
                 android:singleLine="true"/>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/query_image_timestamp"
+                style="?android:textAppearanceMedium"
+                android:textColor="@color/colorWhite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/queryImage"
+                android:layout_alignRight="@id/queryImage"
+                android:layout_alignEnd="@id/queryImage"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
+                android:textSize="@dimen/message_timestamp_size"
+                android:singleLine="true"/>
+        </RelativeLayout>
 
      </android.support.v7.widget.CardView>
 
@@ -57,20 +86,18 @@
         android:id="@+id/cardview_reply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="@dimen/chat_card_min_width"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginEnd="@dimen/chat_side_padding"
         android:layout_marginRight="@dimen/chat_side_padding"
         card_view:cardCornerRadius="@dimen/cardview_corner_radius"
         card_view:cardElevation="@dimen/cardview_medium_elevation"
-        card_view:cardBackgroundColor="@color/colorWhite"
-        card_view:cardUseCompatPadding="true"
-        card_view:contentPadding="@dimen/message_text_padding">
+        card_view:cardBackgroundColor="@color/colorWhite">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/reply"
@@ -78,12 +105,20 @@
                 android:textColor="?android:textColorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
                 android:layout_marginLeft="@dimen/message_text_padding"
                 android:layout_marginStart="@dimen/message_text_padding"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/message_text_padding"
+                android:layout_marginRight="@dimen/message_text_padding"
+                android:layout_marginTop="@dimen/activity_vertical_margin_very_narrow"
                 android:textSize="@dimen/message_text_size"
                 android:singleLine="false"/>
+
+            <ImageView
+                android:id="@+id/replyImage"
+                android:layout_width="@dimen/chat_image_size"
+                android:layout_height="@dimen/chat_image_size"
+                android:layout_below="@id/reply"/>
 
             <TextView
                 android:id="@+id/reply_timestamp"
@@ -91,11 +126,35 @@
                 android:textColor="@color/colorDisabled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_below="@id/reply"
+                android:layout_alignRight="@id/reply"
+                android:layout_alignEnd="@id/reply"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
                 android:textSize="@dimen/message_timestamp_size"
                 android:singleLine="true"/>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/reply_image_timestamp"
+                style="?android:textAppearanceMedium"
+                android:textColor="@color/colorDisabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/replyImage"
+                android:layout_alignRight="@id/replyImage"
+                android:layout_alignEnd="@id/replyImage"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
+                android:textSize="@dimen/message_timestamp_size"
+                android:singleLine="true"/>
+
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 

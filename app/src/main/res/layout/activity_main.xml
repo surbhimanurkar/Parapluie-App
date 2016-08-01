@@ -6,12 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.askoliv.oliv.MainActivity">
+    tools:context="com.askoliv.app.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -25,33 +24,55 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorWhite"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/TabsStyle" />
-
         </android.support.design.widget.AppBarLayout>
+
+
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            app:tabMode="fixed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_bar_height"
+            android:background="?attr/colorPrimary"
+            android:elevation="@dimen/high_elevation"
+            app:tabTextColor="@color/colorSecondary"
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabBackground="@color/colorWhite"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_alignParentBottom="true" />
+
+
+
+        <com.askoliv.utils.CustomViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/tabs"
+            android:layout_below="@id/appbar"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <View
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drop_shadow_height"
-            android:layout_below="@id/toolbar"
+            android:layout_alignTop="@id/container"
             android:background="@drawable/drop_shadow" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/container"
+
+        <View
+            android:id="@+id/help_questions_shadow"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    </LinearLayout>
+            android:layout_height="@dimen/drop_shadow_height"
+            android:background="@drawable/drop_shadow_up"
+            android:layout_above="@id/tabs"/>
+
+    </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

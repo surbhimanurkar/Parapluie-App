@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.askoliv.oliv">
+    package="com.askoliv.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- USE_CREDENTIALS is necessary for Google+ login -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <!-- GET_ACCOUNTS is necessary to display email address of logged in user. This permission is optional -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".OlivApplication"
@@ -20,7 +22,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:label="Oliv"
+            android:label="@string/app_name"
             android:theme="@style/AppFullScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,6 +39,17 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <activity
+            android:name=".FullscreenImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen_image"
+            android:theme="@style/FullscreenTheme" />
+        <service
+            android:name=".AppFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

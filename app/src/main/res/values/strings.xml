@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">Oliv</string>
+    <string name="app_name">Parapluie</string>
+    <string name="tab_bar_stories_title">Stories</string>
+    <string name="tab_bar_chat_title">Chat</string>
+    <string name="tab_bar_profile_title">Profile</string>
+    <string name="share_message_app_name">-via Parapluie</string>
+    <string name="deep_link_prefix">\?link=http://www.askoliv.com/</string>
+    <string name="deep_link_suffix">&amp; apn=com.askoliv.app</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
     <string name="section_format">Hola from section: %1$d</string>
@@ -22,7 +29,10 @@
     <string name="list_item_camera">Take Photo</string>
     <string name="list_item_gallery">Choose from Gallery</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="author_prefix">By </string>
+    <string name="story_chat_related_button_text">Get Personalized Help</string>
+    <string name="story_shares_text">Shares</string>
+    <string name="story_loves_text">Loves</string>
 
+    <string name="title_activity_fullscreen_image">FullscreenImageActivity</string>
 </resources>

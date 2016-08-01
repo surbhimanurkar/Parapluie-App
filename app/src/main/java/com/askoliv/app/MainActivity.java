@@ -1,25 +1,18 @@
-package com.askoliv.oliv;
+package com.askoliv.app;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -28,13 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.askoliv.utils.Constants;
-import com.askoliv.utils.GrandHotelFont;
-import com.firebase.client.AuthData;
+import com.askoliv.utils.CustomViewPager;
+import com.askoliv.utils.TitleFont;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,18 +42,21 @@ public class MainActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
-     * The {@link ViewPager} that will host the section contents.
+     * The {@link CustomViewPager} that will host the section contents.
      */
     private static final String TAG = MainActivity.class.getSimpleName();
-    private ViewPager mViewPager;
+    private CustomViewPager mViewPager;
+    private int secondaryColor;
+    private int primaryColor;
+    private int baseColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //Initializing Resources
         Resources resources = getResources();
-        final int primaryColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
-        final int secondaryColor = ContextCompat.getColor(getApplicationContext(),R.color.colorSecondary);
-        final int whiteColor = ContextCompat.getColor(getApplicationContext(),R.color.colorWhite);
+        primaryColor = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary);
+        secondaryColor = ContextCompat.getColor(getApplicationContext(),R.color.colorSecondary);
+        baseColor = ContextCompat.getColor(getApplicationContext(),R.color.colorBase);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -74,16 +70,19 @@ public class MainActivity extends AppCompatActivity {
             child = toolbar.getChildAt(i);
             if(child instanceof TextView){
                 title = (TextView) child;
-                title.setTypeface(GrandHotelFont.getInstance(this).getTypeFace());
+                title.setTypeface(TitleFont.getInstance(this).getTypeFace());
+                title.setAllCaps(true);
                 title.setTextSize(TypedValue.COMPLEX_UNIT_PX,resources.getDimensionPixelSize(R.dimen.title_text_size));
-                title.setTextScaleX(0.8f);
+                //title.setTextScaleX(0.8f);
+                title.setTextColor(baseColor);
                 break;
             }
         }
 
+
         //Adding overflow icon
         Drawable overflowIcon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_overflow);
-        overflowIcon.setColorFilter(whiteColor, PorterDuff.Mode.SRC_IN);
+        overflowIcon.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
         toolbar.setOverflowIcon(overflowIcon);
 
         // Create the adapter that will return a fragment for each of the three
@@ -91,46 +90,42 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (CustomViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setPagingEnabled(false);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setSelectedTabIndicatorColor(primaryColor);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        //setting icons on tablayout
-        for(int i = 0; i < tabLayout.getTabCount(); i++){
-            Drawable iconDrawable;
-            switch (i){
-                case 0:
-                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.chat));
-                    iconDrawable.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
-                    tabLayout.getTabAt(0).setIcon(iconDrawable);
-                case 1:
-                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.news));
-                    iconDrawable.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
-                    tabLayout.getTabAt(1).setIcon(iconDrawable);
-                case 2:
-                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.user));
-                    iconDrawable.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
-                    tabLayout.getTabAt(2).setIcon(iconDrawable);
-            }
+        tabLayout.setSelectedTabIndicatorColor(primaryColor);
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            tab.setCustomView(mSectionsPagerAdapter.getTabView(i));
+            Log.d(TAG, "Setting custom view for Tab:" + i);
         }
+        tabLayout.getTabAt(0).getCustomView().setSelected(true);
 
         //Changing icon color on selection
         tabLayout.setOnTabSelectedListener(
                 new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
 
+                    ImageView iconImage;
+                    TextView tabTitle;
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         super.onTabSelected(tab);
-                        tab.getIcon().setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                        iconImage = (ImageView) tab.getCustomView().findViewById(R.id.tab_icon);
+                        iconImage.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                        tabTitle = (TextView) tab.getCustomView().findViewById(R.id.tab_title);
+                        tabTitle.setTextColor(primaryColor);
                     }
 
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         super.onTabUnselected(tab);
-                        tab.getIcon().setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
+                        iconImage = (ImageView) tab.getCustomView().findViewById(R.id.tab_icon);
+                        iconImage.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
+                        tabTitle = (TextView) tab.getCustomView().findViewById(R.id.tab_title);
+                        tabTitle.setTextColor(secondaryColor);
                     }
 
                     @Override
@@ -140,9 +135,23 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        //Listener on softkeyboard that hides tabs when softkeyboard is visible and shows tabs when softkeyboard is gone
+        final View rootView = findViewById(R.id.main_content);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            public void onGlobalLayout() {
+                int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
+
+                if (heightDiff > 100) {
+                    Log.d("keyboard", "keyboard UP");
+                    tabLayout.setVisibility(View.GONE);
+                } else {
+                    Log.d("keyboard", "keyboard DOWN");
+                    tabLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -222,11 +231,46 @@ public class MainActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if(position == 0)
-                return new ChatFragment();
-            else if(position == 1)
                 return new StoriesFragment();
+            else if(position == 1)
+                return new ChatFragment();
             else
                 return PlaceholderFragment.newInstance(position + 1);
+        }
+
+        /**
+         * Returns custom view with icon and text for different tabs
+         * @param position
+         * @return View
+         */
+        public View getTabView(int position) {
+            View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.custom_tab, null);
+            TextView title = (TextView) view.findViewById(R.id.tab_title);
+            ImageView icon = (ImageView) view.findViewById(R.id.tab_icon);
+            Drawable iconDrawable;
+            switch (position){
+                case 0:
+                    title.setText(getResources().getString(R.string.tab_bar_stories_title));
+                    title.setTextColor(primaryColor);
+                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.news));
+                    iconDrawable.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                    icon.setImageDrawable(iconDrawable);
+                    break;
+                case 1:
+                    title.setText(getResources().getString(R.string.tab_bar_chat_title));
+                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.chat));
+                    iconDrawable.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
+                    icon.setImageDrawable(iconDrawable);
+                    break;
+                case 2:
+                    title.setText(getResources().getString(R.string.tab_bar_profile_title));
+                    iconDrawable = (ContextCompat.getDrawable(getApplicationContext(),R.drawable.user));
+                    iconDrawable.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
+                    icon.setImageDrawable(iconDrawable);
+                    break;
+            }
+
+            return view;
         }
 
         @Override

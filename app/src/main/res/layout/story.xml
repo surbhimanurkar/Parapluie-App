@@ -1,48 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_vertical_margin_narrow"
-    android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/story_subtitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:textSize="@dimen/story_subtitle_size"
-        android:textColor="@android:color/secondary_text_light"
-        android:fontFamily="sans-serif-condensed"
-        android:text="Trend Alert"/>
+        android:background="@color/colorWhite"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/story_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:textSize="@dimen/story_title_size"
-        android:textColor="@android:color/primary_text_light"
-        android:fontFamily="sans-serif-condensed"
-        android:text="What goes with boots?"/>
+        <RelativeLayout
+            android:id="@+id/story_title_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginTop="@dimen/activity_vertical_margin_narrow"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin_narrow">
 
-    <TextView
-        android:id="@+id/story_text_initial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
-        android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
-        android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:textSize="@dimen/story_text_size"
-        android:textColor="@android:color/primary_text_light"
-        android:fontFamily="sans-serif-light"
-        android:text="Boots are the comfortable mode of walking. Blah blah blh lorem ipsum.Boots are the comfortable mode of walking. Blah blah blh lorem ipsum."
-        android:singleLine="false"/>
+            <TextView
+                android:id="@+id/story_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin_narrow"
+                android:textSize="@dimen/story_subtitle_size"
+                android:textColor="@color/colorSecondary" />
+
+            <TextView
+                android:id="@+id/story_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/story_subtitle"
+                android:textSize="@dimen/story_title_size"
+                android:textColor="@color/colorSecondary"
+                />
+
+            <TextView
+                android:id="@+id/story_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/story_title"
+                android:textSize="@dimen/story_author_size"
+                android:textColor="@color/colorDivider"/>
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/story_text_initial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"
+            android:textSize="@dimen/story_text_size"
+            android:textColor="@color/colorSecondary"
+            android:singleLine="false"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/story_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/story_pager_height">
+        </android.support.v4.view.ViewPager>
+
+        <LinearLayout
+            android:id="@+id/story_carousel_pagination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin_narrow"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="@dimen/story_button_bar_width"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin_very_narrow"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorGrayBackground"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/story_social_bar_height"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_very_narrow"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin_very_narrow">
+            <LinearLayout
+                android:layout_width="@dimen/story_social_bar_width"
+                android:layout_height="@dimen/story_social_bar_height"
+                android:weightSum="2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/story_button_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="@dimen/activity_horizontal_margin_very_narrow"
+                    android:drawableRight="@drawable/ic_share_black_24dp"
+                    android:drawableEnd="@drawable/ic_share_black_24dp"
+                    android:background="@color/transparent"
+                    android:textColor="@color/colorDisabled"
+                    android:textSize="@dimen/story_social_bar_text_size" />
+                <Button
+                    android:id="@+id/story_button_love"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="@dimen/activity_horizontal_margin_very_narrow"
+                    android:drawableRight="@drawable/ic_favorite_black_24dp"
+                    android:drawableEnd="@drawable/ic_favorite_black_24dp"
+                    android:background="@color/transparent"
+                    android:textColor="@color/colorDisabled"
+                    android:textSize="@dimen/story_social_bar_text_size"/>
+            </LinearLayout>
+            <Button
+                android:id="@+id/story_related_chat_button"
+                android:layout_width="@dimen/story_chat_related_button_width"
+                android:layout_height="@dimen/story_chat_related_button_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="@dimen/story_chat_related_padding"
+                android:paddingStart="@dimen/story_chat_related_padding"
+                android:paddingEnd="@dimen/story_chat_related_padding"
+                android:paddingRight="@dimen/story_chat_related_padding"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/chat_primary_color"
+                android:drawableStart="@drawable/chat_primary_color"
+                android:text="@string/story_chat_related_button_text"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/story_chat_related_button_text_size"
+                android:textAllCaps="false"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
 
 
 
-</LinearLayout>
+
+
+
+
+

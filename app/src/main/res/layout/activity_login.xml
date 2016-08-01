@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textColor="@color/colorWhite"
+        android:textAllCaps="true"
         android:textSize="@dimen/app_name_fullscreen_text_size"
         android:layout_gravity="center"
         android:layout_weight="0.5"
@@ -41,6 +42,7 @@
         android:textSize="@dimen/abc_text_size_button_material"
         android:drawableLeft="@drawable/facebook_white_logo" />
 
+    <!--
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_with_google"
         android:text="@string/login_with_google"
@@ -50,7 +52,7 @@
         android:textSize="@dimen/abc_text_size_button_material"/>
 
 
-    <!--
+
     <Button
         android:id="@+id/login_with_password"
         android:text="@string/login_with_password"

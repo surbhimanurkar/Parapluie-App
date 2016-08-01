@@ -10,17 +10,15 @@
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/colorAccentDark"
+        android:textColor="@color/colorSecondary"
         android:gravity="center_vertical"
         android:singleLine="true"
         android:paddingStart="14dp"
         android:paddingLeft="14dp"
         android:paddingEnd="15dp"
         android:paddingRight="15dp"/>
-    <ImageView android:id="@+id/titleDivider"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:scaleType="fitXY"
-        android:gravity="fill_horizontal"
-        android:src="@drawable/divider_horizontal_accent" />
+        android:layout_height="1dp"
+        android:background="@color/colorGrayBackground"/>
 </LinearLayout>

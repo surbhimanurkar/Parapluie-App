@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "284412934550",
+    "firebase_url": "https://askoliv.firebaseio.com",
+    "project_id": "askoliv",
+    "storage_bucket": "askoliv.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284412934550:android:1a9614b0e3602316",
+        "android_client_info": {
+          "package_name": "com.askoliv.oliv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284412934550-4e5le6l62p784cpl5nmh35lmpbbata9k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxBRNC0wMruw9tblbqNkHGbMmVP1t5SSQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284412934550:android:93f6f77ee8f5e1f8",
+        "android_client_info": {
+          "package_name": "com.askoliv.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284412934550-spa1ogsr55o005v84qqtc3bi5clme4c9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.askoliv.app",
+            "certificate_hash": "CE07A7AF81A124866EA66ECCC3191540F0DC8387"
+          }
+        },
+        {
+          "client_id": "284412934550-4e5le6l62p784cpl5nmh35lmpbbata9k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxBRNC0wMruw9tblbqNkHGbMmVP1t5SSQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284412934550-4e5le6l62p784cpl5nmh35lmpbbata9k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

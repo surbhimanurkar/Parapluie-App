@@ -8,18 +8,18 @@ import android.util.Log;
  * Created by surbhimanurkar on 19-05-2016.
  * Singleton of font to avoid memory leak
  */
-public class GrandHotelFont {
+public class TitleFont {
 
-    private static final String TAG = GrandHotelFont.class.getSimpleName();
-    private static GrandHotelFont instance;
+    private static final String TAG = TitleFont.class.getSimpleName();
+    private static TitleFont instance;
     private static Typeface typeface;
 
-    public static GrandHotelFont getInstance(Context context) {
-        synchronized (GrandHotelFont.class) {
+    public static TitleFont getInstance(Context context) {
+        synchronized (TitleFont.class) {
             if (instance == null) {
-                instance = new GrandHotelFont();
+                instance = new TitleFont();
                 try{
-                    typeface = Typeface.createFromAsset(context.getResources().getAssets(), "fonts/GrandHotel-Regular.ttf");
+                    typeface = Typeface.createFromAsset(context.getResources().getAssets(), "fonts/LuloClean.ttf");
                 }
                 catch (Exception e){
                     Log.e(TAG, e.getMessage());

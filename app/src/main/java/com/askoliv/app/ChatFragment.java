@@ -1,12 +1,17 @@
-package com.askoliv.oliv;
+package com.askoliv.app;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -25,35 +30,55 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.askoliv.adapters.HelpQuestionsAdapter;
 import com.askoliv.adapters.MessageListAdapter;
 import com.askoliv.model.Message;
 import com.askoliv.utils.Constants;
 import com.askoliv.utils.DialogListItem;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ServerValue;
-import com.firebase.client.ValueEventListener;
+import com.askoliv.utils.FirebaseUtils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by surbhimanurkar on 03-03-2016.
+ * Defines chat fragment including viewing previous chats and sending new messages. This is invoked when user goes to chat tab
  */
 public class ChatFragment extends Fragment {
 
     private static final String TAG = ChatFragment.class.getSimpleName();
 
     /* A reference to the Firebase */
-    private Firebase mChatRef;
-    private Firebase mUserRef;
-    private Firebase mRootFirebaseRef;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mChatRef;
+    private DatabaseReference mUserRef;
+    private DatabaseReference mRootFirebaseRef;
+    private FirebaseUser mFirebaseUser;
 
     private MessageListAdapter mMessageListAdapter;
     private HelpQuestionsAdapter mHelpQuestionsAdapter;
     private ValueEventListener mConnectedListener;
     private String mUID;
+
+    private View mRootView;
     private ListView listView;
     private ListView helpListView;
     private LinearLayout helpQuestionsLayout;
@@ -69,40 +94,45 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
          /* Create the Firebase ref that is used for all authentication with Firebase */
-        mRootFirebaseRef = new Firebase(getResources().getString(R.string.firebase_url));
-        mUID = mRootFirebaseRef.getAuth().getUid();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRootFirebaseRef = mFirebaseDatabase.getReference();
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        mUID = mFirebaseUser.getUid();
         Log.d(TAG, "Retrieve UID: " + mUID);
-        mChatRef = mRootFirebaseRef.child(Constants.FIREBASE_CHAT_NODE).child(mUID);
-        mUserRef = mRootFirebaseRef.child(Constants.FIREBASE_USER_NODE).child(mUID);
+        mChatRef = mRootFirebaseRef.child(Constants.F_NODE_CHAT).child(mUID);
+        mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(mUID);
 
-        listView = (ListView) rootView.findViewById(R.id.listview_messages);
-        helpListView = (ListView) rootView.findViewById(R.id.listview_help_questions);
+        listView = (ListView) mRootView.findViewById(R.id.listview_messages);
+        helpListView = (ListView) mRootView.findViewById(R.id.listview_help_questions);
         // Setup our input methods. Enter key on the keyboard or pushing the send button
-        inputText = (EditText) rootView.findViewById(R.id.edit_text_chat);
+        inputText = (EditText) mRootView.findViewById(R.id.edit_text_chat);
         inputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    sendMessage(rootView);
+                    String messageText = inputText.getText().toString();
+                    FirebaseUtils.getInstance().sendMessage(messageText, null, inputText);
                 }
                 return true;
             }
         });
 
-        rootView.findViewById(R.id.button_send).setOnClickListener(new View.OnClickListener() {
+
+        mRootView.findViewById(R.id.button_send).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage(rootView);
+                String messageText = inputText.getText().toString();
+                FirebaseUtils.getInstance().sendMessage(messageText, null,inputText);
             }
         });
 
         //Chat Help Panel
-        helpQuestionsLayout = (LinearLayout) rootView.findViewById(R.id.help_questions_layout);
-        helpQuestionsShadow = rootView.findViewById(R.id.help_questions_shadow);
-        helpButton = (Button) rootView.findViewById(R.id.button_help_query);
+        helpQuestionsLayout = (LinearLayout) mRootView.findViewById(R.id.help_questions_layout);
+        helpQuestionsShadow = mRootView.findViewById(R.id.help_questions_shadow);
+        helpButton = (Button) mRootView.findViewById(R.id.button_help_query);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,8 +155,9 @@ public class ChatFragment extends Fragment {
             }
         });
 
+
         //Chat image capture functionality
-        imageButton = (Button) rootView.findViewById(R.id.button_image);
+        imageButton = (Button) mRootView.findViewById(R.id.button_image);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +165,7 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -143,7 +174,7 @@ public class ChatFragment extends Fragment {
 
 
         // Setting Message List Adapter
-        mMessageListAdapter = new MessageListAdapter(getChatsforUser(mChatRef), this.getActivity(), R.layout.chat_message_query);
+        mMessageListAdapter = new MessageListAdapter(mChatRef.orderByChild(Constants.TIME), this.getActivity(), R.layout.chat_message_query);
         listView.setAdapter(mMessageListAdapter);
         mMessageListAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -154,7 +185,7 @@ public class ChatFragment extends Fragment {
         });
 
         // Setting Help Questions List Adapter
-        mHelpQuestionsAdapter = new HelpQuestionsAdapter(mRootFirebaseRef.child(Constants.FIREBASE_HELP_QUESTIONS_NODE).orderByChild(Constants.HELP_QUESTIONS_RELEVANCE).limitToLast(5), this.getActivity(), R.layout.help_question, inputText);
+        mHelpQuestionsAdapter = new HelpQuestionsAdapter(mRootFirebaseRef.child(Constants.F_NODE_HELP_QUESTIONS).orderByChild(Constants.HELP_QUESTIONS_RELEVANCE).limitToLast(5), this.getActivity(), R.layout.help_question, inputText);
         helpListView.setAdapter(mHelpQuestionsAdapter);
         mHelpQuestionsAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -177,8 +208,8 @@ public class ChatFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                // No-op
+            public void onCancelled(DatabaseError firebaseError) {
+                Log.e(TAG, firebaseError.getMessage());
             }
         });
     }
@@ -188,26 +219,6 @@ public class ChatFragment extends Fragment {
         super.onStop();
         mChatRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
         mMessageListAdapter.cleanup();
-    }
-
-
-    private void sendMessage(View rootView) {
-        EditText inputText = (EditText) rootView.findViewById(R.id.edit_text_chat);
-        String input = inputText.getText().toString();
-        if (!input.equals("")) {
-            // Create our 'model', a Chat object
-            Log.d(TAG, "UID: " + mUID);
-            Message message = new Message(input, Constants.SENDER_USER, ServerValue.TIMESTAMP);
-            // Create a new, auto-generated child of that chat location, and save our chat data there
-            mChatRef.push().setValue(message);
-            inputText.setText("");
-            mUserRef.child(Constants.FIREBASE_USER_KEY_RESOLVED).setValue(false);
-            mUserRef.child(Constants.FIREBASE_USER_KEY_STATUS).setValue(Constants.FIREBASE_USER_VALUE_OPEN);
-        }
-    }
-
-    public Query getChatsforUser(Firebase firebaseRef){
-        return firebaseRef.orderByChild(Constants.TIME);
     }
 
     private void setHelpKeyboard(boolean setHelpKeyboardVisible){
@@ -288,17 +299,88 @@ public class ChatFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        if (resultCode == getActivity().RESULT_OK)
+        Bitmap uploadedImageBitmap;
+
+        if (resultCode == getActivity().RESULT_OK && intent!=null)
         {
            switch(requestCode){
                case Constants.REQUEST_CAMERA:
                    Log.d(TAG, "Got image from the Camera");
+                   uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
+                   saveImage(uploadedImageBitmap, requestCode);
                    break;
                case Constants.REQUEST_GALLERY:
                    Log.d(TAG, "Got image from the gallery");
+                   try {
+                       uploadedImageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), intent.getData());
+                       saveImage(uploadedImageBitmap, requestCode);
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
                    break;
            }
         }
+    }
+
+    private void saveImage(Bitmap bitmap, int requestCode){
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebase_storage_url));
+
+        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SENDER_USER + "-" + System.currentTimeMillis() + ".jpg";
+        String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
+        String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+        // Create a reference to image
+        StorageReference imageRef = storageRef.child(firebaseFilePath);
+
+        //Saving image to Firebase
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        //Save image to phone if taken from the camera
+        if(requestCode == Constants.REQUEST_CAMERA){
+            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
+            FileOutputStream fo;
+            try {
+                if (!folder.exists()) {
+                    folder.mkdirs();
+                }
+                File destination = new File(folder.getAbsolutePath(),fileName);
+                destination.createNewFile();
+                fo = new FileOutputStream(destination);
+                fo.write(data);
+                fo.close();
+                MediaScannerConnection.scanFile(getActivity(),new String[] { destination.getAbsolutePath() }, null, null);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        //Uploading image to firebase storage
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(getActivity(), "Image could not be sent!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if(downloadUrl!=null)
+                    FirebaseUtils.getInstance().sendMessage(null, downloadUrl.toString(), inputText);
+            }
+        });
+
     }
 
 }

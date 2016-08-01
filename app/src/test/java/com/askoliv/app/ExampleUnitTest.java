@@ -1,4 +1,4 @@
-package com.askoliv.oliv;
+package com.askoliv.app;
 
 import org.junit.Test;
 

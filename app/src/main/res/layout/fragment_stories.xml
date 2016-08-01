@@ -5,19 +5,15 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    android:background="@color/colorWhite"
-    tools:context="com.askoliv.oliv.StoriesFragment">
+    android:background="@color/colorGrayBackground"
+    tools:context="com.askoliv.app.StoriesFragment">
 
     <ListView
-        android:id="@+id/listview_stories"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
-        android:paddingStart="@dimen/activity_horizontal_margin_narrow"
-        android:paddingRight="@dimen/activity_horizontal_margin_narrow"
-        android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
-        android:divider="@null"
-        android:transcriptMode="alwaysScroll" />
+        android:divider="@color/transparent"
+        android:dividerHeight="1dp"/>
 
 </RelativeLayout>

@@ -2,22 +2,13 @@ package com.askoliv.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.askoliv.model.HelpQuestion;
-import com.askoliv.model.Message;
-import com.askoliv.oliv.R;
-import com.askoliv.utils.Constants;
-import com.firebase.client.Query;
-
-import java.text.SimpleDateFormat;
+import com.askoliv.app.R;
+import com.google.firebase.database.Query;
 
 /**
  * Created by surbhimanurkar on 10-03-2016.
@@ -43,7 +34,7 @@ public class HelpQuestionsAdapter extends FirebaseListAdapter<HelpQuestion> {
      */
     @Override
     @SuppressLint("NewApi")
-    protected void populateView(View view, final HelpQuestion helpQuestion) {
+    protected void populateView(View view, final HelpQuestion helpQuestion, String key) {
         TextView helpTextView = (TextView) view.findViewById(R.id.question);
         helpTextView.setText(helpQuestion.getQuestion());
         helpTextView.setOnClickListener(new View.OnClickListener() {
