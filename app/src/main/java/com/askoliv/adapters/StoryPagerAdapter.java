@@ -44,7 +44,6 @@ public class StoryPagerAdapter extends PagerAdapter{
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        LayoutInflater layoutInflater = mActivity.getLayoutInflater();
         Log.d(TAG, "Position:" + position);
         View itemView = mActivity.getLayoutInflater().inflate(R.layout.story_pager_item, container, false);
 

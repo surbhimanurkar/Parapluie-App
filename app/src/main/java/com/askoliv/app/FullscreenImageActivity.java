@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenImageActivity extends AppCompatActivity {
+public class FullscreenImageActivity extends BaseActivity {
 
     private ImageView mFullscreenImage;
 

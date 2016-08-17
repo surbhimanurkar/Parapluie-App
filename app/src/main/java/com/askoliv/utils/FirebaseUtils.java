@@ -1,15 +1,24 @@
 package com.askoliv.utils;
 
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
 
 import com.askoliv.model.Message;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by surbhimanurkar on 29-07-2016.
@@ -61,6 +70,39 @@ public class FirebaseUtils {
                 });
             }
         }
+
+    }
+
+    public File downloadFilefromFirebaseURL(String urlString){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(urlString);
+
+        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
+        try {
+            String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            File localFile = new File(folder.getAbsolutePath(),fileName);
+            localFile.createNewFile();
+
+            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d(TAG, "Local file successfully created:" + taskSnapshot.getBytesTransferred());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.d(TAG, "Error in creating temp file:"+ exception.getMessage());
+                }
+            });
+            return localFile;
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
 
     }
 }

@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.askoliv.app.ProfileFragment">
+
+    <ImageView
+        android:id="@+id/display_image"
+        android:layout_width="@dimen/display_picture_size"
+        android:layout_height="@dimen/display_picture_size"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/display_name_margin_top"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+    <TextView
+        android:id="@+id/display_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/display_image"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/display_name_size"
+        android:textColor="@color/colorSecondary"/>
+
+
+    <View
+        android:layout_width="@dimen/story_button_bar_width"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/display_name"
+        android:background="@color/colorGrayBackground"/>
+
+
+</RelativeLayout>

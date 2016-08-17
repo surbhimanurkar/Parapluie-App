@@ -8,4 +8,13 @@
 
     <!-- Firebase dynamic link domain name-->
     <string name="firebase_dynamic_link_domain">https://k2a92.app.goo.gl/</string>
+
+    <!--mobile web link of the app-->
+    <string name="mobile_web_link">http://www.parapluie.in</string>
+    
+    <!--batch API Key-->
+    <string name="batch_api_key">DEV57A08F6E6FE36C56522B32FFB78</string>
+
+    <!--GCM Sender ID-->
+    <string name="gcm_sender_id">284412934550</string>
 </resources>

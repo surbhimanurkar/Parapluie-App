@@ -31,8 +31,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow"
-            android:layout_above="@+id/help_questions_layout">
+            android:layout_marginBottom="@dimen/activity_vertical_margin_very_narrow">
 
         <android.support.v7.widget.CardView
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -56,7 +55,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-                <Button
+                <!--<Button
                     android:id="@+id/button_help_query"
                     android:layout_width="@dimen/icon_small_button_size"
                     android:layout_height="@dimen/icon_small_button_size"
@@ -69,35 +68,36 @@
                     android:layout_centerVertical="true"
                     android:background="@null"
                     android:drawableLeft="@drawable/ic_faq"
-                    android:drawableStart="@drawable/ic_faq"/>
+                    android:drawableStart="@drawable/ic_faq"/>-->
+            <Button
+                android:id="@+id/button_image"
+                android:layout_width="@dimen/icon_small_button_size"
+                android:layout_height="@dimen/icon_small_button_size"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+                android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+                android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_photo_camera_24dp"
+                android:backgroundTint="@color/colorDisabled"/>
 
-                <EditText
-                    android:id="@+id/edit_text_chat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/button_help_query"
-                    android:layout_toEndOf="@+id/button_help_query"
-                    android:layout_toLeftOf="@+id/button_image"
-                    android:layout_toStartOf="@+id/button_image"
-                    android:hint="@string/hint_text_chat"
-                    android:imeActionId="@+id/send"
-                    android:imeActionLabel="@string/action_send"
-                    android:imeOptions="actionSend"
-                    style="@style/EditTextStyle"/>
+            <EditText
+                android:id="@+id/edit_text_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@+id/button_image"
+                android:layout_toEndOf="@+id/button_image"
+                android:hint="@string/hint_text_chat"
+                android:imeActionId="@+id/send"
+                android:imeActionLabel="@string/action_send"
+                android:imeOptions="actionSend"
+                style="@style/EditTextStyle"/>
 
-                <Button
-                    android:id="@+id/button_image"
-                    android:layout_width="@dimen/icon_small_button_size"
-                    android:layout_height="@dimen/icon_small_button_size"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin_very_narrow"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin_very_narrow"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/ic_photo_camera_24dp"
-                    android:backgroundTint="@color/colorDisabled"/>
+
 
         </RelativeLayout>
 
@@ -117,7 +117,7 @@
         </RelativeLayout>
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/help_questions_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                 android:divider="@null"
                 android:transcriptMode="alwaysScroll" />
 
-        </LinearLayout>
+        </LinearLayout>-->
 
 
     </LinearLayout>

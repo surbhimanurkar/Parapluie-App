@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.askoliv.utils.Constants;
 import com.askoliv.utils.TitleFont;
+import com.askoliv.utils.UsageAnalytics;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -30,11 +31,13 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -43,7 +46,7 @@ import java.util.Map;
 
 
 
-public class LoginActivity extends AppCompatActivity{
+public class LoginActivity extends BaseActivity{
 
 
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -68,6 +71,7 @@ public class LoginActivity extends AppCompatActivity{
     /* Data from the authenticated user */
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private String mDisplayName;
 
     /* Listener for Firebase session changes */
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -84,24 +88,19 @@ public class LoginActivity extends AppCompatActivity{
     /*Login Manager*/
     private LoginManager mFacebookLoginManager;
 
-
+    private UsageAnalytics mUsageAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        //Initializing Analytics
+        //Obtain the FirebaseAnalytics instance.
+        mUsageAnalytics = new UsageAnalytics();
+        mUsageAnalytics.initTracker(this);
 
-         /* Create the Firebase ref that is used for all authentication with Firebase */
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseRef = mFirebaseDatabase.getReference();
-        mUserRef = mFirebaseRef.child(Constants.F_NODE_USER);
+        Log.d(TAG, "Activity Launched");
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
-        /*Facebook initializations*/
-        mFacebookCallbackManager = CallbackManager.Factory.create();
-        mFacebookLoginManager = LoginManager.getInstance();
 
         if(mFirebaseUser!=null)
         {
@@ -116,6 +115,18 @@ public class LoginActivity extends AppCompatActivity{
                 redirectUserToMain();
             }
         }
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+         /* Create the Firebase ref that is used for all authentication with Firebase */
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseRef = mFirebaseDatabase.getReference();
+        mUserRef = mFirebaseRef.child(Constants.F_NODE_USER);
+
+        /*Facebook initializations*/
+        mFacebookCallbackManager = CallbackManager.Factory.create();
+        mFacebookLoginManager = LoginManager.getInstance();
 
         //Styling the app title
         //getSupportActionBar().hide();
@@ -176,6 +187,9 @@ public class LoginActivity extends AppCompatActivity{
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + mFirebaseUser.getUid());
                     setLoadingScreen(true);
                     setAuthenticatedUser();
+
+                    //logging Login Event
+                    mUsageAnalytics.trackLogin(mFirebaseUser.getUid(), mDisplayName);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -298,7 +312,14 @@ public class LoginActivity extends AppCompatActivity{
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(Constants.F_KEY_USER_PROVIDER, mFirebaseUser.getProviderId());
         if(mFirebaseUser.getDisplayName()!=null) {
-            map.put(Constants.F_KEY_USER_USERNAME, mFirebaseUser.getDisplayName().toString());
+            map.put(Constants.F_KEY_USER_USERNAME, mFirebaseUser.getDisplayName());
+        }else if(mFirebaseUser.getProviderData()!=null){
+            for (UserInfo userInfo : mFirebaseUser.getProviderData()) {
+                if (mDisplayName == null && userInfo.getDisplayName() != null) {
+                    mDisplayName = userInfo.getDisplayName();
+                }
+            }
+            map.put(Constants.F_KEY_USER_USERNAME, mDisplayName);
         }
         mUserRef.child(mFirebaseUser.getUid()).updateChildren(map);
     }

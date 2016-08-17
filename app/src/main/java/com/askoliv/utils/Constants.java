@@ -5,12 +5,20 @@ package com.askoliv.utils;
  */
 public class Constants {
 
+    //Firebase Analytics Constants
+    public static final String TAB_STORIES = "STORIES";
+    public static final String TAB_CHAT = "CHAT";
+    public static final String TAB_PROFILE = "PROFILE";
+
+
     public static final int TYPE_TEXT = 0;
     public static final int TYPE_IMAGE = 1;
     public static final int SENDER_USER = 0;
     public static final int SENDER_OLIV = 1;
-    public static final String IMAGE_NAME_PREFIX = "OLV-";
-    public static final String LOCAL_IMAGE_PATH = "Oliv/Oliv Images/";
+    public static final int SNAPSHOTS = 3;
+    public static final String IMAGE_NAME_PREFIX = "PP-";
+    public static final String LOCAL_IMAGE_PATH = "Parapluie/Parapluie Images/";
+    public static final String SHARE_IMAGE_PATH = "Parapluie/Snapshots";
 
     public static final String F_URL = "https://askoliv.firebaseio.com";
     public static final String F_NODE_CHAT = "chat";
@@ -34,7 +42,9 @@ public class Constants {
     public static final int NUM_STORIES_LOADED = 10;
 
     public static final String SHARED_PREFERENCE_LOGIN = "loginPref";
+    public static final String SHARED_PREFERENCE_HISTORY = "historyPref";
     public static final String LOGIN_PREF_LOGOUT = "logout";
+    public static final String HISTORY_PREF_SELECTED_TAB = "selectedTab";
     public static final String APP_NAME_FONT = "fonts/GrandHotel-Regular.ttf";
 
     public static final int REQUEST_CAMERA = 0;

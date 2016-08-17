@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +29,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="@dimen/activity_vertical_margin_narrow"
                 android:textSize="@dimen/story_subtitle_size"
-                android:textColor="@color/colorSecondary" />
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary" />
 
             <TextView
                 android:id="@+id/story_title"
@@ -65,7 +68,11 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/story_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/story_pager_height">
+            android:layout_height="@dimen/story_pager_height"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_narrow"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_narrow">
         </android.support.v4.view.ViewPager>
 
         <LinearLayout
@@ -77,7 +84,113 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/dot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
+            <ImageView
+                android:id="@+id/dot10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
+                android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:src="@drawable/dot"/>
+
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/story_snapshot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
 
         <View
@@ -139,6 +252,7 @@
                 android:drawableStart="@drawable/chat_primary_color"
                 android:text="@string/story_chat_related_button_text"
                 android:textColor="@color/colorPrimary"
+                android:textStyle="normal"
                 android:textSize="@dimen/story_chat_related_button_text_size"
                 android:textAllCaps="false"/>
         </RelativeLayout>

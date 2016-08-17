@@ -21,7 +21,7 @@
     <dimen name="chat_side_padding">50dp</dimen>
     <dimen name="time_margin">8dp</dimen>
     <dimen name="help_vertical_padding">2dp</dimen>
-    <dimen name="chat_image_size">240dp</dimen>
+    <dimen name="chat_image_size">280dp</dimen>
     <dimen name="chat_card_min_width">47dp</dimen>
 
     <dimen name="login_button_height">45dp</dimen>
@@ -35,7 +35,7 @@
     <dimen name="medium_elevation">2dp</dimen>
     <dimen name="low_elevation">1dp</dimen>
     <dimen name="drop_shadow_height">4dp</dimen>
-    <dimen name="cardview_medium_elevation">3dp</dimen>
+    <dimen name="cardview_medium_elevation">2dp</dimen>
     <dimen name="cardview_corner_radius">1dp</dimen>
 
     <dimen name="app_name_fullscreen_text_size">35sp</dimen>
@@ -65,4 +65,9 @@
     <dimen name="story_chat_related_button_height">35dp</dimen>
     <dimen name="story_chat_related_button_width">190dp</dimen>
     <dimen name="story_card_elevation">1dp</dimen>
+
+    <!--Profile Page Dimensions-->
+    <dimen name="display_name_size">22sp</dimen>
+    <dimen name="display_picture_size">120dp</dimen>
+    <dimen name="display_name_margin_top">80dp</dimen>
 </resources>

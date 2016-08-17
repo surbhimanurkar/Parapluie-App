@@ -17,6 +17,7 @@ public class Story {
     private String textEnd;
     private Map<String, Carousel> carousel;
     private Social social;
+    private String storySnapshot;
 
     public Story(){
 
@@ -93,6 +94,14 @@ public class Story {
 
     public void setSocial(Social social) {
         this.social = social;
+    }
+
+    public String getStorySnapshot() {
+        return storySnapshot;
+    }
+
+    public void setStorySnapshot(String storySnapshot) {
+        this.storySnapshot = storySnapshot;
     }
 
 }

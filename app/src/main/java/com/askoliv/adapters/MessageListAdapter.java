@@ -73,11 +73,17 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
         Log.d(TAG, "Text:" + message.getMessage() + " Image:" + message.getImage());
         if(message.getMessage()!=null){
             activeMessage.setText(message.getMessage());
-            activeImage.setVisibility(View.GONE);
+            if(message.getImage()!=null){
+                Glide.with(mActivity).load(message.getImage()).centerCrop().into(activeImage);
+                activeImage.setVisibility(View.VISIBLE);
+                setClickListenerforImage(message.getImage(),activeCard);
+            }else{
+                activeImage.setVisibility(View.GONE);
+            }
             activeMessage.setVisibility(View.VISIBLE);
-            activeImageTimeStamp.setVisibility(View.GONE);
             activeTimeStamp.setVisibility(View.VISIBLE);
             activeTimeStamp.setText(simpleDateFormat.format(message.getTime()));
+            activeImageTimeStamp.setVisibility(View.GONE);
         }else if(message.getImage()!=null){
             Glide.with(mActivity).load(message.getImage()).centerCrop().into(activeImage);
             activeMessage.setVisibility(View.GONE);
@@ -85,18 +91,22 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
             activeTimeStamp.setVisibility(View.GONE);
             activeImageTimeStamp.setVisibility(View.VISIBLE);
             activeImageTimeStamp.setText(simpleDateFormat.format(message.getTime()));
-            activeCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SharedPreferences sharedPreferences = mActivity.getSharedPreferences(Constants.SHARED_PREFERENCE_IMAGE, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(Constants.IMAGE_PREF_URL, message.getImage());
-                    editor.apply();
-                    Intent intent = new Intent(mActivity, FullscreenImageActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    mActivity.startActivity(intent);
-                }
-            });
+            setClickListenerforImage(message.getImage(),activeCard);
         }
+    }
+
+    private void setClickListenerforImage(final String image, CardView activeCard){
+        activeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences = mActivity.getSharedPreferences(Constants.SHARED_PREFERENCE_IMAGE, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Constants.IMAGE_PREF_URL, image);
+                editor.apply();
+                Intent intent = new Intent(mActivity, FullscreenImageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                mActivity.startActivity(intent);
+            }
+        });
     }
 }

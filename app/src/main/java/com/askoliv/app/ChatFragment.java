@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.askoliv.adapters.HelpQuestionsAdapter;
 import com.askoliv.adapters.MessageListAdapter;
 import com.askoliv.model.Message;
+import com.askoliv.utils.AndroidUtils;
 import com.askoliv.utils.Constants;
 import com.askoliv.utils.DialogListItem;
 import com.askoliv.utils.FirebaseUtils;
@@ -74,18 +76,20 @@ public class ChatFragment extends Fragment {
     private FirebaseUser mFirebaseUser;
 
     private MessageListAdapter mMessageListAdapter;
-    private HelpQuestionsAdapter mHelpQuestionsAdapter;
+    //private HelpQuestionsAdapter mHelpQuestionsAdapter;
     private ValueEventListener mConnectedListener;
     private String mUID;
 
     private View mRootView;
     private ListView listView;
-    private ListView helpListView;
-    private LinearLayout helpQuestionsLayout;
-    private View helpQuestionsShadow;
-    private Button helpButton;
+    //private ListView helpListView;
+    //private LinearLayout helpQuestionsLayout;
+    //private View helpQuestionsShadow;
+    //private Button helpButton;
     private EditText inputText;
     private Button imageButton;
+
+    private AndroidUtils mAndroidUtils = new AndroidUtils();
 
     public ChatFragment() {
         super();
@@ -106,7 +110,7 @@ public class ChatFragment extends Fragment {
         mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(mUID);
 
         listView = (ListView) mRootView.findViewById(R.id.listview_messages);
-        helpListView = (ListView) mRootView.findViewById(R.id.listview_help_questions);
+        //helpListView = (ListView) mRootView.findViewById(R.id.listview_help_questions);
         // Setup our input methods. Enter key on the keyboard or pushing the send button
         inputText = (EditText) mRootView.findViewById(R.id.edit_text_chat);
         inputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -129,8 +133,8 @@ public class ChatFragment extends Fragment {
             }
         });
 
-        //Chat Help Panel
-        helpQuestionsLayout = (LinearLayout) mRootView.findViewById(R.id.help_questions_layout);
+        //Chat Help Panel - Commenting out help questions feature
+        /*helpQuestionsLayout = (LinearLayout) mRootView.findViewById(R.id.help_questions_layout);
         helpQuestionsShadow = mRootView.findViewById(R.id.help_questions_shadow);
         helpButton = (Button) mRootView.findViewById(R.id.button_help_query);
         helpButton.setOnClickListener(new View.OnClickListener() {
@@ -142,9 +146,10 @@ public class ChatFragment extends Fragment {
                     setHelpKeyboard(false);
                 }
             }
-        });
+        });*/
 
         //Chat input text
+        /*
         inputText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -153,7 +158,7 @@ public class ChatFragment extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
 
         //Chat image capture functionality
@@ -185,7 +190,7 @@ public class ChatFragment extends Fragment {
         });
 
         // Setting Help Questions List Adapter
-        mHelpQuestionsAdapter = new HelpQuestionsAdapter(mRootFirebaseRef.child(Constants.F_NODE_HELP_QUESTIONS).orderByChild(Constants.HELP_QUESTIONS_RELEVANCE).limitToLast(5), this.getActivity(), R.layout.help_question, inputText);
+        /*mHelpQuestionsAdapter = new HelpQuestionsAdapter(mRootFirebaseRef.child(Constants.F_NODE_HELP_QUESTIONS).orderByChild(Constants.HELP_QUESTIONS_RELEVANCE).limitToLast(5), this.getActivity(), R.layout.help_question, inputText);
         helpListView.setAdapter(mHelpQuestionsAdapter);
         mHelpQuestionsAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -193,7 +198,7 @@ public class ChatFragment extends Fragment {
                 super.onChanged();
                 helpListView.setSelection(mHelpQuestionsAdapter.getCount() - 1);
             }
-        });
+        });*/
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
@@ -221,7 +226,7 @@ public class ChatFragment extends Fragment {
         mMessageListAdapter.cleanup();
     }
 
-    private void setHelpKeyboard(boolean setHelpKeyboardVisible){
+    /*private void setHelpKeyboard(boolean setHelpKeyboardVisible){
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if(setHelpKeyboardVisible){
             helpQuestionsLayout.setVisibility(View.VISIBLE);
@@ -238,7 +243,7 @@ public class ChatFragment extends Fragment {
             helpButton.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), R.drawable.ic_faq), null, null, null);
             imm.showSoftInput(inputText,InputMethodManager.SHOW_FORCED);
         }
-    }
+    }*/
 
     private void openImageActivity(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -273,14 +278,15 @@ public class ChatFragment extends Fragment {
                 if(dialogListItems[itemPosition]!=null){
                     if (dialogListItems[itemPosition].getListText().equals(itemTextCamera)) {
                         Log.d(TAG, "Camera clicked");
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent, Constants.REQUEST_CAMERA);
+                        dispatchTakePictureIntent(getImageFileNameSentbyUser());
                     }else if (dialogListItems[itemPosition].getListText().equals(itemTextGallery)) {
                         Log.d(TAG, "Gallery clicked");
                         Intent intent = new Intent(
                                 Intent.ACTION_PICK,
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/*");
+                        intent.putExtra("outputY", getResources().getDimensionPixelSize(R.dimen.chat_image_size));
+                        intent.putExtra("scale",true);
                         startActivityForResult(
                                 Intent.createChooser(intent, "Select File"),
                                 Constants.REQUEST_GALLERY);
@@ -300,14 +306,17 @@ public class ChatFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, intent);
 
         Bitmap uploadedImageBitmap;
+        Log.d(TAG, "onActivityResult: Result Code:" + resultCode + " Request Code:" + requestCode + " Intent:" + intent);
 
-        if (resultCode == getActivity().RESULT_OK && intent!=null)
+        if (resultCode == getActivity().RESULT_OK)
         {
            switch(requestCode){
                case Constants.REQUEST_CAMERA:
                    Log.d(TAG, "Got image from the Camera");
-                   uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
+                   //uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
+                   uploadedImageBitmap = mAndroidUtils.getPicture(getActivity());
                    saveImage(uploadedImageBitmap, requestCode);
+                   mAndroidUtils.galleryAddPic(getActivity());
                    break;
                case Constants.REQUEST_GALLERY:
                    Log.d(TAG, "Got image from the gallery");
@@ -329,7 +338,7 @@ public class ChatFragment extends Fragment {
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebase_storage_url));
 
-        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SENDER_USER + "-" + System.currentTimeMillis() + ".jpg";
+        String fileName = getImageFileNameSentbyUser();
         String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
         String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
@@ -338,30 +347,8 @@ public class ChatFragment extends Fragment {
 
         //Saving image to Firebase
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
-
-        //Save image to phone if taken from the camera
-        if(requestCode == Constants.REQUEST_CAMERA){
-            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
-            FileOutputStream fo;
-            try {
-                if (!folder.exists()) {
-                    folder.mkdirs();
-                }
-                File destination = new File(folder.getAbsolutePath(),fileName);
-                destination.createNewFile();
-                fo = new FileOutputStream(destination);
-                fo.write(data);
-                fo.close();
-                MediaScannerConnection.scanFile(getActivity(),new String[] { destination.getAbsolutePath() }, null, null);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
 
         //Uploading image to firebase storage
@@ -381,6 +368,35 @@ public class ChatFragment extends Fragment {
             }
         });
 
+    }
+
+    private String getImageFileNameSentbyUser(){
+        return Constants.IMAGE_NAME_PREFIX + Constants.SENDER_USER + "-" + System.currentTimeMillis() + ".jpg";
+    }
+
+    public void dispatchTakePictureIntent(String imageFileName) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = mAndroidUtils.createImageFile(getActivity(),imageFileName);
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.d(TAG, ex.getMessage());
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Log.d(TAG, "PhotoFile: Path " + photoFile.getAbsolutePath());
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                        "com.askoliv.app.fileprovider",
+                        photoFile);
+                Log.d(TAG, "PhotoURI:" + photoURI);
+                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, Constants.REQUEST_CAMERA);
+            }
+        }
     }
 
 }
