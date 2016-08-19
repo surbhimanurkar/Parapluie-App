@@ -92,6 +92,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -102,6 +103,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -112,6 +114,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -122,6 +125,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -132,6 +136,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -142,6 +147,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -152,6 +158,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -162,6 +169,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -172,6 +180,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
             <ImageView
@@ -182,6 +191,7 @@
                 android:paddingStart="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingEnd="@dimen/activity_horizontal_margin_very_narrow"
                 android:paddingRight="@dimen/activity_horizontal_margin_very_narrow"
+                android:visibility="gone"
                 android:src="@drawable/dot"/>
 
         </LinearLayout>

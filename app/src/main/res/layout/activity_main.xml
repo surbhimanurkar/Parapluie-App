@@ -17,8 +17,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/appbar_padding_top"
             android:theme="@style/AppTheme.AppBarOverlay"
-            android:elevation="@dimen/high_elevation"
-            app:elevation="@dimen/high_elevation">
+            android:elevation="@dimen/high_elevation">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -33,20 +32,19 @@
         </android.support.design.widget.AppBarLayout>
 
 
-
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             app:tabMode="fixed"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tab_bar_height"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorWhite"
             android:elevation="@dimen/high_elevation"
+            android:visibility="visible"
             app:tabTextColor="@color/colorSecondary"
             app:tabSelectedTextColor="@color/colorPrimary"
             app:tabBackground="@color/colorWhite"
-            android:minHeight="?attr/actionBarSize"
+            android:minHeight="@dimen/tab_bar_height"
             android:layout_alignParentBottom="true" />
-
 
 
         <com.askoliv.utils.CustomViewPager
@@ -57,6 +55,7 @@
             android:layout_below="@id/appbar"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+
         <View
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
@@ -66,7 +65,7 @@
 
 
         <View
-            android:id="@+id/help_questions_shadow"
+            android:id="@+id/tabs_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drop_shadow_height"
             android:background="@drawable/drop_shadow_up"

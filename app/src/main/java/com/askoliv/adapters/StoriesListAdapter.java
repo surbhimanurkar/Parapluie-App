@@ -3,13 +3,9 @@ package com.askoliv.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -17,7 +13,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.askoliv.model.Carousel;
@@ -28,18 +23,17 @@ import com.askoliv.utils.Constants;
 import com.askoliv.utils.CustomViewPager;
 import com.askoliv.utils.FirebaseUtils;
 import com.askoliv.utils.UsageAnalytics;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by surbhimanurkar on 19-05-2016.
@@ -52,6 +46,9 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
     private DatabaseReference mFirebaseDatabaseRef;
 
     private UsageAnalytics mUsageAnalytics;
+    private Set<String> mStoryPopulatedOnce = new LinkedHashSet<>();
+
+    private static final int carouselMaxCount = 10;
 
     public StoriesListAdapter(Query ref, Activity activity, int layout) {
         super(ref, Story.class, layout, activity);
@@ -74,6 +71,8 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
     @SuppressLint("NewApi")
     protected void populateView(final View view, final Story story, final String key) {
         Log.d(TAG, "Populating view for:" + story.getTitle());
+
+
         //Colors
         final int primaryColor = ContextCompat.getColor(mActivity, R.color.colorPrimary);
         final int grayColor = ContextCompat.getColor(mActivity, R.color.colorDivider);
@@ -194,77 +193,28 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
             resources.put(carousel.getPosition(),carousel);
         }
 
-        //Populating Dotlayout
-        final ArrayList<ImageView> dotList = new ArrayList<>(10);
-        for(int p=0; p < 10; p++){
-            int size = resources.size();
-            ImageView dotImage;
-            switch (p){
-                case 0: dotList.add((ImageView) view.findViewById(R.id.dot1));
-                    break;
-                case 1: dotList.add((ImageView) view.findViewById(R.id.dot2));
-                    break;
-                case 2: dotList.add((ImageView) view.findViewById(R.id.dot3));
-                    break;
-                case 3: dotList.add((ImageView) view.findViewById(R.id.dot4));
-                    break;
-                case 4: dotList.add((ImageView) view.findViewById(R.id.dot5));
-                    break;
-                case 5: dotList.add((ImageView) view.findViewById(R.id.dot6));
-                    break;
-                case 6: dotList.add((ImageView) view.findViewById(R.id.dot7));
-                    break;
-                case 7: dotList.add((ImageView) view.findViewById(R.id.dot8));
-                    break;
-                case 8: dotList.add((ImageView) view.findViewById(R.id.dot9));
-                    break;
-                case 9: dotList.add((ImageView) view.findViewById(R.id.dot10));
-                    break;
-            }
 
-            if(p<size){
-                dotImage = dotList.get(p);
-                if(p==0)
-                    dotImage.setColorFilter(primaryColor,PorterDuff.Mode.SRC_IN);
-                dotImage.setVisibility(View.VISIBLE);
-            }else{
-                dotImage = dotList.get(p);
-                dotImage.setVisibility(View.GONE);
-            }
-        }
-
-/*
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        int paddingDot = mActivity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin_very_narrow);
-        //dotLayout.removeAllViews();
-        for(int p=0; p < resources.size(); p++){
-            //Log.d(TAG, "Adding dot for story with author: "+authorText + " at position:"+p + " DotsLayout contains:"+ mDotsLayout.getChildCount());
-            //Adding pagination dots for carousel
-            if(dotLayout.getChildAt(p)==null){
-                ImageView dot = new ImageView(mActivity);
-                dot.setTag(authorText);
-                dot.setPadding(paddingDot,0,paddingDot,0);
-                dot.setImageDrawable(dotDrawable);
-                Log.d(TAG, "DotLayout p="+p);
-                if(p==0){
-                    Log.d(TAG, "DotLayout p is zero:"+p);
-                    dot.getDrawable().setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
-                }else{
-                    Log.d(TAG, "DotLayout p is not zero:"+p);
-                    //dot.getDrawable().setColorFilter(grayColor,PorterDuff.Mode.SRC_IN);
-                }
-                dotLayout.addView(dot,p,params);
-            }
-        }
-
-*/
         ViewPager storyViewPager = (ViewPager) view.findViewById(R.id.story_viewpager);
         StoryPagerAdapter storyPagerAdapter = new StoryPagerAdapter(mActivity, resources);
         storyViewPager.setAdapter(storyPagerAdapter);
-        storyViewPager.setCurrentItem(0);
+
+
+        //Styling DotList
+        Log.d(TAG, "Story Populated once:" + mStoryPopulatedOnce.toString());
+        for(int p=0; p < carouselMaxCount; p++){
+            int size = resources.size();
+            ImageView dotImage;
+            Log.d(TAG, "Size:" + size + " p:" + p);
+            dotImage = getDotImageView(p,view);
+            if(p<size){
+                if(p==storyViewPager.getCurrentItem()){
+                    dotImage.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                }
+                dotImage.setVisibility(View.VISIBLE);
+            }else{
+                dotImage.setVisibility(View.GONE);
+            }
+        }
 
         storyViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -275,11 +225,11 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
             @Override
             public void onPageSelected(int position) {
                 Log.d(TAG, "onPageSelected:" + position);
-                for(int p=0; p<dotList.size();p++){
+                for(int p=0; p< carouselMaxCount; p++){
                     if(p==position){
-                        dotList.get(p).setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                        getDotImageView(p,view).setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
                     }else{
-                        dotList.get(p).setColorFilter(grayColor, PorterDuff.Mode.SRC_IN);
+                        getDotImageView(p,view).setColorFilter(grayColor, PorterDuff.Mode.SRC_IN);
                     }
                 }
             }
@@ -288,6 +238,12 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+        //Tracking first loading of story
+        if(!mStoryPopulatedOnce.contains(key)) {
+            mStoryPopulatedOnce.add(key);
+            Log.d(TAG, "Populating mStoryPopulatedOnce:" + key);
+        }
     }
 
     private String getShareBody(Story story, String key, boolean external){
@@ -299,6 +255,33 @@ public class StoriesListAdapter extends FirebaseListAdapter<Story>{
             shareBody = mActivity.getResources().getString(R.string.text_seeking_help_with_story) + " \"" + story.getTitle() + "\"";
         }
         return shareBody;
+    }
+
+    private ImageView getDotImageView(int position, View view){
+        ImageView dotImageView = null;
+        switch (position){
+            case 0: dotImageView = (ImageView) view.findViewById(R.id.dot1);
+                break;
+            case 1: dotImageView = (ImageView) view.findViewById(R.id.dot2);
+                break;
+            case 2: dotImageView = (ImageView) view.findViewById(R.id.dot3);
+                break;
+            case 3: dotImageView = (ImageView) view.findViewById(R.id.dot4);
+                break;
+            case 4: dotImageView = (ImageView) view.findViewById(R.id.dot5);
+                break;
+            case 5: dotImageView = (ImageView) view.findViewById(R.id.dot6);
+                break;
+            case 6: dotImageView = (ImageView) view.findViewById(R.id.dot7);
+                break;
+            case 7: dotImageView = (ImageView) view.findViewById(R.id.dot8);
+                break;
+            case 8: dotImageView = (ImageView) view.findViewById(R.id.dot9);
+                break;
+            case 9: dotImageView = (ImageView) view.findViewById(R.id.dot10);
+                break;
+        }
+        return dotImageView;
     }
 
 
