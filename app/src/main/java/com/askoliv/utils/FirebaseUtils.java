@@ -1,10 +1,15 @@
 package com.askoliv.utils;
 
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.askoliv.app.R;
 import com.askoliv.model.Message;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,7 +21,9 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -75,16 +82,17 @@ public class FirebaseUtils {
 
     public File downloadFilefromFirebaseURL(String urlString){
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(urlString);
+        boolean folderCreated,fileCreated;
 
         String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
         try {
             String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
             File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
             if (!folder.exists()) {
-                folder.mkdirs();
+                folderCreated = folder.mkdirs();
             }
             File localFile = new File(folder.getAbsolutePath(),fileName);
-            localFile.createNewFile();
+            fileCreated = localFile.createNewFile();
 
             storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
@@ -105,4 +113,45 @@ public class FirebaseUtils {
         return null;
 
     }
+
+    public void saveImage(final Activity activity, Bitmap bitmap, int requestCode) {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReferenceFromUrl(activity.getResources().getString(R.string.firebase_storage_url));
+
+        AndroidUtils androidUtils = new AndroidUtils();
+        String fileName = androidUtils.getImageFileNameSentbyUser();
+        String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
+        String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+        // Create a reference to image
+        StorageReference imageRef = storageRef.child(firebaseFilePath);
+
+        //Saving image to Firebase
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+
+        //Uploading image to firebase storage
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(activity, "Image could not be sent!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null)
+                    sendMessage(null, downloadUrl.toString(), null);
+            }
+        });
+
+    }
+
 }

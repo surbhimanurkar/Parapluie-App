@@ -101,6 +101,7 @@ public class LoginActivity extends BaseActivity{
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFacebookLoginManager = LoginManager.getInstance();
 
         if(mFirebaseUser!=null)
         {
@@ -126,13 +127,11 @@ public class LoginActivity extends BaseActivity{
 
         /*Facebook initializations*/
         mFacebookCallbackManager = CallbackManager.Factory.create();
-        mFacebookLoginManager = LoginManager.getInstance();
 
         //Styling the app title
         //getSupportActionBar().hide();
         mAppName = (TextView) findViewById(R.id.app_name);
         mAppName.setTypeface(TitleFont.getInstance(this).getTypeFace());
-        //appName.setTextScaleX(0.8f);
 
 
         int loginTextSize = getResources().getDimensionPixelSize(R.dimen.abc_text_size_button_material);

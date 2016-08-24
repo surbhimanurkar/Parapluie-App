@@ -112,7 +112,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="@dimen/abc_button_padding_horizontal_material"
             android:layout_marginRight="@dimen/abc_button_padding_horizontal_material"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
 
         </RelativeLayout>
 

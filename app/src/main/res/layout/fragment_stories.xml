@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,14 +6,14 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:background="@color/colorGrayBackground"
-    tools:context="com.askoliv.app.StoriesFragment">
+    tools:context="com.askoliv.app.StoriesFragment"
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@android:id/list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/storiesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:divider="@color/transparent"
         android:dividerHeight="1dp"/>
 
-</RelativeLayout>
+</LinearLayout>

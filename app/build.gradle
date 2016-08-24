@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.askoliv.app"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -44,7 +44,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'com.google.android.gms:play-services-plus:9.2.1'
     compile 'com.google.android.gms:play-services-gcm:9.2.1'
-    compile 'com.facebook.android:facebook-android-sdk:4.14.0'
+
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.google.firebase:firebase-invites:9.2.1'
     compile 'com.google.firebase:firebase-messaging:9.2.1'
@@ -52,6 +52,9 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.2.1'
     compile 'com.google.firebase:firebase-storage:9.2.1'
     compile 'com.google.firebase:firebase-auth:9.2.1'
+
+    compile 'com.firebaseui:firebase-ui:0.4.3'
+
     compile 'com.batch.android:batch-sdk:1.5.3'
     compile 'com.google.android.gms:play-services-appindexing:9.2.1'
 }

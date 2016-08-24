@@ -67,11 +67,11 @@ public class UsageAnalytics {
         }
     }
 
-    public void trackShareEvent(Story story) {
+    public void trackShareEvent(String itemID, String itemName) {
         if (isActive() && analytics != null) {
             Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, story.getKey());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, story.getTitle());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, itemID);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemName);
             analytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
         }
     }

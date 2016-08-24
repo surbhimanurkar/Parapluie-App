@@ -1,10 +1,12 @@
 package com.askoliv.app;
 
+import android.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -12,10 +14,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -82,11 +87,8 @@ public class ChatFragment extends Fragment {
 
     private View mRootView;
     private ListView listView;
-    //private ListView helpListView;
-    //private LinearLayout helpQuestionsLayout;
-    //private View helpQuestionsShadow;
-    //private Button helpButton;
     private EditText inputText;
+    private Button sendButton;
     private Button imageButton;
 
     private AndroidUtils mAndroidUtils = new AndroidUtils();
@@ -100,6 +102,11 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
+        //Colors
+        final int primaryColor = ContextCompat.getColor(getActivity(), R.color.colorPrimary);
+        final int disabledColor = ContextCompat.getColor(getActivity(), R.color.colorDisabled);
+        final int secondaryColor = ContextCompat.getColor(getActivity(), R.color.colorSecondary);
+
          /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootFirebaseRef = mFirebaseDatabase.getReference();
@@ -110,28 +117,58 @@ public class ChatFragment extends Fragment {
         mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(mUID);
 
         listView = (ListView) mRootView.findViewById(R.id.listview_messages);
-        //helpListView = (ListView) mRootView.findViewById(R.id.listview_help_questions);
-        // Setup our input methods. Enter key on the keyboard or pushing the send button
+
+        //Setting send button
+        sendButton = (Button) mRootView.findViewById(R.id.button_send);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String messageText = inputText.getText().toString().trim();
+                if(messageText.length()!=0)
+                    FirebaseUtils.getInstance().sendMessage(messageText, null,inputText);
+            }
+        });
+
+        // Setting edittext for messages
         inputText = (EditText) mRootView.findViewById(R.id.edit_text_chat);
         inputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    String messageText = inputText.getText().toString();
-                    FirebaseUtils.getInstance().sendMessage(messageText, null, inputText);
+                    String messageText = inputText.getText().toString().trim();
+                    if(messageText.length()!=0)
+                        FirebaseUtils.getInstance().sendMessage(messageText, null, inputText);
                 }
                 return true;
             }
         });
-
-
-        mRootView.findViewById(R.id.button_send).setOnClickListener(new View.OnClickListener() {
+        inputText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                String messageText = inputText.getText().toString();
-                FirebaseUtils.getInstance().sendMessage(messageText, null,inputText);
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if(charSequence.toString().trim().length()==0){
+                    sendButton.setEnabled(false);
+                    sendButton.getBackground().setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN);
+                } else {
+                    sendButton.setEnabled(true);
+                    sendButton.getBackground().setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
+        if(inputText.getText()==null || inputText.getText().toString().trim().length()==0){
+            sendButton.setEnabled(false);
+            sendButton.getBackground().setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN);
+        }
+
 
         //Chat Help Panel - Commenting out help questions feature
         /*helpQuestionsLayout = (LinearLayout) mRootView.findViewById(R.id.help_questions_layout);
@@ -149,14 +186,15 @@ public class ChatFragment extends Fragment {
         });*/
 
         //Chat input text
-        /*
-        inputText.setOnTouchListener(new View.OnTouchListener() {
+        /*inputText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(v instanceof EditText && v.hasFocus() && helpQuestionsLayout.getVisibility() == View.VISIBLE){
-                    setHelpKeyboard(false);
+            public void onFocusChange(View v, boolean b) {
+                TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
+                if(v instanceof EditText && v.hasFocus()){
+                    tabLayout.setVisibility(View.GONE);
+                }else{
+                    tabLayout.setVisibility(View.VISIBLE);
                 }
-                return false;
             }
         });*/
 
@@ -166,7 +204,11 @@ public class ChatFragment extends Fragment {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImageActivity();
+                setKeyboard(false);
+                AndroidUtils androidUtils = new AndroidUtils();
+                if(androidUtils.checkPermission(getActivity(),new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_IMAGE)){
+                    androidUtils.openImageActivity(getActivity());
+                }
             }
         });
 
@@ -226,175 +268,15 @@ public class ChatFragment extends Fragment {
         mMessageListAdapter.cleanup();
     }
 
-    /*private void setHelpKeyboard(boolean setHelpKeyboardVisible){
+    private void setKeyboard(boolean isVisible){
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(setHelpKeyboardVisible){
-            helpQuestionsLayout.setVisibility(View.VISIBLE);
-            helpQuestionsShadow.setVisibility(View.VISIBLE);
+        if(isVisible){
+            imm.showSoftInput(inputText,InputMethodManager.SHOW_FORCED);
+        }else{
             // Check if no view has focus:
             View view = getActivity().getCurrentFocus();
             if (view != null) {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-            helpButton.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), R.drawable.ic_keyboard), null, null, null);
-        }else{
-            helpQuestionsLayout.setVisibility(View.GONE);
-            helpQuestionsShadow.setVisibility(View.GONE);
-            helpButton.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), R.drawable.ic_faq), null, null, null);
-            imm.showSoftInput(inputText,InputMethodManager.SHOW_FORCED);
-        }
-    }*/
-
-    private void openImageActivity(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        final String itemTextCamera = getResources().getString(R.string.list_item_camera);
-        final String itemTextGallery = getResources().getString(R.string.list_item_gallery);
-        final DialogListItem[] dialogListItems = {
-                new DialogListItem(itemTextCamera,R.drawable.ic_photo_camera_24dp),
-                new DialogListItem(itemTextGallery,R.drawable.ic_photo_library_24dp)
-        };
-
-        ListAdapter adapter = new ArrayAdapter<DialogListItem>(getActivity(), R.layout.custom_list_dialog, R.id.text1, dialogListItems){
-
-            public View getView(int position, View convertView, ViewGroup parent) {
-                //Use super class to create the View
-                View v = super.getView(position, convertView, parent);
-                TextView tv = (TextView)v.findViewById(R.id.text1);
-                tv.setText(dialogListItems[position].getListText());
-
-                //Put the image on the TextView
-                tv.setCompoundDrawablesWithIntrinsicBounds(dialogListItems[position].getListIcon(), 0, 0, 0);
-
-                //Add margin between image and text (support various screen densities)
-                int marginSize = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
-                tv.setCompoundDrawablePadding(marginSize);
-
-                return v;
-            }
-        };
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int itemPosition) {
-                if(dialogListItems[itemPosition]!=null){
-                    if (dialogListItems[itemPosition].getListText().equals(itemTextCamera)) {
-                        Log.d(TAG, "Camera clicked");
-                        dispatchTakePictureIntent(getImageFileNameSentbyUser());
-                    }else if (dialogListItems[itemPosition].getListText().equals(itemTextGallery)) {
-                        Log.d(TAG, "Gallery clicked");
-                        Intent intent = new Intent(
-                                Intent.ACTION_PICK,
-                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intent.setType("image/*");
-                        intent.putExtra("outputY", getResources().getDimensionPixelSize(R.dimen.chat_image_size));
-                        intent.putExtra("scale",true);
-                        startActivityForResult(
-                                Intent.createChooser(intent, "Select File"),
-                                Constants.REQUEST_GALLERY);
-                    }
-                }
-            }
-        });
-        View customTitleView = getActivity().getLayoutInflater().inflate(R.layout.custom_list_title, null);
-        TextView titleTextView = (TextView) customTitleView.findViewById(R.id.alertTitle);
-        titleTextView.setText(getResources().getString(R.string.title_dialog_select_image));
-        builder.setCustomTitle(customTitleView);
-        builder.show();
-    }
-
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        Bitmap uploadedImageBitmap;
-        Log.d(TAG, "onActivityResult: Result Code:" + resultCode + " Request Code:" + requestCode + " Intent:" + intent);
-
-        if (resultCode == getActivity().RESULT_OK)
-        {
-           switch(requestCode){
-               case Constants.REQUEST_CAMERA:
-                   Log.d(TAG, "Got image from the Camera");
-                   //uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
-                   uploadedImageBitmap = mAndroidUtils.getPicture(getActivity());
-                   saveImage(uploadedImageBitmap, requestCode);
-                   mAndroidUtils.galleryAddPic(getActivity());
-                   break;
-               case Constants.REQUEST_GALLERY:
-                   Log.d(TAG, "Got image from the gallery");
-                   try {
-                       uploadedImageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), intent.getData());
-                       saveImage(uploadedImageBitmap, requestCode);
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-                   break;
-           }
-        }
-    }
-
-    private void saveImage(Bitmap bitmap, int requestCode){
-
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        // Create a storage reference from our app
-        StorageReference storageRef = storage.getReferenceFromUrl(getResources().getString(R.string.firebase_storage_url));
-
-        String fileName = getImageFileNameSentbyUser();
-        String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
-        String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-
-        // Create a reference to image
-        StorageReference imageRef = storageRef.child(firebaseFilePath);
-
-        //Saving image to Firebase
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-
-        //Uploading image to firebase storage
-        UploadTask uploadTask = imageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(getActivity(), "Image could not be sent!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                if(downloadUrl!=null)
-                    FirebaseUtils.getInstance().sendMessage(null, downloadUrl.toString(), inputText);
-            }
-        });
-
-    }
-
-    private String getImageFileNameSentbyUser(){
-        return Constants.IMAGE_NAME_PREFIX + Constants.SENDER_USER + "-" + System.currentTimeMillis() + ".jpg";
-    }
-
-    public void dispatchTakePictureIntent(String imageFileName) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = mAndroidUtils.createImageFile(getActivity(),imageFileName);
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.d(TAG, ex.getMessage());
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Log.d(TAG, "PhotoFile: Path " + photoFile.getAbsolutePath());
-                Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                        "com.askoliv.app.fileprovider",
-                        photoFile);
-                Log.d(TAG, "PhotoURI:" + photoURI);
-                takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, Constants.REQUEST_CAMERA);
             }
         }
     }
