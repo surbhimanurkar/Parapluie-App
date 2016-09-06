@@ -8,6 +8,8 @@ import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.media.MediaScannerConnection;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -64,6 +67,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by surbhimanurkar on 03-03-2016.
@@ -125,19 +129,22 @@ public class ChatFragment extends Fragment {
             public void onClick(View view) {
                 String messageText = inputText.getText().toString().trim();
                 if(messageText.length()!=0)
-                    FirebaseUtils.getInstance().sendMessage(messageText, null,inputText);
+                    FirebaseUtils.getInstance().sendMessage(messageText, null,inputText,Constants.SENDER_USER);
             }
         });
 
         // Setting edittext for messages
         inputText = (EditText) mRootView.findViewById(R.id.edit_text_chat);
+        String[] array = getResources().getStringArray(R.array.hint_text_list);
+        String randomStr = array[new Random().nextInt(array.length)];
+        inputText.setHint(randomStr);
         inputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     String messageText = inputText.getText().toString().trim();
                     if(messageText.length()!=0)
-                        FirebaseUtils.getInstance().sendMessage(messageText, null, inputText);
+                        FirebaseUtils.getInstance().sendMessage(messageText, null, inputText,Constants.SENDER_USER);
                 }
                 return true;
             }
@@ -152,10 +159,10 @@ public class ChatFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 if(charSequence.toString().trim().length()==0){
                     sendButton.setEnabled(false);
-                    sendButton.getBackground().setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN);
+                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_disabled));
                 } else {
                     sendButton.setEnabled(true);
-                    sendButton.getBackground().setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
+                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_active));
                 }
             }
 
@@ -166,7 +173,7 @@ public class ChatFragment extends Fragment {
         });
         if(inputText.getText()==null || inputText.getText().toString().trim().length()==0){
             sendButton.setEnabled(false);
-            sendButton.getBackground().setColorFilter(disabledColor, PorterDuff.Mode.SRC_IN);
+            sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_disabled));
         }
 
 
@@ -181,19 +188,6 @@ public class ChatFragment extends Fragment {
                     setHelpKeyboard(true);
                 } else {
                     setHelpKeyboard(false);
-                }
-            }
-        });*/
-
-        //Chat input text
-        /*inputText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean b) {
-                TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
-                if(v instanceof EditText && v.hasFocus()){
-                    tabLayout.setVisibility(View.GONE);
-                }else{
-                    tabLayout.setVisibility(View.VISIBLE);
                 }
             }
         });*/
@@ -227,6 +221,11 @@ public class ChatFragment extends Fragment {
             @Override
             public void onChanged() {
                 super.onChanged();
+                int lastVisibleItem = listView.getLastVisiblePosition();
+                Log.d(TAG,"LastVisibleItem:" + lastVisibleItem);
+                if(lastVisibleItem!=-1){
+                    mAndroidUtils.playNotificationSound(getActivity());
+                }
                 listView.setSelection(mMessageListAdapter.getCount() - 1);
             }
         });

@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -34,6 +36,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -155,24 +159,42 @@ public class AndroidUtils {
         }
     }
 
-    public void shareStory(Activity activity,String text,String snapshot){
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("image/*");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
+    public boolean shareStory(Activity activity,String text,String snapshot){
         File imageFile = FirebaseUtils.getInstance().downloadFilefromFirebaseURL(snapshot);
-        Uri imageUri = Uri.fromFile(imageFile);
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+        if(imageFile!=null){
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("image/*");
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
+            Uri imageUri = Uri.fromFile(imageFile);
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public String getShareStoryBody(Activity activity,Story story, String key, boolean external){
-        String shareBody;
+        String shareBody = story.getTitle() + "\n\n" + activity.getResources().getString(R.string.share_message_app_name);
         if(external){
-            String shareLink = activity.getResources().getString(R.string.mobile_web_link);
+            String deepLink = activity.getResources().getString(R.string.mobile_web_link)
+                    + "/" + Constants.DEEP_LINK_MAIN
+                    + "?" + Constants.DEEP_LINK_FRAGMENT + "=" + Constants.FRAGMENT_POSITION_STORIES
+                    + "&" + Constants.DEEP_LINK_STORY + "=" + key;
+            String deepLinkEncoded = deepLink;
+            try {
+                deepLinkEncoded = URLEncoder.encode(deepLink,"UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return shareBody;
+            }
+            String shareLink = activity.getResources().getString(R.string.firebase_dynamic_link_domain)
+                    + "?" + Constants.DEEP_LINK_LINK + "=" + deepLinkEncoded
+                    + "&" + Constants.DEEP_LINK_PACKAGE + "=" + activity.getPackageName()
+                    + "&" + Constants.DEEP_LINK_FALLBACK + "=" + activity.getResources().getString(R.string.mobile_fallback_link);
             shareBody = story.getTitle() + "\n" + shareLink + "\n\n" + activity.getResources().getString(R.string.share_message_app_name);
         }else{
-            shareBody = activity.getResources().getString(R.string.text_seeking_help_with_story) + " \"" + story.getTitle() + "\"";
+            shareBody = activity.getResources().getString(R.string.text_seeking_help_with_story) + " \"" + story.getTitle() + "\" " + activity.getResources().getString(R.string.text_seeking_help_with_story_suffix);
         }
         return shareBody;
     }
@@ -262,5 +284,13 @@ public class AndroidUtils {
         return Constants.IMAGE_NAME_PREFIX + Constants.SENDER_USER + "-" + System.currentTimeMillis() + ".jpg";
     }
 
-
+    public void playNotificationSound(Activity activity){
+        try {
+            Uri notification = Uri.parse("android.resource://" + activity.getPackageName() + "/" + R.raw.inapp_message_notification);
+            Ringtone r = RingtoneManager.getRingtone(activity, notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -5,10 +5,14 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.askoliv.adapters.StoriesListAdapter;
 import com.askoliv.app.R;
 import com.askoliv.model.Message;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +44,7 @@ public class FirebaseUtils {
     private DatabaseReference mUserRef;
     private FirebaseUser mFirebaseUser;
     private String mUID;
+    private boolean mSuccess;
 
     private FirebaseUtils() {
     }
@@ -51,7 +56,7 @@ public class FirebaseUtils {
         return mFirebaseUtils;
     }
 
-    public void sendMessage(final String messageText, String messageImage, final EditText inputText) {
+    public void sendMessage(final String messageText, String messageImage, final EditText inputText, int sender) {
         Log.d(TAG, "SendMessage started");
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -63,14 +68,14 @@ public class FirebaseUtils {
             if(messageText!=null || messageImage!=null){
                 // Create our 'model', a Chat object
                 Log.d(TAG, "UID: " + mUID);
-                Message message = new Message(messageText, messageImage, Constants.SENDER_USER, ServerValue.TIMESTAMP);
+                if(messageText!=null && inputText!=null){
+                    inputText.setText("");
+                }
+                Message message = new Message(messageText, messageImage, sender, ServerValue.TIMESTAMP);
                 // Create a new, auto-generated child of that chat location, and save our chat data there
                 mChatRef.push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        if(messageText!=null && inputText!=null){
-                            inputText.setText("");
-                        }
                         mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                         mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                     }
@@ -83,6 +88,7 @@ public class FirebaseUtils {
     public File downloadFilefromFirebaseURL(String urlString){
         StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(urlString);
         boolean folderCreated,fileCreated;
+        mSuccess = false;
 
         String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
         try {
@@ -98,14 +104,19 @@ public class FirebaseUtils {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d(TAG, "Local file successfully created:" + taskSnapshot.getBytesTransferred());
+                    mSuccess = true;
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     Log.d(TAG, "Error in creating temp file:"+ exception.getMessage());
+                    mSuccess = false;
                 }
             });
-            return localFile;
+            if(mSuccess)
+                return localFile;
+            else
+                return null;
         }
         catch (IOException e){
             e.printStackTrace();
@@ -148,10 +159,23 @@ public class FirebaseUtils {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null)
-                    sendMessage(null, downloadUrl.toString(), null);
+                    sendMessage(null, downloadUrl.toString(), null, Constants.SENDER_USER);
             }
         });
 
+    }
+
+    public int getStoryPositionfromKey(StoriesListAdapter storiesListAdapter, String key){
+        int count = storiesListAdapter.getItemCount();
+        int position = count-1;
+        for (int p=(count-1); p>=0; p--){
+            if(key.equals(storiesListAdapter.getRef(p).getKey())){
+                position = p;
+                break;
+            }
+        }
+        Log.d(TAG,"Calculated Position:"+position + " Count:" + count);
+        return position;
     }
 
 }

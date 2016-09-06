@@ -10,6 +10,16 @@ import com.batch.android.Batch;
  */
 public class BaseActivity extends AppCompatActivity {
 
+    protected static boolean isVisible = false;
+
+    protected static boolean isVisible() {
+        return isVisible;
+    }
+
+    private static void setIsVisible(boolean isVisible) {
+        BaseActivity.isVisible = isVisible;
+    }
+
     @Override
     protected void onStart()
     {
@@ -32,6 +42,18 @@ public class BaseActivity extends AppCompatActivity {
         Batch.onDestroy(this);
 
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        setIsVisible(true);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        setIsVisible(false);
+        super.onPause();
     }
 
     @Override

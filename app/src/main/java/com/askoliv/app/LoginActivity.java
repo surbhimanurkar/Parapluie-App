@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.askoliv.utils.Constants;
 import com.askoliv.utils.TitleFont;
 import com.askoliv.utils.UsageAnalytics;
+import com.batch.android.Batch;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -81,6 +82,7 @@ public class LoginActivity extends BaseActivity{
      ***************************************/
     /* The login button for Facebook */
     private LoginButton mFacebookLoginButton;
+    private TextView mLoginPrivacyPromise;
     /* The callback manager for Facebook */
     private CallbackManager mFacebookCallbackManager;
     /* Used to track user logging in/out off Facebook */
@@ -140,6 +142,7 @@ public class LoginActivity extends BaseActivity{
          ***************************************/
         /* Load the Facebook login button and set up the tracker to monitor access token changes */
         mFacebookLoginButton = (LoginButton) findViewById(R.id.login_with_facebook);
+        mLoginPrivacyPromise = (TextView) findViewById(R.id.login_privacy_promise);
         customizeFacebookButton(mFacebookLoginButton, loginTextSize);
         mFacebookLoginButton.setReadPermissions("email", "public_profile");
         mFacebookLoginButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
@@ -234,8 +237,13 @@ public class LoginActivity extends BaseActivity{
         if (mFirebaseUser != null) {
             /* Hide all the login buttons */
             mFacebookLoginButton.setVisibility(View.GONE);
+            mLoginPrivacyPromise.setVisibility(View.GONE);
             saveUserData();
             redirectUserToMain();
+            Batch.User.editor()
+                    .setIdentifier(mFirebaseUser.getUid()) // Set to `null` if you want to remove the identifier.
+                    .save();
+
         }
         /* invalidate options menu to hide/show the logout button */
         supportInvalidateOptionsMenu();
@@ -326,9 +334,11 @@ public class LoginActivity extends BaseActivity{
     public void setLoadingScreen(boolean show){
         if(show){
             mFacebookLoginButton.setVisibility(View.GONE);
+            mLoginPrivacyPromise.setVisibility(View.GONE);
             mAppName.setVisibility(View.GONE);
         }else{
             mFacebookLoginButton.setVisibility(View.VISIBLE);
+            mLoginPrivacyPromise.setVisibility(View.VISIBLE);
             mAppName.setVisibility(View.VISIBLE);
         }
     }

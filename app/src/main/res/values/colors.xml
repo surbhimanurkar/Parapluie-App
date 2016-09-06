@@ -4,9 +4,10 @@
     <color name="colorBase">#d1000000</color>
     <color name="colorPrimary">#F44336</color>
     <color name="colorPrimaryDark">#d1000000</color>
-    <color name="colorAccentDark">#FFD21F</color>
+    <!--<color name="colorAccentDark">#FFD21F</color>
     <color name="colorAccent">#ffe061</color>
-    <color name="colorAccentLight">#FFEFAD</color>
+    <color name="colorAccentLight">#FFEFAD</color>-->
+    <color name="colorAccent">#fdcacaca</color>
     <color name="colorWhite">#FFFFFF</color>
     <!--<color name="colorSecondary">#50514F</color>-->
     <color name="colorSecondary">#d1000000</color>
@@ -16,4 +17,12 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="transparent">#00000000</color>
+
+    <!--Random color backgrounds-->
+    <color name="light_cyan">#DAFFED</color>
+    <color name="medium_champagne">#F2F3AE</color>
+    <color name="mindaro">#D2F898</color>
+    <color name="sunny">#FFF275</color>
+    <color name="timberwolf">#DAD6D6</color>
+    <color name="papaya_whip">#FDF0D5</color>
 </resources>

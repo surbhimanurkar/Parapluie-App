@@ -36,11 +36,21 @@
         android:layout_marginStart="@dimen/fb_login_horizontal_margin"
         android:layout_marginEnd="@dimen/fb_login_horizontal_margin"
         android:layout_marginTop="@dimen/login_button_vertical_margin"
-        android:layout_marginBottom="@dimen/login_button_vertical_margin"
         android:layout_gravity="center_horizontal"
-        android:textAllCaps="true"
         android:textSize="@dimen/abc_text_size_button_material"
-        android:drawableLeft="@drawable/facebook_white_logo" />
+        android:textAllCaps="true"
+        android:drawableLeft="@drawable/facebook_white_logo"
+        android:drawableStart="@drawable/facebook_white_logo"/>
+
+    <TextView
+        android:id="@+id/login_privacy_promise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_privacy_promise"
+        android:textSize="@dimen/login_privacy_promise_size"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/login_button_vertical_bottom_margin"/>
 
     <!--
     <com.google.android.gms.common.SignInButton

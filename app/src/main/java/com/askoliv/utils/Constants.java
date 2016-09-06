@@ -9,7 +9,17 @@ public class Constants {
     public static final String TAB_STORIES = "STORIES";
     public static final String TAB_CHAT = "CHAT";
     public static final String TAB_PROFILE = "PROFILE";
+    public static final int FRAGMENT_POSITION_STORIES = 0;
+    public static final int FRAGMENT_POSITION_CHAT = 1;
+    public static final int FRAGMENT_POSITION_PROFILE = 2;
 
+    //Dynamic links constants
+    public static final String DEEP_LINK_LINK = "link";
+    public static final String DEEP_LINK_PACKAGE = "apn";
+    public static final String DEEP_LINK_FALLBACK = "afl";
+    public static final String DEEP_LINK_MAIN = "main";
+    public static final String DEEP_LINK_FRAGMENT = "fragment";
+    public static final String DEEP_LINK_STORY = "story";
 
     public static final int TYPE_TEXT = 0;
     public static final int TYPE_IMAGE = 1;
@@ -39,7 +49,9 @@ public class Constants {
     public static final String F_KEY_STORIES_TIMEPUBLISHED = "timePublished";
     public static final String F_KEY_STORIES_SOCIAL = "social";
     public static final String F_KEY_STORIES_LOVES = "loves";
-    public static final int NUM_STORIES_LOADED = 10;
+    public static final String F_KEY_STORIES_SHARES = "shares";
+    public static final String F_KEY_STORIES_PUBLISHED = "published";
+    public static final int NUM_STORIES_LOADED = 100;
 
     public static final String SHARED_PREFERENCE_LOGIN = "loginPref";
     public static final String SHARED_PREFERENCE_HISTORY = "historyPref";
@@ -51,6 +63,7 @@ public class Constants {
     public static final String STORY_PREF_KEY = "storyKey";
     public static final String STORY_PREF_SHARE_TEXT = "storyShareText";
     public static final String STORY_PREF_SNAPSHOT = "storySnapshot";
+    public static final String HISTORY_PREF_STORY_KEY = "storyKey";
     public static final String APP_NAME_FONT = "fonts/GrandHotel-Regular.ttf";
 
     public static final int REQUEST_CAMERA = 0;

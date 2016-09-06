@@ -18,6 +18,7 @@ public class Story {
     private Map<String, Carousel> carousel;
     private Social social;
     private String storySnapshot;
+    private boolean published;
 
     public Story(){
 
@@ -102,6 +103,14 @@ public class Story {
 
     public void setStorySnapshot(String storySnapshot) {
         this.storySnapshot = storySnapshot;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
 }

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
@@ -24,8 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +65,7 @@ public class MainActivity extends BaseActivity {
      */
     private Stack<Integer> mTabHistory = new Stack<>();
     private boolean doubleBackToExitPressedOnce = false;
+    private SharedPreferences mHistorySharedPreferences;
 
     private UsageAnalytics mUsageAnalytics;
     private AndroidUtils mAndroidUtils = new AndroidUtils();
@@ -100,6 +100,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mHistorySharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_HISTORY, Context.MODE_PRIVATE);
 
         //Setting UI elements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -222,6 +223,32 @@ public class MainActivity extends BaseActivity {
         int selectTabPosition = sharedPreferences.getInt(Constants.HISTORY_PREF_SELECTED_TAB, 0);
         Log.d(TAG, "Select Tab Position:" + selectTabPosition);
         mViewPager.setCurrentItem(selectTabPosition);
+
+        Intent deepLinkIntent = getIntent();
+        Uri data = deepLinkIntent.getData();
+        Log.d(TAG,"onCreate parseIntent:Data:" + data);
+        if(data!=null && data.getQueryParameter(Constants.DEEP_LINK_FRAGMENT)!=null){
+            int fragment = Integer.parseInt(data.getQueryParameter(Constants.DEEP_LINK_FRAGMENT));
+            if(fragment == Constants.FRAGMENT_POSITION_STORIES){
+                mViewPager.setCurrentItem(Constants.FRAGMENT_POSITION_STORIES);
+                String storyKey = data.getQueryParameter(Constants.DEEP_LINK_STORY);
+                SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
+                editor.putString(Constants.HISTORY_PREF_STORY_KEY,storyKey);
+                editor.apply();
+            }else{
+                mViewPager.setCurrentItem(fragment);
+
+                //There is no selected story
+                SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
+                editor.remove(Constants.HISTORY_PREF_STORY_KEY);
+                editor.apply();
+            }
+        }else{
+            //There is no selected story
+            SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
+            editor.remove(Constants.HISTORY_PREF_STORY_KEY);
+            editor.apply();
+        }
 
         //Listener on softkeyboard that hides tabs when softkeyboard is visible and shows tabs when softkeyboard is gone
         final View rootView = findViewById(R.id.main_content);
@@ -399,17 +426,20 @@ public class MainActivity extends BaseActivity {
                     String storyTitle = sharedPreferences.getString(Constants.STORY_PREF_TITLE, null);
                     String storyKey = sharedPreferences.getString(Constants.STORY_PREF_KEY, null);
                     String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
-                    mAndroidUtils.shareStory(this,storyShareText,storySnapshot);
-                    mUsageAnalytics.trackShareEvent(storyKey,storyTitle);
+                    boolean success = mAndroidUtils.shareStory(this,storyShareText,storySnapshot);
+                    if(success)
+                        mUsageAnalytics.trackShareEvent(storyKey,storyTitle);
+                    else
+                        Toast.makeText(this,getResources().getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Permission Denied! Can't share story!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.story_share_error_permission), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case Constants.PERMISSIONS_REQUEST_STORAGE_IMAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mAndroidUtils.openImageActivity(this);
                 }else{
-                    Toast.makeText(MainActivity.this, "Permission Denied! Can't send image!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.image_error_permission), Toast.LENGTH_SHORT).show();
                 }
         }
     }
@@ -426,8 +456,7 @@ public class MainActivity extends BaseActivity {
                 case Constants.REQUEST_CAMERA:
                     Log.d(TAG, "Got image from the Camera");
                     //uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
-                    SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_HISTORY, Context.MODE_PRIVATE);
-                    String currentPhotoPath = sharedPreferences.getString(Constants.HISTORY_PREF_CURRENT_PHOTO_PATH, null);
+                    String currentPhotoPath = mHistorySharedPreferences.getString(Constants.HISTORY_PREF_CURRENT_PHOTO_PATH, null);
                     uploadedImageBitmap = mAndroidUtils.getPicture(this,currentPhotoPath);
                     FirebaseUtils.getInstance().saveImage(this,uploadedImageBitmap, requestCode);
                     mAndroidUtils.galleryAddPic(this,currentPhotoPath);

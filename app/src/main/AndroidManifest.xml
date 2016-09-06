@@ -26,11 +26,21 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <!--<data
+                    android:scheme="http"
+                    android:host="www.parapluie.in"
+                    android:pathPrefix="/main" />-->
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <!--<data
+                    android:scheme="parapluie"
+                    android:host="main" />-->
             </intent-filter>
         </activity>
         <activity
@@ -58,6 +68,15 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".PushService" />
+
+        <receiver android:name=".PushReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.askoliv.app" />
             </intent-filter>
         </receiver>
 

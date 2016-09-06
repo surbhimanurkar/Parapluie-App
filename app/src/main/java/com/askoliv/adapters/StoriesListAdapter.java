@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.askoliv.model.Carousel;
 import com.askoliv.model.Social;
@@ -29,11 +30,14 @@ import com.askoliv.utils.FirebaseUtils;
 import com.askoliv.utils.UsageAnalytics;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -49,6 +53,8 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
     private UsageAnalytics mUsageAnalytics;
 
     private static final int carouselMaxCount = 10;
+    private static final int sharesIndex = 0;
+    private static final int lovesIndex = 1;
 
     public StoriesListAdapter(Query ref, Activity activity, int layout) {
         super(Story.class, layout, StoryViewHolder.class, ref);
@@ -71,12 +77,18 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
     @Override
     protected void populateViewHolder(final StoryViewHolder storyViewHolder, final Story story, int position) {
 
+        //Don't show story if its not published
+        if(!story.isPublished())
+            return;
+
         final String key = this.getRef(position).getKey();
+
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //Colors
         final int primaryColor = ContextCompat.getColor(mActivity, R.color.colorPrimary);
         final int grayColor = ContextCompat.getColor(mActivity, R.color.colorDivider);
-        final int secondaryColor = ContextCompat.getColor(mActivity, R.color.colorSecondary);
+        final int disabledColor = ContextCompat.getColor(mActivity, R.color.colorDisabled);
 
         //Defining Auxiliary objects
         final AndroidUtils androidUtils = new AndroidUtils();
@@ -90,27 +102,57 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
         //Text Initial
         if(story.getTextInitial()!=null){
             storyViewHolder.setTextInitial(story.getTextInitial());
+            storyViewHolder.setTextInitialVisibility(View.VISIBLE);
         }else{
             storyViewHolder.setTextInitialVisibility(View.GONE);
         }
 
 
-        String shares = "";
-        String loves = "";
+        //Populating shares and loves buttons
+        final SparseArray<Integer> socialCount = new SparseArray<>(2);
+        boolean lovedBefore = false;
         if(story.getSocial()!=null){
-           shares = story.getSocial().getShares() + shares;
-            loves = story.getSocial().getLoves() + loves;
+            if(story.getSocial().getShares()!=null) {
+                int sharesCount = 0;
+                for(String userKey:story.getSocial().getShares().keySet()){
+                    sharesCount += story.getSocial().getShares().get(userKey);
+                }
+                socialCount.put(sharesIndex, sharesCount);
+            }else
+                socialCount.put(sharesIndex,0);
+
+            if(story.getSocial().getLoves()!=null)
+                socialCount.put(lovesIndex,story.getSocial().getLoves().size());
+                if(firebaseUser!=null && story.getSocial().getLoves().get(firebaseUser.getUid())!=null && story.getSocial().getLoves().get(firebaseUser.getUid()))
+                    lovedBefore = true;
+            else
+                socialCount.put(lovesIndex,0);
         }else{
-            shares = "0" + shares;
-            loves = "0" + loves;
+            socialCount.put(sharesIndex,0);
+            socialCount.put(lovesIndex,0);
         }
+        String shares = socialCount.get(sharesIndex) + "";
+        String loves = socialCount.get(lovesIndex) + "";
 
         storyViewHolder.setShareButton(shares, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)){
-                    androidUtils.shareStory(mActivity,androidUtils.getShareStoryBody(mActivity,story,key,true),story.getStorySnapshot());
-                    mUsageAnalytics.trackShareEvent(key,story.getTitle());
+                if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)) {
+                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), story.getStorySnapshot());
+                    if (shared){
+                        int newShares = socialCount.get(sharesIndex)+1;
+                        socialCount.put(sharesIndex,newShares);
+                        if(firebaseUser!=null) {
+                            mFirebaseDatabaseRef.child(Constants.F_NODE_STORIES).child(key)
+                                    .child(Constants.F_KEY_STORIES_SOCIAL).child(Constants.F_KEY_STORIES_SHARES)
+                                    .child(firebaseUser.getUid()).setValue(newShares);
+                            mFirebaseDatabaseRef.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
+                                    .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_SHARES)
+                                    .child(key).setValue(newShares);
+                        }
+                        mUsageAnalytics.trackShareEvent(key, story.getTitle());
+                    }else
+                        Toast.makeText(mActivity,mActivity.getResources().getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
                 }else{
                     SharedPreferences sharedPreferences = mActivity.getSharedPreferences(Constants.SHARED_PREFERENCE_STORY, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -122,41 +164,40 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 }
             }
         });
-        storyViewHolder.setLoveButton(loves,new View.OnClickListener() {
+
+        final Drawable lovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_primary_24dp);
+        final Drawable unlovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_black_24dp);
+        storyViewHolder.setLoveButton(loves,lovedBefore,primaryColor,disabledColor,lovedIconDrawable,unlovedIconDrawable
+                ,new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if(v.getId() == R.id.story_button_love){
-                    //Get User ID
-                    String userID = null;
-                    if(FirebaseAuth.getInstance()!=null && FirebaseAuth.getInstance().getCurrentUser()!=null){
-                        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    }
+                //Get User ID
 
-                    Social social = story.getSocial();
-                    int newLoves = social.getLoves();
-                    int color;
-                    Drawable iconDrawable;
+                boolean loved = false;
 
-                    if(v.getTag()!=null && ((int)v.getTag())==1){
-                        v.setTag(0);
-                        Log.d(TAG, "onCLick lovebutton unselected");
-                        newLoves = newLoves - 1;
-                        color = secondaryColor;
-                        iconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_black_24dp);
-                    }else{
-                        v.setTag(1);
-                        Log.d(TAG, "onCLick lovebutton selected");
-                        newLoves = newLoves + 1;
-                        color = primaryColor;
-                        iconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_primary_24dp);
-                    }
-                    //Update UI
-                    ((Button)v).setTextColor(color);
-                    ((Button)v).setCompoundDrawablesWithIntrinsicBounds(null,null,iconDrawable,null);
-                    if(userID!=null){
-                        mFirebaseDatabaseRef.child(Constants.F_NODE_STORIES).child(key).child(Constants.F_KEY_STORIES_SOCIAL).child(Constants.F_KEY_STORIES_LOVES).setValue(newLoves);
-                        mFirebaseDatabaseRef.child(Constants.F_NODE_USER).child(userID).child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_LOVES).child(key).setValue(true);
-                    }
+                Log.d(TAG,"LoveButton Tag:" + v.getTag());
+                if(v.getTag()!=null && (boolean)v.getTag()){
+                    loved = false;
+                    Toast.makeText(mActivity,mActivity.getString(R.string.toast_unlove_button),Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onCLick lovebutton unselected");
+                    ((Button)v).setTextColor(disabledColor);
+                    ((Button)v).setCompoundDrawablesWithIntrinsicBounds(null,null,unlovedIconDrawable,null);
+                }else{
+                    loved = true;
+                    Toast.makeText(mActivity,mActivity.getString(R.string.toast_love_button),Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onCLick lovebutton selected");
+                    ((Button)v).setTextColor(primaryColor);
+                    ((Button)v).setCompoundDrawablesWithIntrinsicBounds(null,null,lovedIconDrawable,null);
+                }
+                v.setTag(loved);
+
+                if(firebaseUser!=null){
+                    mFirebaseDatabaseRef.child(Constants.F_NODE_STORIES).child(key)
+                            .child(Constants.F_KEY_STORIES_SOCIAL).child(Constants.F_KEY_STORIES_LOVES)
+                            .child(firebaseUser.getUid()).setValue(loved);
+                    mFirebaseDatabaseRef.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
+                            .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_LOVES)
+                            .child(key).setValue(loved);
                 }
                 mUsageAnalytics.trackLikeEvent(story);
             }
@@ -168,8 +209,9 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
             @Override
             public void onClick(View view) {
                 FirebaseUtils firebaseUtils = FirebaseUtils.getInstance();
-                firebaseUtils.sendMessage(androidUtils.getShareStoryBody(mActivity,story,key,false),story.getStorySnapshot(),null);
+                firebaseUtils.sendMessage(androidUtils.getShareStoryBody(mActivity,story,key,false),null,null,Constants.SENDER_OLIV);
                 tabsViewPager.setCurrentItem(1);
+                Toast.makeText(mActivity,mActivity.getString(R.string.toast_chat_related_to_story),Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -239,7 +281,8 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
 
         public void setTitle(String title){
             TextView titleTextView = (TextView) mView.findViewById(R.id.story_title);
-            titleTextView.setText(title);
+            if(!title.equals(titleTextView.getText()))
+                titleTextView.setText(title);
         }
 
         public void setSubtitle(String subtitle){
@@ -270,12 +313,20 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 shareButton.setOnClickListener(onClickListener);
         }
 
-        public void setLoveButton(String loveButtonText, View.OnClickListener onClickListener){
+        public void setLoveButton(String loveButtonText, boolean lovedTag,int lovedColor, int unlovedColor, Drawable lovedDrawable, Drawable unlovedDrawable, View.OnClickListener onClickListener){
             Button loveButton = (Button) mView.findViewById(R.id.story_button_love);
             if(loveButtonText!=null)
                 loveButton.setText(loveButtonText);
             if(onClickListener!=null)
                 loveButton.setOnClickListener(onClickListener);
+            loveButton.setTag(lovedTag);
+            if(lovedTag) {
+                loveButton.setTextColor(lovedColor);
+                loveButton.setCompoundDrawablesWithIntrinsicBounds(null,null,lovedDrawable,null);
+            }else{
+                loveButton.setTextColor(unlovedColor);
+                loveButton.setCompoundDrawablesWithIntrinsicBounds(null,null,unlovedDrawable,null);
+            }
         }
 
         public void setChatRelatedButton(String chatRelatedButtonText, View.OnClickListener onClickListener){

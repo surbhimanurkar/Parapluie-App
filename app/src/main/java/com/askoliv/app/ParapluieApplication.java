@@ -20,6 +20,7 @@ public class ParapluieApplication extends Application{
 
         //Settings for Batch.com push notifications
         Batch.Push.setGCMSenderId(getResources().getString(R.string.gcm_sender_id));
+        Batch.Push.setManualDisplay(true);
         Batch.setConfig(new Config(getResources().getString(R.string.batch_api_key)));
     }
 }

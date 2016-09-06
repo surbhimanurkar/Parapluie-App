@@ -15,6 +15,8 @@ import com.askoliv.model.Carousel;
 import com.askoliv.app.R;
 import com.bumptech.glide.Glide;
 
+import java.util.Random;
+
 
 /**
  * Created by surbhimanurkar on 07-06-2016.
@@ -51,6 +53,9 @@ public class StoryPagerAdapter extends PagerAdapter{
 
         if(mResources.get(position)!=null){
             ImageView imageView = (ImageView) itemView.findViewById(R.id.story_pager_image);
+            int[] randomBgColors = mActivity.getResources().getIntArray(R.array.random_bg_colors);
+            int selectedRandomColor = randomBgColors[new Random().nextInt(randomBgColors.length)];
+            imageView.setBackgroundColor(selectedRandomColor);
             Glide.with(mActivity).load(mResources.get(position).getImage()).centerCrop().into(imageView);
             Log.d(TAG, "Loading Image:" + mResources.get(position).getImage());
 
