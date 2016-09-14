@@ -50,7 +50,7 @@ public class Constants {
     public static final String F_KEY_STORIES_SOCIAL = "social";
     public static final String F_KEY_STORIES_LOVES = "loves";
     public static final String F_KEY_STORIES_SHARES = "shares";
-    public static final String F_KEY_STORIES_PUBLISHED = "published";
+    public static final String F_NODE_STORIES_PUBLISHED = "published";
     public static final int NUM_STORIES_LOADED = 100;
 
     public static final String SHARED_PREFERENCE_LOGIN = "loginPref";

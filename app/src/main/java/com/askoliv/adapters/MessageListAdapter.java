@@ -2,6 +2,8 @@ package com.askoliv.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.askoliv.app.FullscreenImageActivity;
 import com.askoliv.model.Message;
@@ -28,6 +31,7 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
 
     private static final String TAG = MessageListAdapter.class.getSimpleName();
     private Activity mActivity;
+    private static final String label = "Parapluie";
 
     public MessageListAdapter(Query ref, Activity activity, int layout) {
         super(ref, Message.class, layout, activity);
@@ -70,6 +74,8 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a");
         activeCard.setVisibility(View.VISIBLE);
         unusedCard.setVisibility(View.GONE);
+        setLongClickListenerforCard(message,activeCard);
+
         Log.d(TAG, "Text:" + message.getMessage() + " Image:" + message.getImage());
         if(message.getMessage()!=null){
             activeMessage.setText(message.getMessage());
@@ -106,6 +112,22 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
                 Intent intent = new Intent(mActivity, FullscreenImageActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 mActivity.startActivity(intent);
+            }
+        });
+    }
+
+    private void setLongClickListenerforCard(final Message message, CardView activeCard){
+        activeCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(message.getMessage()!=null){
+                    Toast.makeText(mActivity,mActivity.getResources().getString(R.string.toast_text_copied), Toast.LENGTH_SHORT).show();
+                    ClipboardManager clipboard = (ClipboardManager) mActivity.getSystemService(mActivity.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(label, message.getMessage());
+                    clipboard.setPrimaryClip(clip);
+                    return true;
+                }
+                return false;
             }
         });
     }

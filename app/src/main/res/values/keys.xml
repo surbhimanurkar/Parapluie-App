@@ -4,7 +4,7 @@
     <string name="firebase_storage_url">gs://askoliv.appspot.com</string>
 
     <!-- Your Facebook App ID from your app settings on https://developers.facebook.com/ -->
-    <string name="facebook_app_id">190754637961726</string>
+    <string name="facebook_app_id">1754155724832154</string>
 
     <!-- Firebase dynamic link domain name-->
     <string name="firebase_dynamic_link_domain">https://k2a92.app.goo.gl/</string>
@@ -16,8 +16,14 @@
     <string name="mobile_fallback_link">http://www.parapluie.in/requestinvite</string>
     
     <!--batch API Key-->
-    <string name="batch_api_key">DEV57A08F6E6FE36C56522B32FFB78</string>
+    <string name="batch_api_key">57A08F6E6DF014CE1F01295225373A</string>
 
     <!--GCM Sender ID-->
     <string name="gcm_sender_id">284412934550</string>
+
+    <!--Goggle API Key-->
+    <string name="google_api_key1">AIzaSyCxBRNC0wMruw9tblbqNkHGbMmVP1t5SSQ</string>
+
+    <!--placeholder_image-->
+    <string name="placeholder_image">https://firebasestorage.googleapis.com/v0/b/askoliv.appspot.com/o/placeholder_image.jpg?alt=media&amp;token=65a5c6d1-1508-44d5-b7e6-b5d3246c1055</string>
 </resources>

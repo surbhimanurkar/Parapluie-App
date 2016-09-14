@@ -31,16 +31,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
                 <!--<data
                     android:scheme="http"
                     android:host="www.parapluie.in"
-                    android:pathPrefix="/main" />-->
+                    android:pathPrefix="/"/>-->
                 <!-- note that the leading "/" is required for pathPrefix-->
-                <!-- Accepts URIs that begin with "example://gizmos” -->
-                <!--<data
-                    android:scheme="parapluie"
-                    android:host="main" />-->
             </intent-filter>
         </activity>
         <activity
@@ -56,6 +53,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.urlshortener.API_KEY"
+            android:value="@string/google_api_key1"/>
 
         <activity
             android:name=".FullscreenImageActivity"

@@ -13,6 +13,7 @@
     <color name="colorSecondary">#d1000000</color>
     <color name="colorDisabled">#70716F</color>
     <color name="colorDivider">#ADAEAD</color>
+    <color name="colorHyperlink">#2196F3</color>
     <color name="colorGrayBackground">#EBEBEA</color>
 
     <color name="black_overlay">#66000000</color>

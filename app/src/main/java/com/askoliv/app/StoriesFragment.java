@@ -60,7 +60,7 @@ public class StoriesFragment extends Fragment {
          /* Create the Firebase ref that is used for all authentication with Firebase */
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootFirebaseRef = mFirebaseDatabase.getReference();
-        mStoriesRef = mRootFirebaseRef.child(Constants.F_NODE_STORIES);
+        mStoriesRef = mRootFirebaseRef.child(Constants.F_NODE_STORIES).child(Constants.F_NODE_STORIES_PUBLISHED);
 
         mStoriesRecyclerView = (RecyclerView) rootView.findViewById(R.id.storiesList);
         mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true);
@@ -119,5 +119,12 @@ public class StoriesFragment extends Fragment {
         Log.d(TAG, "onStart StoriesAdapter:" + mStoriesRecyclerView.getAdapter());
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_HISTORY,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(Constants.HISTORY_PREF_STORY_KEY);
+        editor.apply();
+    }
 }

@@ -77,10 +77,6 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
     @Override
     protected void populateViewHolder(final StoryViewHolder storyViewHolder, final Story story, int position) {
 
-        //Don't show story if its not published
-        if(!story.isPublished())
-            return;
-
         final String key = this.getRef(position).getKey();
 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -121,11 +117,16 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
             }else
                 socialCount.put(sharesIndex,0);
 
-            if(story.getSocial().getLoves()!=null)
-                socialCount.put(lovesIndex,story.getSocial().getLoves().size());
-                if(firebaseUser!=null && story.getSocial().getLoves().get(firebaseUser.getUid())!=null && story.getSocial().getLoves().get(firebaseUser.getUid()))
+            if(story.getSocial().getLoves()!=null) {
+                int lovesCount = 0;
+                for(String userKey:story.getSocial().getLoves().keySet()){
+                    if(story.getSocial().getLoves().get(userKey))
+                        lovesCount += 1;
+                }
+                socialCount.put(lovesIndex, lovesCount);
+                if (firebaseUser != null && story.getSocial().getLoves().get(firebaseUser.getUid()) != null && story.getSocial().getLoves().get(firebaseUser.getUid()))
                     lovedBefore = true;
-            else
+            }else
                 socialCount.put(lovesIndex,0);
         }else{
             socialCount.put(sharesIndex,0);
@@ -211,7 +212,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 FirebaseUtils firebaseUtils = FirebaseUtils.getInstance();
                 firebaseUtils.sendMessage(androidUtils.getShareStoryBody(mActivity,story,key,false),null,null,Constants.SENDER_OLIV);
                 tabsViewPager.setCurrentItem(1);
-                Toast.makeText(mActivity,mActivity.getString(R.string.toast_chat_related_to_story),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity,mActivity.getString(R.string.toast_chat_related_to_story),Toast.LENGTH_SHORT).show();
             }
         });
 

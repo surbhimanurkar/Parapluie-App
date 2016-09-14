@@ -85,45 +85,6 @@ public class FirebaseUtils {
 
     }
 
-    public File downloadFilefromFirebaseURL(String urlString){
-        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(urlString);
-        boolean folderCreated,fileCreated;
-        mSuccess = false;
-
-        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
-        try {
-            String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
-            if (!folder.exists()) {
-                folderCreated = folder.mkdirs();
-            }
-            File localFile = new File(folder.getAbsolutePath(),fileName);
-            fileCreated = localFile.createNewFile();
-
-            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Log.d(TAG, "Local file successfully created:" + taskSnapshot.getBytesTransferred());
-                    mSuccess = true;
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Log.d(TAG, "Error in creating temp file:"+ exception.getMessage());
-                    mSuccess = false;
-                }
-            });
-            if(mSuccess)
-                return localFile;
-            else
-                return null;
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        return null;
-
-    }
 
     public void saveImage(final Activity activity, Bitmap bitmap, int requestCode) {
 

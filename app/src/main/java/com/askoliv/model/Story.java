@@ -18,7 +18,7 @@ public class Story {
     private Map<String, Carousel> carousel;
     private Social social;
     private String storySnapshot;
-    private boolean published;
+    private String shareLink;
 
     public Story(){
 
@@ -105,12 +105,12 @@ public class Story {
         this.storySnapshot = storySnapshot;
     }
 
-    public boolean isPublished() {
-        return published;
+    public String getShareLink() {
+        return shareLink;
     }
 
-    public void setPublished(boolean published) {
-        this.published = published;
+    public void setShareLink(String shareLink) {
+        this.shareLink = shareLink;
     }
 
 }

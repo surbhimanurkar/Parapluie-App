@@ -49,7 +49,7 @@ public class ProfileFragment extends Fragment {
             Uri displayPictureUrl = mFirebaseUser.getPhotoUrl();
             String displayNameText = mFirebaseUser.getDisplayName();
 
-            if(displayPictureUrl==null || displayNameText==null){
+            if(/*displayPictureUrl==null ||*/ displayNameText==null){
                 for (UserInfo userInfo : mFirebaseUser.getProviderData()) {
                     if (displayNameText == null && userInfo.getDisplayName() != null) {
                         displayNameText = userInfo.getDisplayName();
@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment {
                 }
 
             }
+
 
             //Populating display picture
             final ImageView displayPicture = (ImageView)mRootView.findViewById(R.id.display_image);
@@ -77,7 +78,9 @@ public class ProfileFragment extends Fragment {
             TextView displayName = (TextView) mRootView.findViewById(R.id.display_name);
             displayName.setText(displayNameText);
 
-            Log.d(TAG,"Image URI:"+displayPictureUrl + " Name:" + mFirebaseUser.getDisplayName());
+            ImageView placeholderImage = (ImageView) mRootView.findViewById(R.id.placeholder_image);
+            Glide.with(getActivity()).load(getActivity().getResources().getString(R.string.placeholder_image)).centerCrop().into(placeholderImage);
+
         }
 
 

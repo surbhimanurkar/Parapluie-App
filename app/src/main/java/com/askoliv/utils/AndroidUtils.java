@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -28,9 +29,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.askoliv.app.R;
 import com.askoliv.model.Story;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.services.urlshortener.Urlshortener;
+import com.google.api.services.urlshortener.model.Url;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -159,26 +170,48 @@ public class AndroidUtils {
         }
     }
 
-    public boolean shareStory(Activity activity,String text,String snapshot){
-        File imageFile = FirebaseUtils.getInstance().downloadFilefromFirebaseURL(snapshot);
-        if(imageFile!=null){
-            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-            sharingIntent.setType("image/*");
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
-            Uri imageUri = Uri.fromFile(imageFile);
-            sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-            sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+    public boolean shareStory(final Activity activity,final String text,String snapshot){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(snapshot);
+        boolean folderCreated,fileCreated;
+        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
+        try {
+            String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
+            if (!folder.exists()) {
+                folderCreated = folder.mkdirs();
+            }
+            final File localFile = new File(folder.getAbsolutePath(), fileName);
+            fileCreated = localFile.createNewFile();
+
+            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d(TAG, "Local file successfully created:" + taskSnapshot.getBytesTransferred());
+                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                    sharingIntent.setType("image/*");
+                    sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
+                    Uri imageUri = Uri.fromFile(localFile);
+                    sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(activity,activity.getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
+                }
+            });
             return true;
-        }else{
+        }catch (Exception e){
             return false;
         }
     }
 
     public String getShareStoryBody(Activity activity,Story story, String key, boolean external){
-        String shareBody = story.getTitle() + "\n\n" + activity.getResources().getString(R.string.share_message_app_name);
+        //String shareBody = story.getTitle() + "\n\n" + activity.getResources().getString(R.string.share_message_app_name);
+        String shareBody;
         if(external){
-            String deepLink = activity.getResources().getString(R.string.mobile_web_link)
+            /*String deepLink = activity.getResources().getString(R.string.mobile_web_link)
                     + "/" + Constants.DEEP_LINK_MAIN
                     + "?" + Constants.DEEP_LINK_FRAGMENT + "=" + Constants.FRAGMENT_POSITION_STORIES
                     + "&" + Constants.DEEP_LINK_STORY + "=" + key;
@@ -191,7 +224,8 @@ public class AndroidUtils {
             String shareLink = activity.getResources().getString(R.string.firebase_dynamic_link_domain)
                     + "?" + Constants.DEEP_LINK_LINK + "=" + deepLinkEncoded
                     + "&" + Constants.DEEP_LINK_PACKAGE + "=" + activity.getPackageName()
-                    + "&" + Constants.DEEP_LINK_FALLBACK + "=" + activity.getResources().getString(R.string.mobile_fallback_link);
+                    + "&" + Constants.DEEP_LINK_FALLBACK + "=" + activity.getResources().getString(R.string.mobile_fallback_link);*/
+            String shareLink = story.getShareLink();
             shareBody = story.getTitle() + "\n" + shareLink + "\n\n" + activity.getResources().getString(R.string.share_message_app_name);
         }else{
             shareBody = activity.getResources().getString(R.string.text_seeking_help_with_story) + " \"" + story.getTitle() + "\" " + activity.getResources().getString(R.string.text_seeking_help_with_story_suffix);

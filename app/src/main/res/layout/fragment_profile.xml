@@ -2,34 +2,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.askoliv.app.ProfileFragment">
+    tools:context="com.askoliv.app.ProfileFragment"
+    android:background="@color/colorWhite">
 
     <ImageView
-        android:id="@+id/display_image"
-        android:layout_width="@dimen/display_picture_size"
-        android:layout_height="@dimen/display_picture_size"
+        android:id="@+id/placeholder_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/placeholder_picture_height"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/display_name_margin_top"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:id="@+id/placeholder_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:text="@string/placeholder_text"
+        android:textSize="@dimen/placeholder_text_size"
+        android:textColor="@color/colorWhite"/>
+
 
     <TextView
         android:id="@+id/display_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/display_image"
+        android:layout_above="@id/placeholder_image"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:textSize="@dimen/display_name_size"
         android:textColor="@color/colorSecondary"/>
 
+    <ImageView
+        android:id="@+id/display_image"
+        android:layout_width="@dimen/display_picture_size"
+        android:layout_height="@dimen/display_picture_size"
+        android:layout_above="@id/display_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
-    <View
+
+    <!--<View
         android:layout_width="@dimen/story_button_bar_width"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/display_name"
-        android:background="@color/colorGrayBackground"/>
+        android:background="@color/colorGrayBackground"/>-->
 
 
 </RelativeLayout>
