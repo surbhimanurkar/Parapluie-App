@@ -2,6 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/message_relative_layout"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
+    android:paddingStart="@dimen/activity_horizontal_margin_narrow"
+    android:paddingRight="@dimen/activity_horizontal_margin_narrow"
+    android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 

@@ -13,10 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
-        android:paddingStart="@dimen/activity_horizontal_margin_narrow"
-        android:paddingRight="@dimen/activity_horizontal_margin_narrow"
-        android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
+        android:listSelector="@android:color/transparent"
+        android:focusable="false"
+        android:clickable="false"
         android:divider="@null"
         android:transcriptMode="alwaysScroll"
         android:layout_above="@+id/send_message_layout" />

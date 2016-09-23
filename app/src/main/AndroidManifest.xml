@@ -27,15 +27,16 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateUnchanged">
+            android:windowSoftInputMode="stateUnchanged"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
                 <!--<data
-                    android:scheme="http"
-                    android:host="www.parapluie.in"
+                    android:scheme="https"
+                    android:host="k2a92.app.goo.gl"
                     android:pathPrefix="/"/>-->
                 <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
@@ -43,7 +44,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppFullScreenTheme">
+            android:theme="@style/AppFullScreenTheme"
+            android:screenOrientation="portrait">
         </activity>
         <activity android:name="com.facebook.FacebookActivity" />
 
@@ -61,7 +63,8 @@
             android:name=".FullscreenImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen_image"
-            android:theme="@style/FullscreenTheme" />
+            android:theme="@style/FullscreenTheme"
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.batch.android.BatchPushService" />
         <receiver android:name="com.batch.android.BatchPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">

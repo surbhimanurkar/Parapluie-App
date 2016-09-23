@@ -223,9 +223,11 @@ public class ChatFragment extends Fragment {
                 super.onChanged();
                 int lastVisibleItem = listView.getLastVisiblePosition();
                 Log.d(TAG,"LastVisibleItem:" + lastVisibleItem);
-                /*if(lastVisibleItem!=-1){
-                    mAndroidUtils.playNotificationSound(getActivity());
-                }*/
+                if(lastVisibleItem!=-1){
+                    if (isAdded() && isVisible() && getUserVisibleHint()) {
+                        mAndroidUtils.playNotificationSound(getActivity());
+                    }
+                }
                 listView.setSelection(mMessageListAdapter.getCount() - 1);
             }
         });

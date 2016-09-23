@@ -427,9 +427,10 @@ public class MainActivity extends BaseActivity {
                     String storyKey = sharedPreferences.getString(Constants.STORY_PREF_KEY, null);
                     String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
                     boolean success = mAndroidUtils.shareStory(this,storyShareText,storySnapshot);
-                    if(success)
-                        mUsageAnalytics.trackShareEvent(storyKey,storyTitle);
-                    else
+                    if(success) {
+                        FirebaseUtils.getInstance().increaseShareCount(storyKey);
+                        mUsageAnalytics.trackShareEvent(storyKey, storyTitle);
+                    }else
                         Toast.makeText(this,getResources().getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.story_share_error_permission), Toast.LENGTH_SHORT).show();

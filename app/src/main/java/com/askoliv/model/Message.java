@@ -11,16 +11,18 @@ public class Message {
     private int author;
     private Object time;
     private String image;
+    private boolean unread;
 
     private Message(){
 
     }
 
-    public Message(String message, String image, int author, Object time) {
+    public Message(String message, String image, int author, Object time, boolean unread) {
         this.message = message;
         this.author = author;
         this.time = time;
         this.image = image;
+        this.unread = unread;
     }
 
 
@@ -54,5 +56,13 @@ public class Message {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isUnread() {
+        return unread;
+    }
+
+    public void setUnread(boolean unread) {
+        this.unread = unread;
     }
 }

@@ -16,7 +16,6 @@ public class Story {
     private String textInitial;
     private String textEnd;
     private Map<String, Carousel> carousel;
-    private Social social;
     private String storySnapshot;
     private String shareLink;
 
@@ -87,14 +86,6 @@ public class Story {
 
     public void setTextEnd(String textEnd) {
         this.textEnd = textEnd;
-    }
-
-    public Social getSocial() {
-        return social;
-    }
-
-    public void setSocial(Social social) {
-        this.social = social;
     }
 
     public String getStorySnapshot() {

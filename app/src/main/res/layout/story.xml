@@ -257,7 +257,7 @@
                 android:paddingStart="@dimen/story_chat_related_padding"
                 android:paddingEnd="@dimen/story_chat_related_padding"
                 android:paddingRight="@dimen/story_chat_related_padding"
-                android:background="@color/transparent"
+                android:background="?android:attr/selectableItemBackground"
                 android:drawableLeft="@drawable/chat_primary_color"
                 android:drawableStart="@drawable/chat_primary_color"
                 android:text="@string/story_chat_related_button_text"

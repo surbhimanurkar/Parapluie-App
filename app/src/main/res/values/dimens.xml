@@ -48,6 +48,8 @@
     <!--Tab Dimensions-->
     <dimen name="tab_bar_height">56dp</dimen>
     <dimen name="tab_icon_size">24dp</dimen>
+    <dimen name="tab_below_icon_padding">6dp</dimen>
+    <dimen name="tab_above_icon_padding">8dp</dimen>
 
     <!--Story Image Dimension-->
     <dimen name="story_pager_height">280dp</dimen>

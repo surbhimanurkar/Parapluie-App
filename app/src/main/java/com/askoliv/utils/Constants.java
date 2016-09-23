@@ -47,7 +47,7 @@ public class Constants {
     //Firebase Stories Constants
     public static final String F_NODE_STORIES = "stories";
     public static final String F_KEY_STORIES_TIMEPUBLISHED = "timePublished";
-    public static final String F_KEY_STORIES_SOCIAL = "social";
+    public static final String F_NODE_SOCIAL = "social";
     public static final String F_KEY_STORIES_LOVES = "loves";
     public static final String F_KEY_STORIES_SHARES = "shares";
     public static final String F_NODE_STORIES_PUBLISHED = "published";

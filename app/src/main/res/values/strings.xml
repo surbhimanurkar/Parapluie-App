@@ -9,7 +9,7 @@
     <string name="text_seeking_help_with_story">Hey There! So you like </string>
     <string name="text_seeking_help_with_story_suffix">What\'s on your mind? </string>
     <string name="toast_chat_related_to_story">Continue your chat on any topic here!</string>
-    <string name="toast_love_button">We also love this! Keep reading for more!</string>
+    <string name="toast_love_button">We love this too! Keep reading for more!</string>
     <string name="toast_unlove_button">Thanks for your feedback!</string>
     <string name="toast_text_copied">Copied to Clipboard!</string>
 

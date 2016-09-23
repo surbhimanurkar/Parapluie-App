@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -9,14 +9,19 @@
     <ImageView
         android:id="@+id/tab_icon"
         android:layout_width="@dimen/tab_icon_size"
-        android:layout_height="@dimen/tab_icon_size" />
+        android:layout_height="@dimen/tab_icon_size"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+
 
     <TextView
         android:id="@+id/tab_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         android:textAppearance="@style/TabItemFixed.Title"
         android:textColor="@color/colorSecondary"
         android:singleLine="true"/>
 
-</LinearLayout>
+</RelativeLayout>

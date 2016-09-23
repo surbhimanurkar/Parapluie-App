@@ -31,9 +31,12 @@ import com.askoliv.utils.UsageAnalytics;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,6 +58,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
     private static final int carouselMaxCount = 10;
     private static final int sharesIndex = 0;
     private static final int lovesIndex = 1;
+    private boolean lovedBefore = false;
 
     public StoriesListAdapter(Query ref, Activity activity, int layout) {
         super(Story.class, layout, StoryViewHolder.class, ref);
@@ -105,52 +109,65 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
 
 
         //Populating shares and loves buttons
-        final SparseArray<Integer> socialCount = new SparseArray<>(2);
-        boolean lovedBefore = false;
-        if(story.getSocial()!=null){
-            if(story.getSocial().getShares()!=null) {
-                int sharesCount = 0;
-                for(String userKey:story.getSocial().getShares().keySet()){
-                    sharesCount += story.getSocial().getShares().get(userKey);
-                }
-                socialCount.put(sharesIndex, sharesCount);
-            }else
-                socialCount.put(sharesIndex,0);
+        final Drawable lovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_primary_24dp);
+        final Drawable unlovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_black_24dp);
+        //Getting social data from firebase
+        DatabaseReference socialReference = mFirebaseDatabaseRef.child(Constants.F_NODE_SOCIAL).child(Constants.F_NODE_STORIES).child(key);
+        ValueEventListener socialListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Social social = dataSnapshot.getValue(Social.class);
 
-            if(story.getSocial().getLoves()!=null) {
-                int lovesCount = 0;
-                for(String userKey:story.getSocial().getLoves().keySet()){
-                    if(story.getSocial().getLoves().get(userKey))
-                        lovesCount += 1;
-                }
-                socialCount.put(lovesIndex, lovesCount);
-                if (firebaseUser != null && story.getSocial().getLoves().get(firebaseUser.getUid()) != null && story.getSocial().getLoves().get(firebaseUser.getUid()))
-                    lovedBefore = true;
-            }else
-                socialCount.put(lovesIndex,0);
-        }else{
-            socialCount.put(sharesIndex,0);
-            socialCount.put(lovesIndex,0);
-        }
-        String shares = socialCount.get(sharesIndex) + "";
-        String loves = socialCount.get(lovesIndex) + "";
+                SparseArray<Integer> socialCount = new SparseArray<>(2);
+                lovedBefore = false;
+                if(social!=null){
+                    if(social.getShares()!=null) {
+                        int sharesCount = 0;
+                        for(String userKey: social.getShares().keySet()){
+                            sharesCount += social.getShares().get(userKey);
+                        }
+                        socialCount.put(sharesIndex, sharesCount);
+                    }else
+                        socialCount.put(sharesIndex,0);
 
-        storyViewHolder.setShareButton(shares, new View.OnClickListener() {
+                    if(social.getLoves()!=null) {
+                        int lovesCount = 0;
+                        for(String userKey: social.getLoves().keySet()){
+                            if(social.getLoves().get(userKey))
+                                lovesCount += 1;
+                        }
+                        socialCount.put(lovesIndex, lovesCount);
+                        if (firebaseUser != null && social.getLoves().get(firebaseUser.getUid()) != null && social.getLoves().get(firebaseUser.getUid()))
+                            lovedBefore = true;
+                    }else
+                        socialCount.put(lovesIndex,0);
+                }else{
+                    socialCount.put(sharesIndex,0);
+                    socialCount.put(lovesIndex,0);
+                }
+                String shares = socialCount.get(sharesIndex) + "";
+                String loves = socialCount.get(lovesIndex) + "";
+                storyViewHolder.setShareButton(shares);
+                storyViewHolder.setLoveButton(loves,lovedBefore,primaryColor,disabledColor,lovedIconDrawable,unlovedIconDrawable);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.d(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        socialReference.addValueEventListener(socialListener);
+
+
+        storyViewHolder.setShareButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)) {
                     boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), story.getStorySnapshot());
                     if (shared){
-                        int newShares = socialCount.get(sharesIndex)+1;
-                        socialCount.put(sharesIndex,newShares);
-                        if(firebaseUser!=null) {
-                            mFirebaseDatabaseRef.child(Constants.F_NODE_STORIES).child(key)
-                                    .child(Constants.F_KEY_STORIES_SOCIAL).child(Constants.F_KEY_STORIES_SHARES)
-                                    .child(firebaseUser.getUid()).setValue(newShares);
-                            mFirebaseDatabaseRef.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
-                                    .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_SHARES)
-                                    .child(key).setValue(newShares);
-                        }
+                        FirebaseUtils.getInstance().increaseShareCount(key);
                         mUsageAnalytics.trackShareEvent(key, story.getTitle());
                     }else
                         Toast.makeText(mActivity,mActivity.getResources().getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
@@ -166,10 +183,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
             }
         });
 
-        final Drawable lovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_primary_24dp);
-        final Drawable unlovedIconDrawable = ContextCompat.getDrawable(mActivity,R.drawable.ic_favorite_black_24dp);
-        storyViewHolder.setLoveButton(loves,lovedBefore,primaryColor,disabledColor,lovedIconDrawable,unlovedIconDrawable
-                ,new View.OnClickListener() {
+        storyViewHolder.setLoveButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 //Get User ID
@@ -193,8 +207,8 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 v.setTag(loved);
 
                 if(firebaseUser!=null){
-                    mFirebaseDatabaseRef.child(Constants.F_NODE_STORIES).child(key)
-                            .child(Constants.F_KEY_STORIES_SOCIAL).child(Constants.F_KEY_STORIES_LOVES)
+                    mFirebaseDatabaseRef.child(Constants.F_NODE_SOCIAL).child(Constants.F_NODE_STORIES).child(key)
+                            .child(Constants.F_KEY_STORIES_LOVES)
                             .child(firebaseUser.getUid()).setValue(loved);
                     mFirebaseDatabaseRef.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
                             .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_LOVES)
@@ -306,20 +320,22 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
             textInitialTextView.setVisibility(visibility);
         }
 
-        public void setShareButton(String shareButtonText, View.OnClickListener onClickListener){
+        public void setShareButton(String shareButtonText){
             Button shareButton = (Button) mView.findViewById(R.id.story_button_share);
             if(shareButtonText!=null)
                 shareButton.setText(shareButtonText);
+        }
+
+        public void setShareButtonClickListener(View.OnClickListener onClickListener){
+            Button shareButton = (Button) mView.findViewById(R.id.story_button_share);
             if(onClickListener!=null)
                 shareButton.setOnClickListener(onClickListener);
         }
 
-        public void setLoveButton(String loveButtonText, boolean lovedTag,int lovedColor, int unlovedColor, Drawable lovedDrawable, Drawable unlovedDrawable, View.OnClickListener onClickListener){
+        public void setLoveButton(String loveButtonText, boolean lovedTag,int lovedColor, int unlovedColor, Drawable lovedDrawable, Drawable unlovedDrawable){
             Button loveButton = (Button) mView.findViewById(R.id.story_button_love);
             if(loveButtonText!=null)
                 loveButton.setText(loveButtonText);
-            if(onClickListener!=null)
-                loveButton.setOnClickListener(onClickListener);
             loveButton.setTag(lovedTag);
             if(lovedTag) {
                 loveButton.setTextColor(lovedColor);
@@ -328,6 +344,12 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 loveButton.setTextColor(unlovedColor);
                 loveButton.setCompoundDrawablesWithIntrinsicBounds(null,null,unlovedDrawable,null);
             }
+        }
+
+        public void setLoveButtonClickListener(View.OnClickListener onClickListener){
+            Button loveButton = (Button) mView.findViewById(R.id.story_button_love);
+            if(onClickListener!=null)
+                loveButton.setOnClickListener(onClickListener);
         }
 
         public void setChatRelatedButton(String chatRelatedButtonText, View.OnClickListener onClickListener){

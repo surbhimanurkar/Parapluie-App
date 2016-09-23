@@ -49,6 +49,11 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
     @Override
     @SuppressLint("NewApi")
     protected void populateView(View view, final Message message, String key) {
+        // Counting unread messages
+        if(message.isUnread()){
+
+        }
+
         // Map a Chat object to an entry in our listview
         CardView activeCard;
         CardView unusedCard;
