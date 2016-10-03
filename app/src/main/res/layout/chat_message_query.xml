@@ -70,6 +70,20 @@
                 android:singleLine="true"/>
 
             <TextView
+                android:id="@+id/query_text_image_timestamp"
+                style="?android:textAppearanceMedium"
+                android:textColor="@color/colorDisabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/query"
+                android:layout_alignRight="@id/queryImage"
+                android:layout_alignEnd="@id/queryImage"
+                android:textSize="@dimen/message_timestamp_size"
+                android:singleLine="true"
+                android:visibility="gone"/>
+
+
+            <TextView
                 android:id="@+id/query_image_timestamp"
                 style="?android:textAppearanceMedium"
                 android:textColor="@color/colorWhite"
@@ -149,6 +163,19 @@
                 android:layout_alignEnd="@id/reply"
                 android:textSize="@dimen/message_timestamp_size"
                 android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/reply_text_image_timestamp"
+                style="?android:textAppearanceMedium"
+                android:textColor="@color/colorDisabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reply"
+                android:layout_alignRight="@id/replyImage"
+                android:layout_alignEnd="@id/replyImage"
+                android:textSize="@dimen/message_timestamp_size"
+                android:singleLine="true"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/reply_image_timestamp"

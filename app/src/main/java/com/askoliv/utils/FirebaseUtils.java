@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.askoliv.adapters.StoriesListAdapter;
 import com.askoliv.app.R;
+import com.askoliv.model.Config;
 import com.askoliv.model.Message;
+import com.askoliv.model.Story;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +50,10 @@ public class FirebaseUtils {
     private FirebaseUser mFirebaseUser;
     private String mUID;
     private boolean mSuccess;
+    /*
+    * Config variables
+     */
+    private static Config mConfig;
 
     private FirebaseUtils() {
     }
@@ -60,7 +66,17 @@ public class FirebaseUtils {
         return mFirebaseUtils;
     }
 
-    public void sendMessage(final String messageText, String messageImage, final EditText inputText, int sender) {
+    public void sendMessagebyUser(String messageText, String messageImage, EditText inputText){
+        sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true);
+    }
+
+    public void sendMessageChatRelatedtoStories(Activity activity, Story story, String key){
+        AndroidUtils androidUtils = new AndroidUtils();
+        String messageText = androidUtils.getShareStoryBody(activity,story,key, false);
+        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true);
+    }
+
+    private void sendMessage(final String messageText, String messageImage, final EditText inputText, final int sender, final boolean userTriggered) {
         Log.d(TAG, "SendMessage started");
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null){
@@ -80,7 +96,10 @@ public class FirebaseUtils {
                     @Override
                     public void onSuccess(Void aVoid) {
                         mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
-                        mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
+                        //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
+                        if(!isActive() && userTriggered){
+                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false);
+                        }
                     }
                 });
             }
@@ -88,8 +107,9 @@ public class FirebaseUtils {
 
     }
 
-
-    public void saveImage(final Activity activity, Bitmap bitmap, int requestCode) {
+    public void saveImagewithCaption(final Activity activity, Bitmap bitmap, final String caption){
+        final long t = System.currentTimeMillis();
+        Log.d(TAG,"Send image 1 t=" + (System.currentTimeMillis()-t));
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -100,14 +120,16 @@ public class FirebaseUtils {
         String fileName = androidUtils.getImageFileNameSentbyUser();
         String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
         String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        Log.d(TAG,"Send image 2 t=" + (System.currentTimeMillis()-t));
 
         // Create a reference to image
         StorageReference imageRef = storageRef.child(firebaseFilePath);
 
         //Saving image to Firebase
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] data = baos.toByteArray();
+        Log.d(TAG,"Send image 3 t=" + (System.currentTimeMillis()-t));
 
 
         //Uploading image to firebase storage
@@ -121,12 +143,23 @@ public class FirebaseUtils {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Log.d(TAG,"Send image 4 t=" + (System.currentTimeMillis()-t));
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                if (downloadUrl != null)
-                    sendMessage(null, downloadUrl.toString(), null, Constants.SENDER_USER);
+                if (downloadUrl != null) {
+                    if(caption!=null && !caption.equals("")){
+                        sendMessagebyUser(caption, downloadUrl.toString(), null);
+                    }else{
+                        sendMessagebyUser(null, downloadUrl.toString(), null);
+                    }
+                }
+                Log.d(TAG,"Send image 5 t=" + (System.currentTimeMillis()-t));
             }
         });
+    }
 
+
+    public void saveImage(final Activity activity, Bitmap bitmap) {
+        saveImagewithCaption(activity,bitmap,null);
     }
 
     public int getStoryPositionfromKey(StoriesListAdapter storiesListAdapter, String key){
@@ -152,8 +185,11 @@ public class FirebaseUtils {
             sharesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    long newShares = ((long) dataSnapshot.getValue()) + 1;
-                    if(firebaseUser!=null) {
+                    if(dataSnapshot!=null && firebaseUser!=null) {
+                        long newShares = 0;
+                        if(dataSnapshot.getValue()!=null)
+                            newShares = ((long) dataSnapshot.getValue());
+                        newShares++;
                         sharesRef.setValue(newShares);
                         mFirebaseDatabase.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
                                 .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_SHARES)
@@ -167,6 +203,33 @@ public class FirebaseUtils {
                 }
             });
         }
+    }
+
+    public void populatingConfigVariables(){
+        DatabaseReference mConfigRef = mFirebaseDatabase.child(Constants.F_NODE_CONFIG);
+        if(mConfigRef!=null){
+            ValueEventListener configListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mConfig = dataSnapshot.getValue(Config.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e(TAG,"Config Retrieval cancelled" + databaseError.getMessage());
+                }
+            };
+            mConfigRef.addValueEventListener(configListener);
+        }
+
+    }
+
+    public boolean isActive(){
+        return mConfig.isActive();
+    }
+
+    public String getInactiveMessage(){
+        return mConfig.getInactiveMessage();
     }
 
 }

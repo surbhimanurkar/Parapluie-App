@@ -24,7 +24,7 @@ public class Constants {
     public static final int TYPE_TEXT = 0;
     public static final int TYPE_IMAGE = 1;
     public static final int SENDER_USER = 0;
-    public static final int SENDER_OLIV = 1;
+    public static final int SENDER_PARAPLUIE = 1;
     public static final int SNAPSHOTS = 3;
     public static final String IMAGE_NAME_PREFIX = "PP-";
     public static final String LOCAL_IMAGE_PATH = "Parapluie/Parapluie Images/";
@@ -34,15 +34,20 @@ public class Constants {
     public static final String F_NODE_CHAT = "chat";
     public static final String F_NODE_HELP_QUESTIONS = "help_questions";
     public static final String F_NODE_USER = "user";
+    public static final String F_NODE_USER_FB = "facebook";
     public static final String F_KEY_USER_PROVIDER = "provider";
     public static final String F_KEY_USER_USERNAME = "username";
     public static final String F_KEY_USER_RESOLVED = "resolved";
+    public static final String F_KEY_USER_GENDER = "gender";
+    public static final String F_KEY_USER_AGE_RANGE = "ageRange";
+    public static final String F_KEY_USER_EMAIL = "email";
     public static final String F_KEY_USER_STATUS = "status";
     public static final String F_KEY_USER_ACTIVITY = "activity";
     public static final String F_KEY_USER_LOVES = "loves";
     public static final String F_VALUE_USER__OPEN = "OPEN";
     public static final String TIME = "time";
     public static final String HELP_QUESTIONS_RELEVANCE = "relevance";
+    public static final String F_NODE_CONFIG = "config";
 
     //Firebase Stories Constants
     public static final String F_NODE_STORIES = "stories";
@@ -57,6 +62,7 @@ public class Constants {
     public static final String SHARED_PREFERENCE_HISTORY = "historyPref";
     public static final String SHARED_PREFERENCE_STORY = "storyPref";
     public static final String LOGIN_PREF_LOGOUT = "logout";
+    public static final String LOGIN_PREF_ISCHATALLOWED = "isChatAllowed";
     public static final String HISTORY_PREF_SELECTED_TAB = "selectedTab";
     public static final String HISTORY_PREF_CURRENT_PHOTO_PATH = "currentPhotoPath";
     public static final String STORY_PREF_TITLE = "storyTitle";
@@ -70,9 +76,18 @@ public class Constants {
     public static final int REQUEST_GALLERY = 1;
 
     public static final String SHARED_PREFERENCE_IMAGE = "imagePref";
-    public static final String IMAGE_PREF_URL = "imageURL";
+    public static final String IMAGE_URL = "imageURL";
+    public static final String IMAGE_BITMAP = "imagebitmap";
+    public static final String IMAGE_REQUEST_CODE = "requestCode";
 
     //Permissions
     public static final int PERMISSIONS_REQUEST_STORAGE_IMAGE = 2;
     public static final int PERMISSIONS_REQUEST_STORAGE_SHARE = 1;
+
+    //FB profile variable names
+    public static final String FB_PROFILE_GENDER = "gender";
+    public static final String FB_PROFILE_AGE_RANGE = "age_range";
+    public static final String FB_PROFILE_EMAIL = "email";
+    public static final String FB_PROFILE_GENDER_MALE = "male";
+    public static final String FB_PROFILE_GENDER_FEMALE = "female";
 }

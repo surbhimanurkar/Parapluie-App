@@ -27,6 +27,8 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -42,7 +44,10 @@ import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -150,7 +155,7 @@ public class LoginActivity extends BaseActivity{
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 setLoadingScreen(true);
-                handleFacebookAccessToken(loginResult.getAccessToken());
+                handleFacebookAccessToken(loginResult);
             }
 
             @Override
@@ -273,7 +278,8 @@ public class LoginActivity extends BaseActivity{
         signInButton.setTypeface(null, Typeface.NORMAL);
         signInButton.setAllCaps(true);
     }
-    private void handleFacebookAccessToken(AccessToken token) {
+    private void handleFacebookAccessToken(final LoginResult loginResult) {
+        AccessToken token = loginResult.getAccessToken();
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -283,6 +289,8 @@ public class LoginActivity extends BaseActivity{
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
+                        //Save data from facebook
+                        saveFacebookData(loginResult);
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -292,6 +300,52 @@ public class LoginActivity extends BaseActivity{
                         }
                     }
                 });
+    }
+    private void saveFacebookData(LoginResult loginResult){
+        // App code
+        GraphRequest request = GraphRequest.newMeRequest(
+                loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.v("LoginActivity", response.toString());
+
+                        // Application code
+                        try {
+                            Map<String,Object> map = new HashMap<String,Object>(3);
+                            String gender = null;
+                            if(object.has(Constants.FB_PROFILE_GENDER)) {
+                                gender = object.getString(Constants.FB_PROFILE_GENDER);
+                                map.put(Constants.F_KEY_USER_GENDER,gender);
+                            }
+                            if(object.has(Constants.FB_PROFILE_AGE_RANGE))
+                                map.put(Constants.F_KEY_USER_AGE_RANGE,object.getString(Constants.FB_PROFILE_AGE_RANGE));
+                            if(object.has(Constants.FB_PROFILE_EMAIL))
+                                map.put(Constants.F_KEY_USER_EMAIL,object.getString(Constants.FB_PROFILE_EMAIL));
+
+                            //Add Gender to shared Pref
+                            SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN,Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            boolean isChatAllowed = true;
+                            if(gender!=null && gender.equals(Constants.FB_PROFILE_GENDER_MALE))
+                                isChatAllowed = false;
+                            editor.putBoolean(Constants.LOGIN_PREF_ISCHATALLOWED, isChatAllowed);
+                            editor.apply();
+
+                            if(mFirebaseUser==null)
+                                mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            mUserRef.child(mFirebaseUser.getUid())
+                                    .child(Constants.F_NODE_USER_FB)
+                                    .updateChildren(map);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,gender");
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 
 
@@ -305,7 +359,7 @@ public class LoginActivity extends BaseActivity{
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN,Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(Constants.LOGIN_PREF_LOGOUT, false);
-        editor.commit();
+        editor.apply();
         Intent intent = new Intent(this,MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
@@ -317,7 +371,6 @@ public class LoginActivity extends BaseActivity{
      */
     public void saveUserData(){
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put(Constants.F_KEY_USER_PROVIDER, mFirebaseUser.getProviderId());
         if(mFirebaseUser.getDisplayName()!=null) {
             map.put(Constants.F_KEY_USER_USERNAME, mFirebaseUser.getDisplayName());
         }else if(mFirebaseUser.getProviderData()!=null){
@@ -325,9 +378,11 @@ public class LoginActivity extends BaseActivity{
                 if (mDisplayName == null && userInfo.getDisplayName() != null) {
                     mDisplayName = userInfo.getDisplayName();
                 }
+                map.put(Constants.F_KEY_USER_PROVIDER, userInfo.getProviderId());
             }
             map.put(Constants.F_KEY_USER_USERNAME, mDisplayName);
         }
+        Log.d(TAG,"Tracking Login UID:" + mFirebaseUser.getUid());
         mUserRef.child(mFirebaseUser.getUid()).updateChildren(map);
     }
 

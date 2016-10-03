@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimary">#F64747</color>-->
-    <color name="colorBase">#d1000000</color>
+    <color name="colorBase">#000000</color>
     <color name="colorPrimary">#F44336</color>
     <color name="colorPrimaryDark">#d1000000</color>
     <!--<color name="colorAccentDark">#FFD21F</color>
     <color name="colorAccent">#ffe061</color>
     <color name="colorAccentLight">#FFEFAD</color>-->
-    <color name="colorAccent">#eeeeee</color>
+    <color name="colorAccent">#D7CCC8</color>
     <color name="colorWhite">#FFFFFF</color>
     <!--<color name="colorSecondary">#50514F</color>-->
     <color name="colorSecondary">#d1000000</color>

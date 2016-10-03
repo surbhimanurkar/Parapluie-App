@@ -3,11 +3,9 @@ package com.askoliv.adapters;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +26,8 @@ import com.askoliv.utils.Constants;
 import com.askoliv.utils.CustomViewPager;
 import com.askoliv.utils.FirebaseUtils;
 import com.askoliv.utils.UsageAnalytics;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,9 +38,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -161,11 +158,14 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
         socialReference.addValueEventListener(socialListener);
 
 
+        storyViewHolder.loadStorySnapshot(mActivity, story.getStorySnapshot());
         storyViewHolder.setShareButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)) {
-                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), story.getStorySnapshot());
+                    ImageView snapshotImageView = storyViewHolder.getSnapshotImageView();
+                    Log.d(TAG,"snapshotImageView:"+snapshotImageView);
+                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), story.getStorySnapshot(),snapshotImageView);
                     if (shared){
                         FirebaseUtils.getInstance().increaseShareCount(key);
                         mUsageAnalytics.trackShareEvent(key, story.getTitle());
@@ -223,8 +223,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
         storyViewHolder.setChatRelatedButton(null,new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseUtils firebaseUtils = FirebaseUtils.getInstance();
-                firebaseUtils.sendMessage(androidUtils.getShareStoryBody(mActivity,story,key,false),null,null,Constants.SENDER_OLIV);
+                FirebaseUtils.getInstance().sendMessageChatRelatedtoStories(mActivity,story,key);
                 tabsViewPager.setCurrentItem(1);
                 //Toast.makeText(mActivity,mActivity.getString(R.string.toast_chat_related_to_story),Toast.LENGTH_SHORT).show();
             }
@@ -419,6 +418,15 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 case 9: (mView.findViewById(R.id.dot10)).setVisibility(visibility);
                     break;
             }
+        }
+
+        public void loadStorySnapshot(Activity activity, String snapshot){
+            ImageView snapShotImageView = (ImageView) mView.findViewById(R.id.story_snapshot);
+            Glide.with(activity).load(snapshot).diskCacheStrategy(DiskCacheStrategy.NONE).into(snapShotImageView);
+        }
+
+        public ImageView getSnapshotImageView(){
+            return ((ImageView) mView.findViewById(R.id.story_snapshot));
         }
     }
 

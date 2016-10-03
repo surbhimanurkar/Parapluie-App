@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -33,6 +35,12 @@ import android.widget.Toast;
 
 import com.askoliv.app.R;
 import com.askoliv.model.Story;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -170,41 +178,72 @@ public class AndroidUtils {
         }
     }
 
-    public boolean shareStory(final Activity activity,final String text,String snapshot){
-        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(snapshot);
-        boolean folderCreated,fileCreated;
-        String fileName = Constants.IMAGE_NAME_PREFIX + Constants.SNAPSHOTS + "-" + System.currentTimeMillis() + ".jpg";
-        try {
-            String localFilePath = Environment.getExternalStorageDirectory().getAbsolutePath();
-            File folder = new File(localFilePath, Constants.LOCAL_IMAGE_PATH);
-            if (!folder.exists()) {
-                folderCreated = folder.mkdirs();
+    public boolean shareStory(final Activity activity,final String text,String snapshot,final ImageView snapShotImageView){
+        /*Glide.with(activity).load(snapshot).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).listener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                e.printStackTrace();
+                return false;
             }
-            final File localFile = new File(folder.getAbsolutePath(), fileName);
-            fileCreated = localFile.createNewFile();
 
-            storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Log.d(TAG, "Local file successfully created:" + taskSnapshot.getBytesTransferred());
-                    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                    sharingIntent.setType("image/*");
-                    sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
-                    Uri imageUri = Uri.fromFile(localFile);
-                    sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                    sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(activity,activity.getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
-                }
-            });
-            return true;
-        }catch (Exception e){
-            return false;
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                Log.d(TAG,"isFromMemoryCache:" + isFromMemoryCache);
+                Bitmap imageBitmap = ((GlideBitmapDrawable)resource).getBitmap();
+                String path = MediaStore.Images.Media.insertImage(activity.getContentResolver(),
+                        imageBitmap, "Image title", null);
+                Uri imageUri = Uri.parse(path);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("image/*");
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+                return false;
+            }
+        }).into(snapShotImageView);
+        return true;*/
+
+        /*GlideDrawable imageDrawable = (GlideDrawable) snapShotImageView.getDrawable();
+        Bitmap imageBitmap = ((GlideBitmapDrawable)imageDrawable).getBitmap();
+        String path = MediaStore.Images.Media.insertImage(activity.getContentResolver(),
+                imageBitmap, "Image Description", null);
+        Uri imageUri = Uri.parse(path);*/
+        Uri imageUri = getLocalBitmapUri(activity,snapShotImageView);
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("image/*");
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+        return true;
+    }
+
+    // Returns the URI path to the Bitmap displayed in specified ImageView
+    public Uri getLocalBitmapUri(Activity activity,ImageView imageView) {
+        // Extract Bitmap from ImageView drawable
+        Drawable drawable = imageView.getDrawable();
+        Bitmap bmp = null;
+        if (drawable instanceof GlideDrawable){
+            bmp = ((GlideBitmapDrawable) drawable).getBitmap();
+        } else {
+            return null;
         }
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        try {
+            File file =  new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS), "share_image_" + System.currentTimeMillis() + ".jpg");
+            if(file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+            bmpUri = Uri.fromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bmpUri;
     }
 
     public String getShareStoryBody(Activity activity,Story story, String key, boolean external){

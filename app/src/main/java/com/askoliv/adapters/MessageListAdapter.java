@@ -7,10 +7,14 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +63,7 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
         CardView unusedCard;
         TextView activeTimeStamp;
         TextView activeImageTimeStamp;
+        TextView activeTextImageTimestamp;
         TextView activeMessage;
         ImageView activeImage;
         if(message.getAuthor() == Constants.SENDER_USER){
@@ -66,6 +71,7 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
             unusedCard = (CardView) view.findViewById(R.id.cardview_reply);
             activeTimeStamp = (TextView) view.findViewById(R.id.query_timestamp);
             activeImageTimeStamp = (TextView) view.findViewById(R.id.query_image_timestamp);
+            activeTextImageTimestamp = (TextView) view.findViewById(R.id.query_text_image_timestamp);
             activeMessage = (TextView) view.findViewById(R.id.query);
             activeImage = (ImageView) view.findViewById(R.id.queryImage);
         }else{
@@ -73,6 +79,7 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
             unusedCard = (CardView) view.findViewById(R.id.cardview_query);
             activeTimeStamp = (TextView) view.findViewById(R.id.reply_timestamp);
             activeImageTimeStamp = (TextView) view.findViewById(R.id.reply_image_timestamp);
+            activeTextImageTimestamp = (TextView) view.findViewById(R.id.reply_text_image_timestamp);
             activeMessage = (TextView) view.findViewById(R.id.reply);
             activeImage = (ImageView) view.findViewById(R.id.replyImage);
         }
@@ -88,20 +95,25 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
                 Glide.with(mActivity).load(message.getImage()).centerCrop().into(activeImage);
                 activeImage.setVisibility(View.VISIBLE);
                 setClickListenerforImage(message.getImage(),activeCard);
+                activeTextImageTimestamp.setVisibility(View.VISIBLE);
+                activeTextImageTimestamp.setText(simpleDateFormat.format(message.getTime()));
+                activeTimeStamp.setVisibility(View.GONE);
             }else{
                 activeImage.setVisibility(View.GONE);
+                activeTimeStamp.setVisibility(View.VISIBLE);
+                activeTimeStamp.setText(simpleDateFormat.format(message.getTime()));
+                activeTextImageTimestamp.setVisibility(View.GONE);
             }
             activeMessage.setVisibility(View.VISIBLE);
-            activeTimeStamp.setVisibility(View.VISIBLE);
-            activeTimeStamp.setText(simpleDateFormat.format(message.getTime()));
             activeImageTimeStamp.setVisibility(View.GONE);
         }else if(message.getImage()!=null){
-            Glide.with(mActivity).load(message.getImage()).centerCrop().into(activeImage);
+            Glide.with(mActivity).load(message.getImage()).centerCrop().placeholder(new ColorDrawable(Color.DKGRAY)).into(activeImage);
             activeMessage.setVisibility(View.GONE);
             activeImage.setVisibility(View.VISIBLE);
             activeTimeStamp.setVisibility(View.GONE);
             activeImageTimeStamp.setVisibility(View.VISIBLE);
             activeImageTimeStamp.setText(simpleDateFormat.format(message.getTime()));
+            activeTextImageTimestamp.setVisibility(View.GONE);
             setClickListenerforImage(message.getImage(),activeCard);
         }
     }
@@ -112,7 +124,7 @@ public class MessageListAdapter extends FirebaseListAdapter<Message> {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = mActivity.getSharedPreferences(Constants.SHARED_PREFERENCE_IMAGE, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Constants.IMAGE_PREF_URL, image);
+                editor.putString(Constants.IMAGE_URL, image);
                 editor.apply();
                 Intent intent = new Intent(mActivity, FullscreenImageActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

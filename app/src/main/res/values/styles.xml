@@ -46,6 +46,18 @@
         <item name="android:textColorHint">@color/colorDivider</item>
     </style>
 
+    <style name="EditTextStyleDark">
+        <item name="android:paddingTop">@dimen/text_padding</item>
+        <item name="android:paddingBottom">@dimen/text_padding</item>
+        <item name="android:paddingRight">@dimen/text_padding</item>
+        <item name="android:background">@color/colorBase</item>
+        <item name="android:cursorVisible">true</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:textSize">@dimen/hint_text_size</item>
+        <item name="android:textColorHint">@color/colorDivider</item>
+    </style>
+
     <style name="LoadingSpinnerTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
         <item name="android:windowBackground">@color/transparent</item>

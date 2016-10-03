@@ -4,6 +4,7 @@ import android.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -52,6 +53,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,13 +89,13 @@ public class ChatFragment extends Fragment {
     private MessageListAdapter mMessageListAdapter;
     //private HelpQuestionsAdapter mHelpQuestionsAdapter;
     private ValueEventListener mConnectedListener;
-    private String mUID;
 
     private View mRootView;
     private ListView listView;
     private EditText inputText;
     private Button sendButton;
     private Button imageButton;
+
 
     private AndroidUtils mAndroidUtils = new AndroidUtils();
 
@@ -115,10 +117,12 @@ public class ChatFragment extends Fragment {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootFirebaseRef = mFirebaseDatabase.getReference();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        mUID = mFirebaseUser.getUid();
-        Log.d(TAG, "Retrieve UID: " + mUID);
-        mChatRef = mRootFirebaseRef.child(Constants.F_NODE_CHAT).child(mUID);
-        mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(mUID);
+        String uid = mFirebaseUser.getUid();
+        Log.d(TAG, "Retrieve UID: " + uid);
+
+        mChatRef = mRootFirebaseRef.child(Constants.F_NODE_CHAT).child(uid);
+        mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(uid);
+
 
         listView = (ListView) mRootView.findViewById(R.id.listview_messages);
 
@@ -129,7 +133,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View view) {
                 String messageText = inputText.getText().toString().trim();
                 if(messageText.length()!=0)
-                    FirebaseUtils.getInstance().sendMessage(messageText, null,inputText,Constants.SENDER_USER);
+                    FirebaseUtils.getInstance().sendMessagebyUser(messageText, null,inputText);
             }
         });
 
@@ -144,7 +148,7 @@ public class ChatFragment extends Fragment {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     String messageText = inputText.getText().toString().trim();
                     if(messageText.length()!=0)
-                        FirebaseUtils.getInstance().sendMessage(messageText, null, inputText,Constants.SENDER_USER);
+                        FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText);
                 }
                 return true;
             }
@@ -205,6 +209,15 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
+
+        //Disable All if chat is not allowed
+        if(!isChatAllowed()){
+            ((TextView) mRootView.findViewById(R.id.female_only_message)).setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            inputText.setVisibility(View.GONE);
+            imageButton.setVisibility(View.GONE);
+            sendButton.setVisibility(View.GONE);
+        }
 
         return mRootView;
     }
@@ -280,6 +293,13 @@ public class ChatFragment extends Fragment {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
+    }
+
+    private boolean isChatAllowed(){
+        boolean isChatAllowed = true;
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN,Context.MODE_PRIVATE);
+        isChatAllowed = sharedPreferences.getBoolean(Constants.LOGIN_PREF_ISCHATALLOWED,true);
+        return isChatAllowed;
     }
 
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.askoliv.utils.Constants;
@@ -29,9 +28,8 @@ public class FullscreenImageActivity extends BaseActivity {
             actionBar.hide();
         mFullscreenImage = (ImageView) findViewById(R.id.fullscreen_image);
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_IMAGE, Context.MODE_PRIVATE);
-        String imageURL = sharedPreferences.getString(Constants.IMAGE_PREF_URL, null);
+        String imageURL = sharedPreferences.getString(Constants.IMAGE_URL, null);
         Glide.with(this).load(imageURL).fitCenter().into(mFullscreenImage);
-
 
     }
 

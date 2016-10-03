@@ -33,6 +33,7 @@ import com.askoliv.utils.AndroidUtils;
 import com.askoliv.utils.Constants;
 import com.askoliv.utils.CustomViewPager;
 import com.askoliv.utils.FirebaseUtils;
+import com.askoliv.utils.Global;
 import com.askoliv.utils.TitleFont;
 import com.askoliv.utils.UsageAnalytics;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,6 +70,7 @@ public class MainActivity extends BaseActivity {
 
     private UsageAnalytics mUsageAnalytics;
     private AndroidUtils mAndroidUtils = new AndroidUtils();
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -90,6 +92,9 @@ public class MainActivity extends BaseActivity {
         if (mFirebaseUser == null) {
             redirectUserToLogin();
         }
+
+        //Populating Config variables
+        FirebaseUtils.getInstance().populatingConfigVariables();
 
         //Initializing Resources
         Resources resources = getResources();
@@ -325,6 +330,7 @@ public class MainActivity extends BaseActivity {
 
 
 
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -426,7 +432,8 @@ public class MainActivity extends BaseActivity {
                     String storyTitle = sharedPreferences.getString(Constants.STORY_PREF_TITLE, null);
                     String storyKey = sharedPreferences.getString(Constants.STORY_PREF_KEY, null);
                     String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
-                    boolean success = mAndroidUtils.shareStory(this,storyShareText,storySnapshot);
+                    //TODO Change implementation
+                    boolean success = mAndroidUtils.shareStory(this,storyShareText,storySnapshot,null);
                     if(success) {
                         FirebaseUtils.getInstance().increaseShareCount(storyKey);
                         mUsageAnalytics.trackShareEvent(storyKey, storyTitle);
@@ -459,15 +466,18 @@ public class MainActivity extends BaseActivity {
                     //uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
                     String currentPhotoPath = mHistorySharedPreferences.getString(Constants.HISTORY_PREF_CURRENT_PHOTO_PATH, null);
                     uploadedImageBitmap = mAndroidUtils.getPicture(this,currentPhotoPath);
-                    FirebaseUtils.getInstance().saveImage(this,uploadedImageBitmap, requestCode);
+                    FirebaseUtils.getInstance().saveImage(this,uploadedImageBitmap);
                     mAndroidUtils.galleryAddPic(this,currentPhotoPath);
                     break;
                 case Constants.REQUEST_GALLERY:
                     Log.d(TAG, "Got image from the gallery");
                     try {
-                        uploadedImageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), intent.getData());
-                        FirebaseUtils.getInstance().saveImage(this,uploadedImageBitmap, requestCode);
-                    } catch (IOException e) {
+                        Intent imageConfirmationIntent = new Intent(this, ImageConfirmationActivity.class);
+                        Global.imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), intent.getData());
+                        imageConfirmationIntent.putExtra(Constants.IMAGE_URL, intent.getData());
+                        startActivity(imageConfirmationIntent);
+                        finish();
+                    }catch(IOException e){
                         e.printStackTrace();
                     }
                     break;
