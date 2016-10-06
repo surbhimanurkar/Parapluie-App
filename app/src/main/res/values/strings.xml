@@ -51,7 +51,7 @@
     <string name="facebook_graph_url_prefix">https://graph.facebook.com/</string>
     <string name="facebook_picture_url_suffix">/picture?type=square</string>
 
-    <string name="placeholder_text">We are working on this page!</string>
+    <string name="placeholder_text">Your profile is being created!</string>
     <string name="female_only_message">Sorry! We don\'t cater to men currently!</string>
 
     <string name="title_activity_image_confirmation">ImageConfirmationActivity</string>

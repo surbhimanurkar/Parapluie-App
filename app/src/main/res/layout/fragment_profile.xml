@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.askoliv.app.ProfileFragment"
+    tools:context="in.parapluie.app.ProfileFragment"
     android:background="@color/colorWhite"
     android:orientation="vertical"
     android:gravity="center_horizontal">
@@ -37,14 +37,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin_broad"
-        android:layout_marginBottom="@dimen/activity_vertical_margin_broad"
         android:orientation="vertical"
         android:gravity="center">
         <ImageView
             android:id="@+id/placeholder_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"
             android:tint="@color/colorDivider"
             android:src="@drawable/workinghard"/>
 

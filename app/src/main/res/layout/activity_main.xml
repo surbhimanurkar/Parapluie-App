@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.askoliv.app.MainActivity">
+    tools:context="in.parapluie.app.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
             android:layout_alignParentBottom="true" />
 
 
-        <com.askoliv.utils.CustomViewPager
+        <in.parapluie.utils.CustomViewPager
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

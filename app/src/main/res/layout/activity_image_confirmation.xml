@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBase"
-    tools:context="com.askoliv.app.ImageConfirmationActivity"
+    tools:context="in.parapluie.app.ImageConfirmationActivity"
     android:gravity="center_horizontal">
 
 

@@ -6,7 +6,7 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:background="@color/colorGrayBackground"
-    tools:context="com.askoliv.app.StoriesFragment"
+    tools:context="in.parapluie.app.StoriesFragment"
     android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView

@@ -6,10 +6,10 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     android:background="@color/colorGrayBackground"
-    tools:context="com.askoliv.app.ChatFragment">
+    tools:context="in.parapluie.app.ChatFragment">
 
-    <ListView
-        android:id="@+id/listview_messages"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.askoliv.app">
+    package="in.parapluie.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- USE_CREDENTIALS is necessary for Google+ login -->
@@ -20,14 +20,14 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:name=".ParapluieApplication"
+        android:name="in.parapluie.app.ParapluieApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="in.parapluie.app.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
@@ -48,7 +48,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name="in.parapluie.app.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppFullScreenTheme"/>
@@ -65,7 +65,7 @@
             android:value="@string/google_api_key1" />
 
         <activity
-            android:name=".FullscreenImageActivity"
+            android:name="in.parapluie.app.FullscreenImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen_image"
             android:screenOrientation="portrait"
@@ -83,10 +83,10 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".PushService" />
+        <service android:name="in.parapluie.app.PushService" />
 
         <receiver
-            android:name=".PushReceiver"
+            android:name="in.parapluie.app.PushReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -97,7 +97,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.askoliv.app.fileprovider"
+            android:authorities="in.parapluie.app.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -106,7 +106,7 @@
         </provider>
 
         <activity
-            android:name=".ImageConfirmationActivity"
+            android:name="in.parapluie.app.ImageConfirmationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_image_confirmation"
             android:theme="@style/AppTheme"/>

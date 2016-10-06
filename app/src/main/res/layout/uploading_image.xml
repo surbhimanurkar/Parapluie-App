@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/message_relative_layout"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin_narrow"
+    android:paddingStart="@dimen/activity_horizontal_margin_narrow"
+    android:paddingRight="@dimen/activity_horizontal_margin_narrow"
+    android:paddingEnd="@dimen/activity_horizontal_margin_narrow"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardview_query"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/chat_card_min_width"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/chat_side_padding"
+        android:layout_marginLeft="@dimen/chat_side_padding"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        card_view:contentPadding="@dimen/activity_horizontal_margin_very_narrow"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardCornerRadius="@dimen/cardview_corner_radius"
+        card_view:cardElevation="@dimen/cardview_medium_elevation"
+        card_view:cardBackgroundColor="@color/colorAccent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/queryImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chat_image_size"
+                android:layout_centerInParent="true"
+                android:src="@drawable/placeholder_image_loading"/>
+
+        </RelativeLayout>
+
+     </android.support.v7.widget.CardView>
+
+</RelativeLayout>

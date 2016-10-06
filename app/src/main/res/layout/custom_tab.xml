@@ -6,22 +6,43 @@
     android:orientation="vertical"
     style="@style/TabItemFixed">
 
-    <ImageView
-        android:id="@+id/tab_icon"
-        android:layout_width="@dimen/tab_icon_size"
-        android:layout_height="@dimen/tab_icon_size"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/tab_icon"
+            android:layout_width="@dimen/tab_icon_size"
+            android:layout_height="@dimen/tab_icon_size" />
 
+        <TextView
+            android:id="@+id/tab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TabItemFixed.Title"
+            android:textColor="@color/colorSecondary"
+            android:singleLine="true"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/tab_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:textAppearance="@style/TabItemFixed.Title"
-        android:textColor="@color/colorSecondary"
-        android:singleLine="true"/>
+    <LinearLayout
+        android:id="@+id/tab_badge"
+        android:layout_width="@dimen/badge_width"
+        android:layout_height="@dimen/badge_width"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/badge"
+        android:visibility="gone"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/tab_badge_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/badge_text_size" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>
