@@ -13,8 +13,8 @@ android {
         applicationId "in.parapluie.app"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
         multiDexEnabled true
     }
     packagingOptions {
@@ -33,9 +33,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-
-
-
 
     compile 'com.android.support:appcompat-v7:24.1.0'
     compile 'com.android.support:design:24.1.1'
@@ -58,6 +55,7 @@ dependencies {
     compile 'com.firebaseui:firebase-ui:0.4.3'
     compile 'com.batch.android:batch-sdk:1.5.3'
     compile 'com.google.android.gms:play-services-appindexing:9.2.1'
+    compile 'com.android.support:multidex:1.0.1'
 }
 
 
