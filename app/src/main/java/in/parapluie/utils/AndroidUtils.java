@@ -157,7 +157,7 @@ public class AndroidUtils {
         }
     }
 
-    public boolean shareStory(final Activity activity,final String text,String snapshot,final ImageView snapShotImageView){
+    public boolean shareStory(final Activity activity,final String text,final ImageView snapShotImageView){
         /*Glide.with(activity).load(snapshot).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {

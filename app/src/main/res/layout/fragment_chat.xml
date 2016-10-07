@@ -20,21 +20,32 @@
         android:transcriptMode="alwaysScroll"
         android:layout_above="@+id/send_message_layout" />
 
-    <TextView
+    <LinearLayout
         android:id="@+id/female_only_message"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:text="@string/female_only_message"
-        android:textColor="@color/colorDisabled"
-        android:textSize="@dimen/placeholder_text_size"
-        android:visibility="gone"/>
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorDivider"
+            android:layout_gravity="center"
+            android:src="@drawable/female_talking"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/female_only_message"
+            android:textColor="@color/colorDivider"
+            android:textSize="@dimen/placeholder_text_size" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/send_message_layout"

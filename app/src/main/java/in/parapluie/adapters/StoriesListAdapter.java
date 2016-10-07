@@ -25,6 +25,7 @@ import in.parapluie.utils.AndroidUtils;
 import in.parapluie.utils.Constants;
 import in.parapluie.utils.CustomViewPager;
 import in.parapluie.utils.FirebaseUtils;
+import in.parapluie.utils.Global;
 import in.parapluie.utils.UsageAnalytics;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -165,7 +166,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)) {
                     ImageView snapshotImageView = storyViewHolder.getSnapshotImageView();
                     Log.d(TAG,"snapshotImageView:"+snapshotImageView);
-                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), story.getStorySnapshot(),snapshotImageView);
+                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), snapshotImageView);
                     if (shared){
                         FirebaseUtils.getInstance().increaseShareCount(key);
                         mUsageAnalytics.trackShareEvent(key, story.getTitle());
@@ -177,7 +178,8 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                     editor.putString(Constants.STORY_PREF_KEY, key);
                     editor.putString(Constants.STORY_PREF_TITLE, story.getTitle());
                     editor.putString(Constants.STORY_PREF_SHARE_TEXT, androidUtils.getShareStoryBody(mActivity,story,key,true));
-                    editor.putString(Constants.STORY_PREF_SNAPSHOT, story.getStorySnapshot());
+                    //editor.putString(Constants.STORY_PREF_SNAPSHOT, story.getStorySnapshot());
+                    Global.currentStorySnapshot = storyViewHolder.getSnapshotImageView();
                     editor.apply();
                 }
             }

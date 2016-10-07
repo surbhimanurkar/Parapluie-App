@@ -462,9 +462,8 @@ public class MainActivity extends BaseActivity {
                     String storyShareText = sharedPreferences.getString(Constants.STORY_PREF_SHARE_TEXT, null);
                     String storyTitle = sharedPreferences.getString(Constants.STORY_PREF_TITLE, null);
                     String storyKey = sharedPreferences.getString(Constants.STORY_PREF_KEY, null);
-                    String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
-                    //TODO Change implementation
-                    boolean success = mAndroidUtils.shareStory(this,storyShareText,storySnapshot,null);
+                    //String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
+                    boolean success = mAndroidUtils.shareStory(this,storyShareText,Global.currentStorySnapshot);
                     if(success) {
                         FirebaseUtils.getInstance().increaseShareCount(storyKey);
                         mUsageAnalytics.trackShareEvent(storyKey, storyTitle);

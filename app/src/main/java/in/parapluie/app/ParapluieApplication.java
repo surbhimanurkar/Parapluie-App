@@ -1,6 +1,7 @@
 package in.parapluie.app;
 
 import android.app.Application;
+import android.support.multidex.MultiDex;
 
 import com.batch.android.Batch;
 import com.batch.android.Config;
@@ -17,6 +18,7 @@ public class ParapluieApplication extends Application{
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        MultiDex.install(this);
 
         //Settings for Batch.com push notifications
         Batch.Push.setGCMSenderId(getResources().getString(R.string.gcm_sender_id));

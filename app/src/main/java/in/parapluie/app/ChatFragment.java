@@ -147,23 +147,6 @@ public class ChatFragment extends Fragment {
             sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_disabled));
         }
 
-
-        //Chat Help Panel - Commenting out help questions feature
-        /*helpQuestionsLayout = (LinearLayout) mRootView.findViewById(R.id.help_questions_layout);
-        helpQuestionsShadow = mRootView.findViewById(R.id.help_questions_shadow);
-        helpButton = (Button) mRootView.findViewById(R.id.button_help_query);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (helpQuestionsLayout.getVisibility() == View.GONE) {
-                    setHelpKeyboard(true);
-                } else {
-                    setHelpKeyboard(false);
-                }
-            }
-        });*/
-
-
         //Chat image capture functionality
         imageButton = (Button) mRootView.findViewById(R.id.button_image);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +162,7 @@ public class ChatFragment extends Fragment {
 
         //Disable All if chat is not allowed
         if(!isChatAllowed()){
-            ((TextView) mRootView.findViewById(R.id.female_only_message)).setVisibility(View.VISIBLE);
+            (mRootView.findViewById(R.id.female_only_message)).setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
             inputText.setVisibility(View.GONE);
             imageButton.setVisibility(View.GONE);
@@ -213,18 +196,6 @@ public class ChatFragment extends Fragment {
         });
         mRecyclerView.setAdapter(mMessageListAdapter);
 
-
-
-        // Setting Help Questions List Adapter
-        /*mHelpQuestionsAdapter = new HelpQuestionsAdapter(mRootFirebaseRef.child(Constants.F_NODE_HELP_QUESTIONS).orderByChild(Constants.HELP_QUESTIONS_RELEVANCE).limitToLast(5), this.getActivity(), R.layout.help_question, inputText);
-        helpListView.setAdapter(mHelpQuestionsAdapter);
-        mHelpQuestionsAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                helpListView.setSelection(mHelpQuestionsAdapter.getCount() - 1);
-            }
-        });*/
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
