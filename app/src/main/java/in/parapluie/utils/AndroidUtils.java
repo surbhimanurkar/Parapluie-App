@@ -157,7 +157,7 @@ public class AndroidUtils {
         }
     }
 
-    public boolean shareStory(final Activity activity,final String text,final ImageView snapShotImageView){
+    public boolean shareStory(final Activity activity,final String text,final ImageView snapShotImageView, String key){
         /*Glide.with(activity).load(snapshot).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -193,8 +193,13 @@ public class AndroidUtils {
         sharingIntent.setType("image/*");
         sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
         sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        sharingIntent.putExtra("key",key);
+        Log.d("key for story sharestory",key);
         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        activity.startActivity(Intent.createChooser(sharingIntent, "Share"));
+        activity.startActivityForResult(Intent.createChooser(sharingIntent, "Share"),Constants.REQUEST_SHARE);
+        //activity.setResult(Activity.RESULT_OK, sharingIntent);
+
+        //activity.finish();
         return true;
     }
 

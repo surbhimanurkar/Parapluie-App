@@ -6,10 +6,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,7 +23,22 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 /**
  * Created by surbhimanurkar on 10-03-2016.
@@ -35,9 +50,139 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
     private Activity mActivity;
     private static final String label = "Parapluie";
 
+    private class ParseURL extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            StringBuffer buffer = new StringBuffer();
+                try {
+                    /*Document document = null;
+                    document = Jsoup.connect(strings[0]).get();*/
+                    //Log.d("document",document.absUrl());
+
+                    /*if (document != null){
+                        String title = document.title();
+                        Log.d("title",title);
+                        String description = getMetaTag(document, "description");
+                        if (description == null) {
+                            description = getMetaTag(document, "og:description");
+                        }
+                        Log.d("description",description);
+                        //message.setMessage(title + "-" + description);
+                        String ogImage = getMetaTag(document, "og:image");
+                        Log.d("image",ogImage);
+                        *//*if(message.getImage() == null) {
+                            message.setImage(ogImage);
+                        }*//*
+                    }*/
+
+
+                //Log.d("JSwa", "Connecting to [" + strings[0] + "]");
+                    Connection con = Jsoup.connect(strings[0]);
+
+    /* this browseragant thing is important to trick servers into sending us the LARGEST versions of the images */
+                    //con.userAgent(Constants.BROWSER_USER_AGENT);
+                    Document doc = con.get();
+                //Log.d("JSwa", "Connected to [" + strings[0] + "]");
+// Get document (HTML page) title
+                String title = doc.title();
+                Log.d("JSwA", "Title [" + title + "]");
+                buffer.append("Title: " + title + "rn");
+
+// Get meta info
+                    /*Element image = doc.select("img[id~=\"(landingImage)\"]").first(); //img[src~=(?i)\.(jpe?g)]
+                    String imageUrl = "";
+                    if(image != null)
+                        imageUrl = image.attr("src");*/
+                    /*Element image = doc.getElementById("landingImage");
+                    String imageUrl = "";
+                    if(image != null)
+                        imageUrl = image.attr("src");*/
+                    String imageUrl = "";
+                    Elements images = doc.select("img");
+                    for(Element image : images){
+                        Log.d("testing",image.attr("src"));
+                        if(image.attr("id") == "landingImage") {
+                            Log.d("1","");
+                            Log.d("imageId",image.attr("id"));
+                            Log.d("landingImage_",image.attr("src"));
+                            imageUrl = image.attr("src");
+                        }
+                        if(image.attr("class") == "thumbnails-selected-image") {
+                            Log.d("2","");
+                            Log.d("thumbnails-selected-image",image.attr("src"));
+                            imageUrl = image.attr("src");
+                        }
+                    }
+                    ////title[@lang='en']
+                    /*String html = doc.html();
+                    org.w3c.dom.Document doc1 = DocumentBuilderFactory.newInstance()
+                            .newDocumentBuilder().parse(new InputSource(new StringReader(html)));
+
+                    //noinspection MalformedXPath
+                    XPathExpression xpath = XPathFactory.newInstance()
+                            .newXPath().compile("//img[@id=\"landingImage\"");
+
+                    String result = (String) xpath.evaluate(doc1, XPathConstants.STRING);
+                    String regex = "/<img.*?src='(.*?)'/";
+                    String src = regex.exec(str)[1];*/
+                    //Element image = doc.attr("id","landingImage");
+                    //String imageUrl = image.attr("src");
+                    String imageOgUrl = "";
+                    Elements metaOgImage = doc.select("meta[property=og:image]");
+                    if (metaOgImage!=null) {
+                        imageOgUrl = metaOgImage.attr("content");
+                    }
+                    Log.d("imageOgUrl", imageOgUrl);
+                    Log.d("imageUrl", imageUrl);
+                    /*Elements images = doc.select("img[src~=(?i)\\.(jpe?g)]");
+                    *//*String image = images.get(0).absUrl("src");
+                    Log.d("images", image);*//*
+                    for (Element image : images) {
+                        Log.d("images", image.attr("src"));
+                    }*/
+                    /*Elements metaElems = doc.select("meta");
+                buffer.append("META DATArn");
+                for (Element metaElem : metaElems) {
+                    String name = metaElem.attr("name");
+                    String content = metaElem.attr("content");
+                    buffer.append("name [" + name + "] - content [" + content + "] rn");
+                }
+
+                Elements topicList = doc.select("h2.topic");
+                buffer.append("Topic listrn");
+                for (Element topic : topicList) {
+                    String data = topic.text();
+
+                    buffer.append("Data [" + data + "] rn");
+                }*/
+
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
+            Log.d("capturedData",buffer.toString());
+            return buffer.toString();
+        }
+    }
+
     public MessageListAdapter(Query ref, Activity activity, int layout) {
         super(Message.class, layout, MessageViewHolder.class, ref);
         this.mActivity = activity;
+    }
+
+    String getMetaTag(Document document, String attr) {
+        Elements elements = document.select("meta[name=" + attr + "]");
+        for (Element element : elements) {
+            final String s = element.attr("content");
+            if (s != null) return s;
+        }
+        elements = document.select("meta[property=" + attr + "]");
+        for (Element element : elements) {
+            final String s = element.attr("content");
+            if (s != null) return s;
+        }
+        return null;
     }
     /**
      * Bind an instance of the <code>Messages</code> class to our view. This method is called by <code>FirebaseListAdapter</code>
@@ -55,6 +200,14 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
         boolean query = false;
         boolean textExists = false;
         boolean imageExists = false;
+        boolean linkExists = false;
+        //gruber v2
+        //final String URL_REGEX = "#(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))#iS";
+        //diegoperini
+        // final String URL_REGEX = "_^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!10(?:\\.\\d{1,3}){3})(?!127(?:\\.\\d{1,3}){3})(?!169\\.254(?:\\.\\d{1,3}){2})(?!192\\.168(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\x{00a1}-\\x{ffff}0-9]+-?)*[a-z\\x{00a1}-\\x{ffff}0-9]+)(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}0-9]+-?)*[a-z\\x{00a1}-\\x{ffff}0-9]+)*(?:\\.(?:[a-z\\x{00a1}-\\x{ffff}]{2,})))(?::\\d{2,5})?(?:/[^\\s]*)?$_iuS";
+        //example-simple
+        final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+
         // Map a Chat object to an entry in our listview
         if(message.getAuthor() == Constants.SENDER_USER){
             query = true;
@@ -62,13 +215,84 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
 
         if(message.getMessage()!=null && !message.getMessage().trim().equals("")){
             textExists = true;
+            Log.d("text",message.getMessage().trim());
+
+            Pattern p = Pattern.compile(URL_REGEX);
+            Matcher m = p.matcher(message.getMessage().trim());
+            Log.d("Matched",m.toString());
+            if(m.find()) {
+                String group = m.group();
+                Log.d("Match Found",group);
+                linkExists = true;
+                ParseURL urlParser = new ParseURL();
+                urlParser.execute(group);
+                /*Document document = null;
+                try {
+                    document = Jsoup.connect(group).get();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (document != null){
+                    String title = document.title();
+                    Log.d("title",title);
+                    String description = getMetaTag(document, "description");
+                    if (description == null) {
+                        description = getMetaTag(document, "og:description");
+                    }
+                    Log.d("description",description);
+                    message.setMessage(title + "-" + description);
+                    String ogImage = getMetaTag(document, "og:image");
+                    Log.d("image",ogImage);
+                    if(message.getImage() == null) {
+                        message.setImage(ogImage);
+                    }
+                }*/
+                /*Document doc = null;
+                String text = "";
+                Elements metaOgTitle = null;
+                String imageUrl = null;
+                Elements metaOgImage = null;
+                try {
+                    doc = Jsoup.connect(message.getMessage().trim()).get();
+                    metaOgTitle = doc.select("meta[property=og:title]");
+                    metaOgImage = doc.select("meta[property=og:image]");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //this browseragant thing is important to trick servers into sending us the LARGEST versions of the images
+
+                if (metaOgTitle!=null) {
+                    text = metaOgTitle.attr("content");
+                }
+                else {
+                    text = doc != null ? doc.title() : null;
+                }
+                if (text!=null) {
+                    text = text + message.getMessage().trim();
+                    message.setMessage(text);
+                }
+
+                if (metaOgImage!=null) {
+                    imageUrl = metaOgImage.attr("content");
+                }
+
+                if (imageUrl!=null) {
+                    if (message.getImage()!=null && !message.getImage().trim().equals("")){
+                    } else {
+                        message.setImage(imageUrl);
+                    }
+                }*/
+
+
+            }
         }
 
         if(message.getImage()!=null && !message.getImage().trim().equals("")){
             imageExists = true;
+            Log.d("image",message.getImage().trim());
         }
 
-        messageViewHolder.setCardVisibility(query,textExists,imageExists);
+        messageViewHolder.setCardVisibility(query,textExists,imageExists,linkExists);
         messageViewHolder.setMessage(query,message.getMessage());
         messageViewHolder.setImage(mActivity,query,message.getImage(),new View.OnClickListener() {
             @Override
@@ -107,7 +331,7 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
             mView = itemView;
         }
 
-        public void setCardVisibility(boolean query, boolean textExists, boolean imageExists){
+        public void setCardVisibility(boolean query, boolean textExists, boolean imageExists, boolean linkExists){
             if(query){
                 //Managing card visibility
                 mView.findViewById(R.id.cardview_query).setVisibility(View.VISIBLE);

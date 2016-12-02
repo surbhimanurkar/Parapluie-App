@@ -5,7 +5,8 @@
     tools:context="in.parapluie.app.ProfileFragment"
     android:background="@color/colorWhite"
     android:orientation="vertical"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    style="@style/TabItemFixed">
 
 
     <LinearLayout
@@ -27,13 +28,32 @@
             android:textColor="@color/colorSecondary"/>
     </LinearLayout>
 
-    <View
+    <!--<View
         android:layout_width="@dimen/story_button_bar_width"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@color/colorGrayBackground"/>
+        android:background="@color/colorGrayBackground"/>-->
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/tab_icon"
+            android:layout_width="@dimen/tab_icon_size"
+            android:layout_height="@dimen/tab_icon_size" />
+
+        <TextView
+            android:id="@+id/tab_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TabItemFixed.Title"
+            android:textColor="@color/colorSecondary"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <!--<LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin_broad"
@@ -54,7 +74,7 @@
             android:text="@string/placeholder_text"
             android:textSize="@dimen/placeholder_text_size"
             android:textColor="@color/colorDivider" />
-    </LinearLayout>
+    </LinearLayout>-->
 
 
 </LinearLayout>

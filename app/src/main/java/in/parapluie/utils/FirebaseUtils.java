@@ -41,9 +41,11 @@ public class FirebaseUtils {
     private static DatabaseReference mFirebaseDatabase;
     private DatabaseReference mChatRef;
     private DatabaseReference mUserRef;
+    private DatabaseReference mQueryRef;
     private static FirebaseUser mFirebaseUser;
     private static String mUID;
     private boolean mSuccess;
+    private UsageAnalytics mUsageAnalytics;
     /*
     * Config variables
      */
@@ -62,16 +64,33 @@ public class FirebaseUtils {
     }
 
     public void sendMessagebyUser(String messageText, String messageImage, EditText inputText){
-        sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true);
+        String queryId = "";
+        final String[] resolved = {""};
+        mUserRef.child(Constants.F_KEY_USER_RESOLVED).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                resolved[0] = (String) dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        if (resolved[0] == "true"){
+            sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true);
+        } else {
+            sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false);
+        }
+
     }
 
     public void sendMessageChatRelatedtoStories(Activity activity, Story story, String key){
         AndroidUtils androidUtils = new AndroidUtils();
         String messageText = androidUtils.getShareStoryBody(activity,story,key, false);
-        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true);
+        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,false);
     }
 
-    private void sendMessage(final String messageText, String messageImage, final EditText inputText, final int sender, final boolean userTriggered) {
+    private void sendMessage(final String messageText, String messageImage, final EditText inputText, final int sender, final boolean userTriggered, final boolean markUnResolved) {
         Log.d(TAG, "SendMessage started");
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null){
@@ -79,21 +98,41 @@ public class FirebaseUtils {
             Log.d(TAG, "Retrieve UID: " + mUID);
             mChatRef = mFirebaseDatabase.child(Constants.F_NODE_CHAT).child(mUID);
             mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID);
+            mQueryRef = mFirebaseDatabase.child(Constants.F_NODE_QUERY).child(mUID);
             if(messageText!=null || messageImage!=null){
                 // Create our 'model', a Chat object
                 Log.d(TAG, "UID: " + mUID);
                 if(messageText!=null && inputText!=null){
                     inputText.setText("");
                 }
-                Message message = new Message(messageText, messageImage, sender, ServerValue.TIMESTAMP, true);
+                String queryId = "";
+                if (markUnResolved) {
+                    mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
+                    queryId = mQueryRef.push().getRef().getKey();
+                    mUserRef.child(Constants.F_KEY_USER_ACTIVEQID).setValue(queryId);
+                } else {
+                    final String[] queryIds = {""};
+                    mUserRef.child(Constants.F_KEY_USER_RESOLVED).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            queryIds[0] = (String) dataSnapshot.getValue();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+
+                Message message = new Message(messageText, messageImage, sender, ServerValue.TIMESTAMP, true, queryId);
                 // Create a new, auto-generated child of that chat location, and save our chat data there
                 mChatRef.push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
+                        //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                         //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                         if(!isActive() && userTriggered){
-                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false);
+                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false);
                         }
                     }
                 });

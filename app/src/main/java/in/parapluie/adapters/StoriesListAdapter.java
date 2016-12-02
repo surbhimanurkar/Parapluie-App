@@ -166,7 +166,7 @@ public class StoriesListAdapter extends FirebaseRecyclerAdapter<Story,StoriesLis
                 if(androidUtils.checkPermission(mActivity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_SHARE)) {
                     ImageView snapshotImageView = storyViewHolder.getSnapshotImageView();
                     Log.d(TAG,"snapshotImageView:"+snapshotImageView);
-                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), snapshotImageView);
+                    boolean shared = androidUtils.shareStory(mActivity, androidUtils.getShareStoryBody(mActivity, story, key, true), snapshotImageView, key);
                     if (shared){
                         FirebaseUtils.getInstance().increaseShareCount(key);
                         mUsageAnalytics.trackShareEvent(key, story.getTitle());

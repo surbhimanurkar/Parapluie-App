@@ -12,17 +12,19 @@ public class Message {
     private Object time;
     private String image;
     private boolean read;
+    private String queryId;
 
     private Message(){
 
     }
 
-    public Message(String message, String image, int author, Object time, boolean read) {
+    public Message(String message, String image, int author, Object time, boolean read, String queryId) {
         this.message = message;
         this.author = author;
         this.time = time;
         this.image = image;
         this.read = read;
+        this.queryId = queryId;
     }
 
 
@@ -65,4 +67,8 @@ public class Message {
     public void setRead(boolean read) {
         this.read = read;
     }
+
+    public String getQueryId() { return queryId; }
+
+    public void setQueryId(String queryId) { this.queryId = queryId; }
 }

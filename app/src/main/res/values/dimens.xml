@@ -69,7 +69,7 @@
     <dimen name="story_chat_related_padding">8dp</dimen>
     <dimen name="story_chat_related_button_size">40dp</dimen>
     <dimen name="story_chat_related_button_height">35dp</dimen>
-    <dimen name="story_chat_related_button_width">190dp</dimen>
+    <dimen name="story_chat_related_button_width">120dp</dimen>
     <dimen name="story_card_elevation">1dp</dimen>
 
     <!--Profile Page Dimensions-->

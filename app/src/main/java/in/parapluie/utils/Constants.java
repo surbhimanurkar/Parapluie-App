@@ -32,6 +32,7 @@ public class Constants {
 
     public static final String F_URL = "https://co.in.parapluie.firebaseio.com";
     public static final String F_NODE_CHAT = "chat";
+    public static final String F_NODE_QUERY = "query";
     public static final String F_NODE_HELP_QUESTIONS = "help_questions";
     public static final String F_NODE_USER = "user";
     public static final String F_NODE_USER_APP = "app";
@@ -39,6 +40,7 @@ public class Constants {
     public static final String F_KEY_USER_PROVIDER = "provider";
     public static final String F_KEY_USER_USERNAME = "username";
     public static final String F_KEY_USER_RESOLVED = "resolved";
+    public static final String F_KEY_USER_ACTIVEQID = "activeQid";
     public static final String F_KEY_USER_GENDER = "gender";
     public static final String F_KEY_USER_AGE_RANGE = "ageRange";
     public static final String F_KEY_USER_EMAIL = "email";
@@ -76,6 +78,7 @@ public class Constants {
 
     public static final int REQUEST_CAMERA = 0;
     public static final int REQUEST_GALLERY = 1;
+    public static final int REQUEST_SHARE = 2;
 
     public static final String SHARED_PREFERENCE_IMAGE = "imagePref";
     public static final String IMAGE_URL = "imageURL";
@@ -92,4 +95,7 @@ public class Constants {
     public static final String FB_PROFILE_EMAIL = "email";
     public static final String FB_PROFILE_GENDER_MALE = "male";
     public static final String FB_PROFILE_GENDER_FEMALE = "female";
+
+    //yet to categorize constants
+    public static final String BROWSER_USER_AGENT = "Mozilla"; ///5.0 (Windows NT 5.1; rv:19.0) Gecko/20100101 Firefox/19.0
 }

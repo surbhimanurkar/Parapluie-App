@@ -37,7 +37,7 @@ public class CustomViewPager extends ViewPager{
 
     @Override
     public void setCurrentItem(int item, boolean smoothScroll) {
-        super.setCurrentItem(item, false);
+        super.setCurrentItem(item, true);
     }
 
     @Override

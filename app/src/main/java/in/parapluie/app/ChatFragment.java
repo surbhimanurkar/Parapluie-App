@@ -2,6 +2,7 @@ package in.parapluie.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -12,18 +13,23 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import in.parapluie.adapters.MessageListAdapter;
 import in.parapluie.utils.AndroidUtils;
 import in.parapluie.utils.Constants;
 import in.parapluie.utils.FirebaseUtils;
+import in.parapluie.utils.UsageAnalytics;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +55,8 @@ public class ChatFragment extends Fragment {
     private DatabaseReference mRootFirebaseRef;
     private FirebaseUser mFirebaseUser;
 
+    private UsageAnalytics mUsageAnalytics;
+
     private MessageListAdapter mMessageListAdapter;
     private LinearLayoutManager mLayoutManager;
     //private HelpQuestionsAdapter mHelpQuestionsAdapter;
@@ -60,7 +68,7 @@ public class ChatFragment extends Fragment {
     private Button sendButton;
     private Button imageButton;
 
-
+    private int lastVisibleItem = 0;
     private AndroidUtils mAndroidUtils = new AndroidUtils();
 
     public ChatFragment() {
@@ -84,14 +92,52 @@ public class ChatFragment extends Fragment {
         String uid = mFirebaseUser.getUid();
         Log.d(TAG, "Retrieve UID: " + uid);
 
+        mUsageAnalytics = new UsageAnalytics();
+        mUsageAnalytics.initTracker(this.getContext());
+
         mChatRef = mRootFirebaseRef.child(Constants.F_NODE_CHAT).child(uid);
         mUserRef = mRootFirebaseRef.child(Constants.F_NODE_USER).child(uid);
 
 
         mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recyclerview_messages);
-        mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
-        mLayoutManager.setStackFromEnd(true);
+        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        //mLayoutManager.setStackFromEnd(true);
+        mLayoutManager.setSmoothScrollbarEnabled(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setScrollbarFadingEnabled(true);
+        //mRecyclerView.setEmptyView(mRootView.findViewById(R.id.empty));
+        /*mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView RecyclerView, int dx, int dy) {
+                Log.d("Scrolled", "Yes");
+                Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
+                Log.d("total count", "" + mMessageListAdapter.getItemCount());
+
+                //lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                //super.onScrolled(RecyclerView, dx, dy);
+            }
+        });*/
+        /*if (mLayoutManager.findLastVisibleItemPosition() == (mMessageListAdapter.getItemCount() - 1)) {
+            mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                    //mRecyclerView.scrollToPosition(mLayoutManager.findLastCompletelyVisibleItemPosition());
+                    //mRecyclerView.scrollToPosition(lastVisibleItem);
+                    mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
+                }
+            });
+        }*/
+        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
+                Log.d("layout changed", "yes");
+                //mRecyclerView.scrollToPosition(mLayoutManager.findLastVisibleItemPosition());
+                //mRecyclerView.scrollToPosition(lastVisibleItem);
+                //mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount()-1);
+            }
+        });
 
         //Setting send button
         sendButton = (Button) mRootView.findViewById(R.id.button_send);
@@ -99,8 +145,10 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String messageText = inputText.getText().toString().trim();
-                if(messageText.length()!=0)
-                    FirebaseUtils.getInstance().sendMessagebyUser(messageText, null,inputText);
+                if (messageText.length() != 0){
+                    FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText);
+
+                }
             }
         });
 
@@ -114,8 +162,10 @@ public class ChatFragment extends Fragment {
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     String messageText = inputText.getText().toString().trim();
-                    if(messageText.length()!=0)
+                    if (messageText.length() != 0) {
                         FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText);
+
+                    }
                 }
                 return true;
             }
@@ -128,12 +178,12 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                if(charSequence.toString().trim().length()==0){
+                if (charSequence.toString().trim().length() == 0) {
                     sendButton.setEnabled(false);
-                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_disabled));
+                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.send_icon_disabled));
                 } else {
                     sendButton.setEnabled(true);
-                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_active));
+                    sendButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.send_icon_active));
                 }
             }
 
@@ -142,9 +192,9 @@ public class ChatFragment extends Fragment {
 
             }
         });
-        if(inputText.getText()==null || inputText.getText().toString().trim().length()==0){
+        if (inputText.getText() == null || inputText.getText().toString().trim().length() == 0) {
             sendButton.setEnabled(false);
-            sendButton.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.send_icon_disabled));
+            sendButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.send_icon_disabled));
         }
 
         //Chat image capture functionality
@@ -154,14 +204,14 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 setKeyboard(false);
                 AndroidUtils androidUtils = new AndroidUtils();
-                if(androidUtils.checkPermission(getActivity(),new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},Constants.PERMISSIONS_REQUEST_STORAGE_IMAGE)){
+                if (androidUtils.checkPermission(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSIONS_REQUEST_STORAGE_IMAGE)) {
                     androidUtils.openImageActivity(getActivity());
                 }
             }
         });
 
         //Disable All if chat is not allowed
-        if(!isChatAllowed()){
+        if (!isChatAllowed()) {
             (mRootView.findViewById(R.id.female_only_message)).setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
             inputText.setVisibility(View.GONE);
@@ -179,23 +229,33 @@ public class ChatFragment extends Fragment {
 
         // Setting Message List Adapter
         mMessageListAdapter = new MessageListAdapter(mChatRef.orderByChild(Constants.TIME), this.getActivity(), R.layout.chat_message_query);
+        if (mMessageListAdapter.getItemCount() == 0){
+
+        }
         mMessageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
+                if (mMessageListAdapter.getItemCount() > 0){
+                    (mRootView.findViewById(R.id.empty_message)).setVisibility(View.GONE);
+                    if (isChatAllowed()) {
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                    }
+                }
                 super.onItemRangeInserted(positionStart, itemCount);
                 int lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition();
-                if(lastVisibleItem!=-1){
-                    if(!getUserVisibleHint()){
+                if (lastVisibleItem != -1) {
+                    if (!getUserVisibleHint()) {
                         FirebaseUtils.getInstance().increaseUnreadChatMessageCount(getActivity());
                     }
                     mAndroidUtils.playNotificationSound(getActivity());
                 }
+                Log.d("onItemRangeInserted ", "yes");
                 mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
             }
 
         });
         mRecyclerView.setAdapter(mMessageListAdapter);
-
+        lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
@@ -223,11 +283,11 @@ public class ChatFragment extends Fragment {
         mMessageListAdapter.cleanup();
     }
 
-    private void setKeyboard(boolean isVisible){
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(isVisible){
-            imm.showSoftInput(inputText,InputMethodManager.SHOW_FORCED);
-        }else{
+    private void setKeyboard(boolean isVisible) {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (isVisible) {
+            imm.showSoftInput(inputText, InputMethodManager.SHOW_FORCED);
+        } else {
             // Check if no view has focus:
             View view = getActivity().getCurrentFocus();
             if (view != null) {
@@ -236,10 +296,11 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    private boolean isChatAllowed(){
+    private boolean isChatAllowed() {
         boolean isChatAllowed = true;
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN,Context.MODE_PRIVATE);
-        isChatAllowed = sharedPreferences.getBoolean(Constants.LOGIN_PREF_ISCHATALLOWED,true);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
+        isChatAllowed = sharedPreferences.getBoolean(Constants.LOGIN_PREF_ISCHATALLOWED, true);
+        Log.d("isChatAllowed",isChatAllowed +"");
         return isChatAllowed;
     }
 
@@ -247,7 +308,7 @@ public class ChatFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(FirebaseUtils.getInstance().getUnreadChatMessages()>0){
+            if (FirebaseUtils.getInstance().getUnreadChatMessages() > 0) {
                 FirebaseUtils.getInstance().readAllChatMessages(getActivity());
             }
         }

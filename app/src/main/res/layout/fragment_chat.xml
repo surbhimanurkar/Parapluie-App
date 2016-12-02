@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="0dp"
@@ -17,8 +18,47 @@
         android:focusable="false"
         android:clickable="false"
         android:divider="@null"
-        android:transcriptMode="alwaysScroll"
-        android:layout_above="@+id/send_message_layout" />
+        android:transcriptMode="normal"
+        android:layout_above="@+id/send_message_layout"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/empty_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="visible">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/empty_state_picture" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/empty_state_message"
+            android:textColor="@color/colorDivider"
+            android:textSize="@dimen/placeholder_text_size" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/empty_state_message_1"
+            android:textColor="@color/colorDivider"
+            android:textSize="@dimen/placeholder_text_size" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/empty_state_ask_message"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/placeholder_text_size" />
+        </LinearLayout>
 
     <LinearLayout
         android:id="@+id/female_only_message"

@@ -19,11 +19,32 @@
         <item>Ms. Potts? This is Jarvis</item>
     </string-array>
     <array name="random_bg_colors">
-        <item>@color/light_cyan</item>
+        <!--<item>@color/light_cyan</item>
         <item>@color/medium_champagne</item>
         <item>@color/mindaro</item>
         <item>@color/papaya_whip</item>
         <item>@color/sunny</item>
-        <item>@color/timberwolf</item>
+        <item>@color/timberwolf</item>-->
+        <!--<item>@color/test1</item>
+        <item>@color/test2</item>
+        <item>@color/test3</item>
+        <item>@color/test4</item>
+        <item>@color/test5</item>-->
+       <!-- <item>@color/test6</item>-->
+        <item>@color/test7</item>
+        <item>@color/test8</item>
+        <item>@color/test9</item>
+        <item>@color/test10</item>
+        <!--<item>@color/test11</item>-->
+        <item>@color/test12</item>
+        <item>@color/test13</item>
+        <!--<item>@color/test14</item>-->
+        <item>@color/test15</item>
+        <!--<item>@color/test16</item>-->
+        <!--<item>@color/test17</item>-->
+        <item>@color/test18</item>
+
+
+
     </array>
 </resources>

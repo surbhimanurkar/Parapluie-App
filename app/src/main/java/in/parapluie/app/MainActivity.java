@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,11 +26,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import in.parapluie.adapters.MessageListAdapter;
 import in.parapluie.utils.AndroidUtils;
 import in.parapluie.utils.Constants;
 import in.parapluie.utils.CustomViewPager;
@@ -37,9 +40,14 @@ import in.parapluie.utils.FirebaseUtils;
 import in.parapluie.utils.Global;
 import in.parapluie.utils.TitleFont;
 import in.parapluie.utils.UsageAnalytics;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.Stack;
@@ -78,6 +86,11 @@ public class MainActivity extends BaseActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,9 +191,9 @@ public class MainActivity extends BaseActivity {
                         super.onTabSelected(tab);
 
                         //Usage Analytics
-                        if(tab.getPosition()==0)
+                        if (tab.getPosition() == 0)
                             mUsageAnalytics.trackTab(Constants.TAB_STORIES);
-                        else if(tab.getPosition()==1)
+                        else if (tab.getPosition() == 1)
                             mUsageAnalytics.trackTab(Constants.TAB_CHAT);
                         else
                             mUsageAnalytics.trackTab(Constants.TAB_PROFILE);
@@ -191,18 +204,20 @@ public class MainActivity extends BaseActivity {
                         editor.putInt(Constants.HISTORY_PREF_SELECTED_TAB, tab.getPosition());
                         Log.d(TAG, "Selected Tab:" + tab.getPosition());
                         editor.apply();
-                        if (mTabHistory.empty())
-                            mTabHistory.push(0);
+                        if (mTabHistory.empty()){
+                            mTabHistory.push(1);
+                        }
+
 
                         if (mTabHistory.contains(tab.getPosition())) {
                             mTabHistory.remove(mTabHistory.indexOf(tab.getPosition()));
                             mTabHistory.push(tab.getPosition());
+                            Log.d(TAG, "Selected TabHistory:" + mTabHistory);
                         } else {
                             mTabHistory.push(tab.getPosition());
                         }
-
                         //Adjusting UI
-                        if(tab.getCustomView()!=null){
+                        if (tab.getCustomView() != null) {
                             iconImage = (ImageView) tab.getCustomView().findViewById(R.id.tab_icon);
                             iconImage.setColorFilter(primaryColor, PorterDuff.Mode.SRC_IN);
                             tabTitle = (TextView) tab.getCustomView().findViewById(R.id.tab_title);
@@ -213,7 +228,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         super.onTabUnselected(tab);
-                        if(tab.getCustomView()!=null){
+                        if (tab.getCustomView() != null) {
                             iconImage = (ImageView) tab.getCustomView().findViewById(R.id.tab_icon);
                             iconImage.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
                             tabTitle = (TextView) tab.getCustomView().findViewById(R.id.tab_title);
@@ -236,24 +251,23 @@ public class MainActivity extends BaseActivity {
 
         Intent deepLinkIntent = getIntent();
         Uri data = deepLinkIntent.getData();
-        Log.d(TAG,"onCreate parseIntent:Data:" + data);
-        if(data!=null && data.getQueryParameter(Constants.DEEP_LINK_FRAGMENT)!=null){
+        Log.d(TAG, "onCreate parseIntent:Data:" + data);
+        if (data != null && data.getQueryParameter(Constants.DEEP_LINK_FRAGMENT) != null) {
             int fragment = Integer.parseInt(data.getQueryParameter(Constants.DEEP_LINK_FRAGMENT));
-            if(fragment == Constants.FRAGMENT_POSITION_STORIES){
+            if (fragment == Constants.FRAGMENT_POSITION_STORIES) {
                 mViewPager.setCurrentItem(Constants.FRAGMENT_POSITION_STORIES);
                 String storyKey = data.getQueryParameter(Constants.DEEP_LINK_STORY);
                 SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
-                editor.putString(Constants.HISTORY_PREF_STORY_KEY,storyKey);
+                editor.putString(Constants.HISTORY_PREF_STORY_KEY, storyKey);
                 editor.apply();
-            }else{
+            } else {
                 mViewPager.setCurrentItem(fragment);
-
                 //There is no selected story
                 SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
                 editor.remove(Constants.HISTORY_PREF_STORY_KEY);
                 editor.apply();
             }
-        }else{
+        } else {
             //There is no selected story
             SharedPreferences.Editor editor = mHistorySharedPreferences.edit();
             editor.remove(Constants.HISTORY_PREF_STORY_KEY);
@@ -283,17 +297,42 @@ public class MainActivity extends BaseActivity {
 
                 // screen height - (user app height + status + nav) ..... if non-zero, then there is a soft keyboard
                 int keyboardHeight = rootView.getRootView().getHeight() - (statusBarHeight + navigationBarHeight + rect.height());
+                /*InputMethodManager imm = (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                if (imm.isAcceptingText()) {
+                    Log.d("keyboard", "keyboard UP");
+                    mTabLayout.setVisibility(View.GONE);
+                } else {
+                    Log.d("keyboard", "keyboard DOWN");
+                    mTabLayout.setVisibility(View.VISIBLE);
+                }*/
 
                 if (keyboardHeight <= 0) {
+                    Log.d("1", "" + rootView.getRootView().getHeight());
+                    Log.d("1", "" + (statusBarHeight + navigationBarHeight + rect.height()));
                     Log.d("keyboard", "keyboard DOWN");
                     mTabLayout.setVisibility(View.VISIBLE);
                 } else {
+                    Log.d("2", "" + rootView.getRootView().getHeight());
+                    Log.d("2", "" + statusBarHeight + navigationBarHeight + rect.height());
                     Log.d("keyboard", "keyboard UP");
                     mTabLayout.setVisibility(View.GONE);
                 }
             }
         });
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+    @Override
+    public void onPause(){
+        SharedPreferences historySharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_HISTORY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = historySharedPreferences.edit();
+        editor.putInt(Constants.HISTORY_PREF_SELECTED_TAB, 1);
+        Log.d(TAG, "Selected Tab Set to Home on Pause");
+        editor.apply();
+        super.onPause();
     }
 
     @Override
@@ -333,7 +372,45 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client2.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://in.parapluie.app/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client2, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://in.parapluie.app/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client2, viewAction);
+        client2.disconnect();
+    }
 
 
     /**
@@ -384,11 +461,11 @@ public class MainActivity extends BaseActivity {
                     iconDrawable = (ContextCompat.getDrawable(getApplicationContext(), R.drawable.chat));
                     iconDrawable.setColorFilter(secondaryColor, PorterDuff.Mode.SRC_IN);
                     icon.setImageDrawable(iconDrawable);
-                    if(FirebaseUtils.getInstance().getUnreadChatMessages()>0){
+                    if (FirebaseUtils.getInstance().getUnreadChatMessages() > 0) {
                         tabBadge.setVisibility(View.VISIBLE);
                         TextView tabBadgeText = (TextView) view.findViewById(R.id.tab_badge_text);
-                        tabBadgeText.setText(""+FirebaseUtils.getInstance().getUnreadChatMessages());
-                    }else{
+                        tabBadgeText.setText("" + FirebaseUtils.getInstance().getUnreadChatMessages());
+                    } else {
                         tabBadge.setVisibility(View.GONE);
                     }
                     break;
@@ -413,15 +490,15 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    public void setUnreadChatMessagesBadge(long unreadChatMessages){
-        if(mTabLayout!=null && mTabLayout.getTabAt(1)!=null && (mTabLayout.getTabAt(1).getCustomView())!=null){
-            if(unreadChatMessages>0){
+    public void setUnreadChatMessagesBadge(long unreadChatMessages) {
+        if (mTabLayout != null && mTabLayout.getTabAt(1) != null && (mTabLayout.getTabAt(1).getCustomView()) != null) {
+            if (unreadChatMessages > 0) {
                 View customView = (mTabLayout.getTabAt(1).getCustomView());
-                TextView tabBadgeText =(TextView)customView.findViewById(R.id.tab_badge_text);
+                TextView tabBadgeText = (TextView) customView.findViewById(R.id.tab_badge_text);
                 tabBadgeText.setText(unreadChatMessages + "");
                 LinearLayout tabBadge = (LinearLayout) customView.findViewById(R.id.tab_badge);
                 tabBadge.setVisibility(View.VISIBLE);
-            }else if(unreadChatMessages==0){
+            } else if (unreadChatMessages == 0) {
                 View customView = (mTabLayout.getTabAt(1).getCustomView());
                 LinearLayout tabBadge = (LinearLayout) customView.findViewById(R.id.tab_badge);
                 tabBadge.setVisibility(View.GONE);
@@ -454,7 +531,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.d(TAG,"onRequestPermissionsResult");
+        Log.d(TAG, "onRequestPermissionsResult");
         switch (requestCode) {
             case Constants.PERMISSIONS_REQUEST_STORAGE_SHARE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -463,12 +540,12 @@ public class MainActivity extends BaseActivity {
                     String storyTitle = sharedPreferences.getString(Constants.STORY_PREF_TITLE, null);
                     String storyKey = sharedPreferences.getString(Constants.STORY_PREF_KEY, null);
                     //String storySnapshot = sharedPreferences.getString(Constants.STORY_PREF_SNAPSHOT, null);
-                    boolean success = mAndroidUtils.shareStory(this,storyShareText,Global.currentStorySnapshot);
-                    if(success) {
+                    boolean success = mAndroidUtils.shareStory(this, storyShareText, Global.currentStorySnapshot, storyKey);
+                    if (success) {
                         FirebaseUtils.getInstance().increaseShareCount(storyKey);
                         mUsageAnalytics.trackShareEvent(storyKey, storyTitle);
-                    }else
-                        Toast.makeText(this,getResources().getString(R.string.story_share_error_generic),Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(this, getResources().getString(R.string.story_share_error_generic), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.story_share_error_permission), Toast.LENGTH_SHORT).show();
                 }
@@ -476,7 +553,7 @@ public class MainActivity extends BaseActivity {
             case Constants.PERMISSIONS_REQUEST_STORAGE_IMAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mAndroidUtils.openImageActivity(this);
-                }else{
+                } else {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.image_error_permission), Toast.LENGTH_SHORT).show();
                 }
         }
@@ -488,16 +565,15 @@ public class MainActivity extends BaseActivity {
         Bitmap uploadedImageBitmap;
         Log.d(TAG, "onActivityResult: Result Code:" + resultCode + " Request Code:" + requestCode + " Intent:" + intent);
 
-        if (resultCode == RESULT_OK)
-        {
-            switch(requestCode){
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
                 case Constants.REQUEST_CAMERA:
                     Log.d(TAG, "Got image from the Camera");
                     //uploadedImageBitmap = (Bitmap) intent.getExtras().get("data");
                     String currentPhotoPath = mHistorySharedPreferences.getString(Constants.HISTORY_PREF_CURRENT_PHOTO_PATH, null);
-                    uploadedImageBitmap = mAndroidUtils.getPicture(this,currentPhotoPath);
-                    FirebaseUtils.getInstance().saveImage(this,uploadedImageBitmap);
-                    mAndroidUtils.galleryAddPic(this,currentPhotoPath);
+                    uploadedImageBitmap = mAndroidUtils.getPicture(this, currentPhotoPath);
+                    FirebaseUtils.getInstance().saveImage(this, uploadedImageBitmap);
+                    mAndroidUtils.galleryAddPic(this, currentPhotoPath);
                     break;
                 case Constants.REQUEST_GALLERY:
                     Log.d(TAG, "Got image from the gallery");
@@ -507,9 +583,15 @@ public class MainActivity extends BaseActivity {
                         imageConfirmationIntent.putExtra(Constants.IMAGE_URL, intent.getData());
                         startActivity(imageConfirmationIntent);
                         finish();
-                    }catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case Constants.REQUEST_SHARE:
+                    Log.d(TAG, "Shared successfully");
+                    String key = intent.getExtras().getString("key");
+                    Log.d("key for story onactivityresult",key);
+                    //FirebaseUtils.getInstance().increaseShareCount(key);
                     break;
             }
         }

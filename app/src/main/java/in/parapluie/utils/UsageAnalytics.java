@@ -30,6 +30,14 @@ public class UsageAnalytics {
         }
     }
 
+    public void trackQDAU(String uId) {
+        if (isActive() && analytics != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, uId);
+            analytics.logEvent("QDAU", bundle);
+        }
+    }
+
     public void trackStory(Story story) {
         if (isActive() && analytics != null) {
             Bundle bundle = new Bundle();

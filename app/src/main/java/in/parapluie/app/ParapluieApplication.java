@@ -1,6 +1,8 @@
 package in.parapluie.app;
 
 import android.app.Application;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.multidex.MultiDex;
 
 import com.batch.android.Batch;
@@ -16,6 +18,7 @@ public class ParapluieApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
+        String myString = "#f44336";
         FacebookSdk.sdkInitialize(this);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         MultiDex.install(this);
@@ -24,5 +27,8 @@ public class ParapluieApplication extends Application{
         Batch.Push.setGCMSenderId(getResources().getString(R.string.gcm_sender_id));
         Batch.Push.setManualDisplay(true);
         Batch.setConfig(new Config(getResources().getString(R.string.batch_api_key)));
+        Batch.Push.setSmallIconResourceId(R.drawable.chat);
+        Batch.Push.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        //Batch.Push.setNotificationsColor(Integer.parseInt(myString.replaceFirst("#", ""), 16));
     }
 }

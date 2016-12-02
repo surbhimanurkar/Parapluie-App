@@ -14,7 +14,7 @@
     <color name="colorDisabled">#70716F</color>
     <color name="colorDivider">#ADAEAD</color>
     <color name="colorHyperlink">#2196F3</color>
-    <color name="colorGrayBackground">#EBEBEA</color>
+    <color name="colorGrayBackground">#F5F5F5</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="transparent">#00000000</color>
@@ -26,4 +26,24 @@
     <color name="sunny">#FFF275</color>
     <color name="timberwolf">#DAD6D6</color>
     <color name="papaya_whip">#FDF0D5</color>
+    <color name="test1">#069696</color>
+    <color name="test2">#816E94</color>
+    <color name="test3">#FFE2D1</color>
+    <color name="test4">#357266</color>
+    <color name="test5">#6BAB90</color>
+
+    <!--<color name="test6">#F6D8AE</color>-->
+    <color name="test7">#F9DBBD</color>
+    <!--<color name="test16">#FFCAB1</color>-->
+    <color name="test18">#F9E0D9</color>
+    <color name="test8">#F7EDF0</color>
+    <color name="test9">#E3E7AF</color>
+    <color name="test10">#D4F2DB</color>
+    <!--<color name="test11">#B7AD99</color>-->
+    <color name="test12">#DCD6F7</color>
+    <color name="test13">#D7C0D0</color>
+    <!--<color name="test14">#D3AB9E</color>-->
+    <color name="test15">#E2FCEF</color>
+    <!--<color name="test17">#E5F4E3</color>-->
+
 </resources>

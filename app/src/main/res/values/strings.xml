@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Parapluie</string>
-    <string name="tab_bar_stories_title">Stories</string>
-    <string name="tab_bar_chat_title">Chat</string>
+    <string name="tab_bar_stories_title">Snipps</string>
+    <string name="tab_bar_chat_title">Ask Stylist</string>
     <string name="tab_bar_profile_title">Profile</string>
     <string name="share_message_app_name">-via Parapluie</string>
     <string name="deep_link_prefix">\?link=http://www.askoliv.com/</string>
@@ -38,7 +38,7 @@
     <string name="list_item_gallery">Choose from Gallery</string>
 
     <string name="author_prefix">By </string>
-    <string name="story_chat_related_button_text">Get Personalized Help</string>
+    <string name="story_chat_related_button_text">Ask Stylist</string>
     <string name="story_shares_text">Shares</string>
     <string name="story_loves_text">Loves</string>
     <string name="story_share_error_generic">Something\'s not right! Can\'t share story!</string>
@@ -53,7 +53,12 @@
 
     <string name="placeholder_text">Your profile is being created!</string>
     <string name="female_only_message">Sorry! We cater to women only!</string>
+    <string name="empty_state_message">You look great!</string>
+    <string name="empty_state_message_1">What can make you look better? \r\n</string>
+    <string name="empty_state_ask_message">Ask your Personal Stylist!</string>
 
     <string name="title_activity_image_confirmation">ImageConfirmationActivity</string>
+
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

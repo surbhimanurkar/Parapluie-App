@@ -20,38 +20,53 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
-        android:name="in.parapluie.app.ParapluieApplication"
+        android:name=".ParapluieApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name="in.parapluie.app.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateUnchanged">
+            android:windowSoftInputMode="stateUnchanged|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <!--<category android:name="android.intent.category.BROWSABLE" />-->
                 <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
                 <!--
                     <data
-                    android:scheme="https"
-                    android:host="k2a92.app.goo.gl"
+                    android:scheme="http"
+                    android:host="www.parapluie.in"
                     android:pathPrefix="/"/>
                 -->
                 <!-- note that the leading "/" is required for pathPrefix -->
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="http"
+                    android:host="k2a92.app.goo.gl"
+                    android:pathPrefix="/"
+                    />
+                <data
+                    android:scheme="https"
+                    android:host="k2a92.app.goo.gl"
+                    android:pathPrefix="/"
+                    />
+            </intent-filter>
         </activity>
         <activity
-            android:name="in.parapluie.app.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppFullScreenTheme"/>
+            android:theme="@style/AppFullScreenTheme" />
         <activity android:name="com.facebook.FacebookActivity" />
 
         <meta-data
@@ -65,7 +80,7 @@
             android:value="@string/google_api_key1" />
 
         <activity
-            android:name="in.parapluie.app.FullscreenImageActivity"
+            android:name=".FullscreenImageActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen_image"
             android:screenOrientation="portrait"
@@ -83,10 +98,10 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="in.parapluie.app.PushService" />
+        <service android:name=".PushService" />
 
         <receiver
-            android:name="in.parapluie.app.PushReceiver"
+            android:name=".PushReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -106,10 +121,22 @@
         </provider>
 
         <activity
-            android:name="in.parapluie.app.ImageConfirmationActivity"
+            android:name=".ImageConfirmationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_image_confirmation"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TestActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_test"
+            android:theme="@style/FullscreenTheme">
+
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>
