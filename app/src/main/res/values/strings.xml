@@ -61,4 +61,9 @@
 
     <string name="title_activity_test">TestActivity</string>
 
+    <!--Profile string-->
+    <string name="profile_shares">Shares</string>
+    <string name="profile_loves">Loves</string>
+    <string name="profile_queries">Queries</string>
+
 </resources>

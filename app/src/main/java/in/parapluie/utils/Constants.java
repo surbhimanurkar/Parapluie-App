@@ -47,6 +47,7 @@ public class Constants {
     public static final String F_KEY_USER_STATUS = "status";
     public static final String F_KEY_USER_ACTIVITY = "activity";
     public static final String F_KEY_USER_LOVES = "loves";
+    public static final String F_KEY_USER_SHARES = "shares";
     public static final String F_KEY_USER_UNREAD_CHAT_MESSAGES = "unreadChatMessages";
     public static final String F_VALUE_USER__OPEN = "OPEN";
     public static final String TIME = "time";

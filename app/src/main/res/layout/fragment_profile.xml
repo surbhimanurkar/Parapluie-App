@@ -10,9 +10,9 @@
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin_broad"
+        android:layout_marginTop="@dimen/activity_vertical_margin_very_broad"
         android:orientation="vertical"
         android:gravity="center">
         <ImageView
@@ -26,15 +26,90 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/display_name_size"
             android:textColor="@color/colorSecondary"/>
+        <View
+            android:layout_width="@dimen/longish_divider"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin_broad"
+            android:background="@color/colorGrayBackground"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:weightSum="3">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/totalqueries"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/placeholder_text_size"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_queries"/>
+            </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/vertical_divider_long"
+                android:background="@color/colorGrayBackground"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/totalloves"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/placeholder_text_size"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_loves"/>
+            </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="@dimen/vertical_divider_long"
+                android:background="@color/colorGrayBackground" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/totalshares"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/placeholder_text_size"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_shares"/>
+            </LinearLayout>
+
+        </LinearLayout>
+        <View
+            android:layout_width="@dimen/longish_divider"
+            android:layout_height="1dp"
+            android:background="@color/colorGrayBackground"/>
+
     </LinearLayout>
 
-    <!--<View
-        android:layout_width="@dimen/story_button_bar_width"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@color/colorGrayBackground"/>-->
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="vertical"
@@ -51,29 +126,6 @@
             android:textAppearance="@style/TabItemFixed.Title"
             android:textColor="@color/colorSecondary"
             android:singleLine="true"/>
-    </LinearLayout>
-
-    <!--<LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin_broad"
-        android:orientation="vertical"
-        android:gravity="center">
-        <ImageView
-            android:id="@+id/placeholder_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"
-            android:tint="@color/colorDivider"
-            android:src="@drawable/workinghard"/>
-
-        <TextView
-            android:id="@+id/placeholder_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/placeholder_text"
-            android:textSize="@dimen/placeholder_text_size"
-            android:textColor="@color/colorDivider" />
     </LinearLayout>-->
 
 
