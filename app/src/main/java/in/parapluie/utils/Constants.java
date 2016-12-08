@@ -66,6 +66,7 @@ public class Constants {
     public static final String SHARED_PREFERENCE_LOGIN = "loginPref";
     public static final String SHARED_PREFERENCE_HISTORY = "historyPref";
     public static final String SHARED_PREFERENCE_STORY = "storyPref";
+    public static final String ONBOARDING_SETTING = "logout";
     public static final String LOGIN_PREF_LOGOUT = "logout";
     public static final String LOGIN_PREF_ISCHATALLOWED = "isChatAllowed";
     public static final String HISTORY_PREF_SELECTED_TAB = "selectedTab";

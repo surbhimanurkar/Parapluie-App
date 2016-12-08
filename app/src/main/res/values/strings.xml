@@ -59,7 +59,7 @@
 
     <string name="title_activity_image_confirmation">ImageConfirmationActivity</string>
 
-    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_pager">PagerActivity</string>
 
     <!--Profile string-->
     <string name="profile_shares">Shares</string>

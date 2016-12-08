@@ -2,6 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="title_text_size">16sp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_margin_half">8dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_broad">30dp</dimen>
     <dimen name="activity_vertical_margin_very_broad">50dp</dimen>
@@ -48,6 +49,10 @@
     <dimen name="hint_text_size">16sp</dimen>
     <dimen name="message_text_size">15sp</dimen>
     <dimen name="message_timestamp_size">10sp</dimen>
+
+    <dimen name="onboarding_button">56dp</dimen>
+    <dimen name="onboarding_navigation">24dp</dimen>
+    <dimen name="onboarding_bottom">80dp</dimen>
 
     <!--Tab Dimensions-->
     <dimen name="tab_bar_height">56dp</dimen>

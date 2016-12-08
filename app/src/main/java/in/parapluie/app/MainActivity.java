@@ -38,6 +38,7 @@ import in.parapluie.utils.Constants;
 import in.parapluie.utils.CustomViewPager;
 import in.parapluie.utils.FirebaseUtils;
 import in.parapluie.utils.Global;
+import in.parapluie.utils.OnboardingUtils;
 import in.parapluie.utils.TitleFont;
 import in.parapluie.utils.UsageAnalytics;
 
@@ -80,6 +81,9 @@ public class MainActivity extends BaseActivity {
     private UsageAnalytics mUsageAnalytics;
     private AndroidUtils mAndroidUtils = new AndroidUtils();
 
+    public static final String PREF_USER_FIRST_TIME = "user_first_time";
+    boolean isUserFirstTime;
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -101,11 +105,20 @@ public class MainActivity extends BaseActivity {
 
         Log.d(TAG, "Activity Launched");
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        isUserFirstTime = Boolean.valueOf(OnboardingUtils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
 
-        if (mFirebaseUser == null) {
-            redirectUserToLogin();
+        Intent introIntent = new Intent(MainActivity.this, PagerActivity.class);
+        introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
+
+        if (isUserFirstTime) {
+            startActivity(introIntent);
+        } else {
+            mFirebaseAuth = FirebaseAuth.getInstance();
+            mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+            if (mFirebaseUser == null) {
+                redirectUserToLogin();
+            }
         }
 
         //Populating Config variables
