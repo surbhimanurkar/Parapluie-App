@@ -89,7 +89,10 @@ public class ChatFragment extends Fragment {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootFirebaseRef = mFirebaseDatabase.getReference();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = mFirebaseUser.getUid();
+        String uid = "";
+        if(mFirebaseUser != null) {
+            uid = mFirebaseUser.getUid();
+        }
         Log.d(TAG, "Retrieve UID: " + uid);
 
         mUsageAnalytics = new UsageAnalytics();

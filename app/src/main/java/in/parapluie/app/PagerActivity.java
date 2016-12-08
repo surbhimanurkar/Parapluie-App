@@ -67,8 +67,8 @@ public class PagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        /*setSupportActionBar(toolbar);*/
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -127,7 +127,8 @@ public class PagerActivity extends AppCompatActivity {
             }
         });
 
-        /*mNextBtn.setOnClickListener(new View.OnClickListener() {
+        mNextBtn = (Button) findViewById(R.id.intro_btn_next);
+        mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 page += 1;
@@ -137,6 +138,7 @@ public class PagerActivity extends AppCompatActivity {
             }
         });
 
+        mFinishBtn = (Button) findViewById(R.id.intro_btn_finish);
         mFinishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,10 +153,9 @@ public class PagerActivity extends AppCompatActivity {
                 startActivity(loginIntent);
             }
         });
-*/
     }
 
-    public void nextButton(View view) {
+    /*public void nextButton(View view) {
         page += 1;
         Log.d("next","clicked");
         mViewPager.setCurrentItem(page, true);
@@ -171,7 +172,7 @@ public class PagerActivity extends AppCompatActivity {
         Log.d(TAG, "Redirecting to login");
         Intent loginIntent = new Intent(PagerActivity.this, LoginActivity.class);
         startActivity(loginIntent);
-    }
+    }*/
 
     void updateIndicators(int position) {
         for (int i = 0; i < indicators.length; i++) {
@@ -215,7 +216,11 @@ public class PagerActivity extends AppCompatActivity {
 
         ImageView img;
 
-        int[] bgs = new int[]{R.drawable.ic_favorite_primary_24dp, R.drawable.ic_favorite_primary_24dp, R.drawable.ic_favorite_primary_24dp};
+        int[] images = new int[]{R.drawable.empty_state_picture, R.drawable.ic_favorite_primary_24dp, R.drawable.ic_favorite_primary_24dp};
+
+        int[] textHeads = new int[]{R.string.onboarding_section_1, R.string.onboarding_section_2, R.string.onboarding_section_3};
+
+        int[] textDesc = new int[]{R.string.onboarding_section_1_desc, R.string.onboarding_section_2_desc, R.string.onboarding_section_3_desc};
 
         public PlaceholderFragment() {
         }
@@ -237,10 +242,13 @@ public class PagerActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_pager, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            textView.setText(textHeads[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            TextView textViewDesc = (TextView) rootView.findViewById(R.id.section_label_desc);
+            textViewDesc.setText(textDesc[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
 
             img = (ImageView) rootView.findViewById(R.id.section_img);
-            img.setBackgroundResource(bgs[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
+            img.setImageResource(images[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
 
             return rootView;
         }

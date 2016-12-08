@@ -20,6 +20,14 @@
     <string name="action_send">Send</string>
     <string name="image_confirmation_title">Send image</string>
 
+    <string name="onboarding_section_1">onboarding_section_1</string>
+    <string name="onboarding_section_2">onboarding_section_2</string>
+    <string name="onboarding_section_3">onboarding_section_3</string>
+
+    <string name="onboarding_section_1_desc">onboarding_section_1_description_looooooooooooooooooo ooooooooooooooo oooooooooooooo ooooo oo o oooooooooo ooooo oooooong</string>
+    <string name="onboarding_section_2_desc">onboarding_section_2_description</string>
+    <string name="onboarding_section_3_desc">onboarding_section_3_description</string>
+
     <string name="login_with_facebook">Sign in with Facebook</string>
     <string name="login_with_google">Sign in with Google</string>
     <string name="login_with_password">Sign in with account</string>

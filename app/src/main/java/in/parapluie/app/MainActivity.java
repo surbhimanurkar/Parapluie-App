@@ -105,21 +105,25 @@ public class MainActivity extends BaseActivity {
 
         Log.d(TAG, "Activity Launched");
 
-        isUserFirstTime = Boolean.valueOf(OnboardingUtils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
+        isUserFirstTime = Boolean.valueOf(OnboardingUtils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "false"));
 
         Intent introIntent = new Intent(MainActivity.this, PagerActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
 
-        if (isUserFirstTime) {
-            startActivity(introIntent);
-        } else {
-            mFirebaseAuth = FirebaseAuth.getInstance();
-            mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-            if (mFirebaseUser == null) {
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        if (mFirebaseUser == null) {
+            /*if (isUserFirstTime) {
+                startActivity(introIntent);
+            } else {
                 redirectUserToLogin();
-            }
+            }*/
+            redirectUserToLogin();
         }
+
 
         //Populating Config variables
         FirebaseUtils.getInstance().populatingConfigVariables();
