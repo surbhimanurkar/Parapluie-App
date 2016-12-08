@@ -61,9 +61,9 @@
 
     <string name="placeholder_text">Your profile is being created!</string>
     <string name="female_only_message">Sorry! We cater to women only!</string>
-    <string name="empty_state_message">You look great!</string>
-    <string name="empty_state_message_1">What can make you look better? \r\n</string>
-    <string name="empty_state_ask_message">Ask your Personal Stylist!</string>
+    <string name="empty_state_message">It never hurts to ask!</string>
+    <string name="empty_state_message_1">Get expert opinion on your style dilemmas</string>
+    <string name="empty_state_ask_message">Start a conversation now!</string>
 
     <string name="title_activity_image_confirmation">ImageConfirmationActivity</string>
 

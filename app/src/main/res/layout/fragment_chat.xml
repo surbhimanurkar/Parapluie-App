@@ -30,33 +30,38 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:visibility="visible">
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/empty_state_picture" />
+            android:layout_height="@dimen/chat_empty_state_illustration_size"
+            android:layout_marginTop="@dimen/activity_vertical_margin_broad"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_broad"
+            android:src="@drawable/illustration_chat_empty_state" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/empty_state_message"
             android:textColor="@color/colorDivider"
-            android:textSize="@dimen/placeholder_text_size" />
+            android:textSize="@dimen/placeholder_text_size_small" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/empty_state_message_1"
             android:textColor="@color/colorDivider"
-            android:textSize="@dimen/placeholder_text_size" />
+            android:textSize="@dimen/placeholder_text_size_small" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/empty_state_ask_message"
             android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             android:textSize="@dimen/placeholder_text_size" />
         </LinearLayout>
 
