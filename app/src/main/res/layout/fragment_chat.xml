@@ -65,7 +65,7 @@
             android:textSize="@dimen/placeholder_text_size" />
         </LinearLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/female_only_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
             android:text="@string/female_only_message"
             android:textColor="@color/colorDivider"
             android:textSize="@dimen/placeholder_text_size" />
-    </LinearLayout>
+    </LinearLayout>-->
 
 
     <LinearLayout

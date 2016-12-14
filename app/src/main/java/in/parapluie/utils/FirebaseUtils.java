@@ -67,7 +67,7 @@ public class FirebaseUtils {
         return mFirebaseUtils;
     }
 
-    public void sendMessagebyUser( final String messageText, final String messageImage, final EditText inputText){
+    public void sendMessagebyUser( final String messageText, final String messageImage, final EditText inputText, final UsageAnalytics mUsageAnalytics){
         /*mMessageText = messageText;
         mMessageImage = messageImage;
         mInputText = inputText;*/
@@ -78,6 +78,7 @@ public class FirebaseUtils {
             mUID = mFirebaseUser.getUid();
             Log.d(TAG, "Retrieve UID: " + mUID);
             mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID).child("resolved");
+            mUserRef.keepSynced(true);
         }
         mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,9 +86,9 @@ public class FirebaseUtils {
                 boolean[] resolved = {true};
                 resolved[0] = (boolean) dataSnapshot.getValue();
                 if (resolved[0] == true){
-                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true);
+                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true, mUsageAnalytics);
                 } else {
-                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false);
+                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false, null);
                 }
             }
 
@@ -109,10 +110,10 @@ public class FirebaseUtils {
     public void sendMessageChatRelatedtoStories(Activity activity, Story story, String key){
         AndroidUtils androidUtils = new AndroidUtils();
         String messageText = androidUtils.getShareStoryBody(activity,story,key, false);
-        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,false);
+        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,false,null);
     }
 
-    private void sendMessage(final String messageText, final String messageImage, final EditText inputText, final int sender, final boolean userTriggered, final boolean markUnResolved) {
+    private void sendMessage(final String messageText, final String messageImage, final EditText inputText, final int sender, final boolean userTriggered, final boolean markUnResolved, final UsageAnalytics mUsageAnalytics) {
         Log.d(TAG, "SendMessage started");
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null){
@@ -138,6 +139,7 @@ public class FirebaseUtils {
                                 System.out.println("Data saved successfully.");
                                 String[] queryId = {""};
                                 queryId[0] = databaseReference.getKey();
+                                mUsageAnalytics.trackQDAU(queryId[0]);
                                 mUserRef.child(Constants.F_KEY_USER_ACTIVEQID).setValue(queryId[0]);
                                 Message message = new Message(messageText, messageImage, sender, ServerValue.TIMESTAMP, true, queryId[0]);
                                 mChatRef.push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -146,7 +148,7 @@ public class FirebaseUtils {
                                         //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                                         //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                                         if(!isActive() && userTriggered){
-                                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false);
+                                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
                                         }
                                     }
                                 });
@@ -168,7 +170,7 @@ public class FirebaseUtils {
                                     //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                                     //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                                     if(!isActive() && userTriggered){
-                                        sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false);
+                                        sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
                                     }
                                 }
                             });
@@ -237,9 +239,9 @@ public class FirebaseUtils {
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
                     if(caption!=null && !caption.equals("")){
-                        sendMessagebyUser(caption, downloadUrl.toString(), null);
+                        sendMessagebyUser(caption, downloadUrl.toString(), null, null);
                     }else{
-                        sendMessagebyUser(null, downloadUrl.toString(), null);
+                        sendMessagebyUser(null, downloadUrl.toString(), null, null);
                     }
                 }
                 Log.d(TAG,"Send image 5 t=" + (System.currentTimeMillis()-t));

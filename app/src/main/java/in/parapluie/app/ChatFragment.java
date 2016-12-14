@@ -149,7 +149,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View view) {
                 String messageText = inputText.getText().toString().trim();
                 if (messageText.length() != 0){
-                    FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText);
+                    FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText, mUsageAnalytics);
 
                 }
             }
@@ -166,7 +166,7 @@ public class ChatFragment extends Fragment {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     String messageText = inputText.getText().toString().trim();
                     if (messageText.length() != 0) {
-                        FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText);
+                        FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText, null);
 
                     }
                 }
@@ -214,13 +214,13 @@ public class ChatFragment extends Fragment {
         });
 
         //Disable All if chat is not allowed
-        if (!isChatAllowed()) {
+        /*if (!isChatAllowed()) {
             (mRootView.findViewById(R.id.female_only_message)).setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
             inputText.setVisibility(View.GONE);
             imageButton.setVisibility(View.GONE);
             sendButton.setVisibility(View.GONE);
-        }
+        }*/
 
         return mRootView;
     }
