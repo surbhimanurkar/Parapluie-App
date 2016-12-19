@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Parapluie</string>
+    <string name="app_subtitle">Let\'s create the perfect you!</string>
     <string name="tab_bar_stories_title">Snipps</string>
     <string name="tab_bar_chat_title">Ask Stylist</string>
     <string name="tab_bar_profile_title">Profile</string>
@@ -20,13 +21,13 @@
     <string name="action_send">Send</string>
     <string name="image_confirmation_title">Send image</string>
 
-    <string name="onboarding_section_1">onboarding_section_1</string>
-    <string name="onboarding_section_2">onboarding_section_2</string>
-    <string name="onboarding_section_3">onboarding_section_3</string>
+    <string name="onboarding_section_1">Confused what to wear?</string>
+    <string name="onboarding_section_2">Ask your personal stylist</string>
+    <string name="onboarding_section_3">Look gorgeous!</string>
 
-    <string name="onboarding_section_1_desc">onboarding_section_1_description_looooooooooooooooooo ooooooooooooooo oooooooooooooo ooooo oo o oooooooooo ooooo oooooong</string>
-    <string name="onboarding_section_2_desc">onboarding_section_2_description</string>
-    <string name="onboarding_section_3_desc">onboarding_section_3_description</string>
+    <string name="onboarding_section_1_desc">Not sure what’s in trend? Not sure what looks good on you? Not sure where to find your perfect outfit?</string>
+    <string name="onboarding_section_2_desc">Log into Parapluie and chat live with your personal stylist. Just a few questions and your stylist will find that perfect outfit.</string>
+    <string name="onboarding_section_3_desc">Become a fashionista with the help of your personal fashion stylist at Parapluie!</string>
 
     <string name="login_with_facebook">Sign in with Facebook</string>
     <string name="login_with_google">Sign in with Google</string>
@@ -35,7 +36,7 @@
     <string name="signup_with_email">Sign Up</string>
     <string name="com_facebook_loginview_log_in_button">Log in</string>
     <string name="com_facebook_loginview_log_in_button_long">Sign in with Facebook</string>
-    <string name="login_privacy_promise">We promise to keep your info private!</string>
+    <string name="login_privacy_promise">By logging in, you agree to Parapluie\'s Terms of Service and Privacy Policy</string>
 
     <string name="title_activity_send_image">Send Image</string>
     <string name="dummy_button">Dummy Button</string>

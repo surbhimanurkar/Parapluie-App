@@ -385,7 +385,7 @@ public class LoginActivity extends BaseActivity{
         if(show){
             mFacebookLoginButton.setVisibility(View.GONE);
             mLoginPrivacyPromise.setVisibility(View.GONE);
-            mAppName.setVisibility(View.GONE);
+            //mAppName.setVisibility(View.GONE);
         }else{
             mFacebookLoginButton.setVisibility(View.VISIBLE);
             mLoginPrivacyPromise.setVisibility(View.VISIBLE);

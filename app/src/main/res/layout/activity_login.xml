@@ -8,22 +8,43 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:background="@drawable/sunny_skirt"
+    android:background="@color/colorWhite"
     android:orientation="vertical"
     tools:context="in.parapluie.app.LoginActivity">
 
 
-    <TextView
-        android:id="@+id/app_name"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/colorWhite"
-        android:textAllCaps="true"
-        android:textSize="@dimen/app_name_fullscreen_text_size"
-        android:layout_gravity="center"
         android:layout_weight="0.5"
-        android:gravity="center_vertical" />
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="@dimen/login_logo_size"
+            android:layout_height="@dimen/login_logo_size"
+            android:src="@drawable/high_res_parapluie_logo"
+            android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/app_name"
+            android:textColor="@color/colorBase"
+            android:textAllCaps="true"
+            android:textSize="@dimen/app_name_fullscreen_text_size" />
+        <TextView
+            android:id="@+id/app_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_subtitle"
+            android:textSize="@dimen/app_subtitle_fullscreen_text_size"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_with_facebook"
@@ -35,7 +56,6 @@
         android:layout_marginRight="@dimen/fb_login_horizontal_margin"
         android:layout_marginStart="@dimen/fb_login_horizontal_margin"
         android:layout_marginEnd="@dimen/fb_login_horizontal_margin"
-        android:layout_marginTop="@dimen/login_button_vertical_margin"
         android:layout_gravity="center_horizontal"
         android:textSize="@dimen/abc_text_size_button_material"
         android:textAllCaps="true"
@@ -46,11 +66,16 @@
         android:id="@+id/login_privacy_promise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textAlignment="center"
         android:text="@string/login_privacy_promise"
         android:textSize="@dimen/login_privacy_promise_size"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorWhite"
-        android:layout_marginBottom="@dimen/login_button_vertical_bottom_margin"/>
+        android:layout_marginStart="@dimen/activity_horizontal_margin_broad"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin_broad"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin_broad"
+        android:layout_marginRight="@dimen/activity_horizontal_margin_broad"
+        android:layout_marginTop="@dimen/activity_vertical_margin_broad"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"/>
 
     <!--
     <com.google.android.gms.common.SignInButton
