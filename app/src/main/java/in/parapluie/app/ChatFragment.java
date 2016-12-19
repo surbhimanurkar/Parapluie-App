@@ -117,8 +117,8 @@ public class ChatFragment extends Fragment {
                 Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
                 Log.d("total count", "" + mMessageListAdapter.getItemCount());
 
-                //lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
-                //super.onScrolled(RecyclerView, dx, dy);
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                super.onScrolled(RecyclerView, dx, dy);
             }
         });*/
         /*if (mLayoutManager.findLastVisibleItemPosition() == (mMessageListAdapter.getItemCount() - 1)) {
@@ -131,7 +131,7 @@ public class ChatFragment extends Fragment {
                 }
             });
         }*/
-        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        /*mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
@@ -140,7 +140,7 @@ public class ChatFragment extends Fragment {
                 //mRecyclerView.scrollToPosition(lastVisibleItem);
                 //mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount()-1);
             }
-        });
+        });*/
 
         //Setting send button
         sendButton = (Button) mRootView.findViewById(R.id.button_send);
@@ -240,9 +240,9 @@ public class ChatFragment extends Fragment {
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 if (mMessageListAdapter.getItemCount() > 0){
                     (mRootView.findViewById(R.id.empty_message)).setVisibility(View.GONE);
-                    if (isChatAllowed()) {
+                    //if (isChatAllowed()) {
                         mRecyclerView.setVisibility(View.VISIBLE);
-                    }
+                    //}
                 }
                 super.onItemRangeInserted(positionStart, itemCount);
                 int lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition();
@@ -259,6 +259,18 @@ public class ChatFragment extends Fragment {
         });
         mRecyclerView.setAdapter(mMessageListAdapter);
         lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
+
+
+            mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                    //mRecyclerView.scrollToPosition(mLayoutManager.findLastCompletelyVisibleItemPosition());
+                    //mRecyclerView.scrollToPosition(lastVisibleItem);
+                    if (mLayoutManager.findLastCompletelyVisibleItemPosition() == (mMessageListAdapter.getItemCount() - 1)) {
+                        mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
+                    }
+                }
+            });
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
@@ -299,13 +311,13 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    private boolean isChatAllowed() {
+    /*private boolean isChatAllowed() {
         boolean isChatAllowed = true;
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
         isChatAllowed = sharedPreferences.getBoolean(Constants.LOGIN_PREF_ISCHATALLOWED, true);
         Log.d("isChatAllowed",isChatAllowed +"");
         return isChatAllowed;
-    }
+    }*/
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

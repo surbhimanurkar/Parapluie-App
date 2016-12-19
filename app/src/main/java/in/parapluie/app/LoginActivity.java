@@ -307,11 +307,19 @@ public class LoginActivity extends BaseActivity{
 
                         // Application code
                         try {
-                            Map<String,Object> map = new HashMap<String,Object>(3);
+                            Map<String,Object> map = new HashMap<String,Object>(5);
                             String gender = null;
                             if(object.has(Constants.FB_PROFILE_GENDER)) {
                                 gender = object.getString(Constants.FB_PROFILE_GENDER);
                                 map.put(Constants.F_KEY_USER_GENDER,gender);
+                            }
+                            if(object.has(Constants.FB_PROFILE_LINK)) {
+                                map.put(Constants.FB_PROFILE_LINK,object.getString(Constants.FB_PROFILE_LINK));
+                                Log.d("profile link",object.getString(Constants.FB_PROFILE_LINK));
+                            }
+                            if(object.has(Constants.FB_PROFILE_PICTURE)) {
+                                map.put(Constants.FB_PROFILE_PICTURE,object.getString(Constants.FB_PROFILE_PICTURE));
+                                Log.d("profile picture",object.getString(Constants.FB_PROFILE_PICTURE));
                             }
                             if(object.has(Constants.FB_PROFILE_AGE_RANGE))
                                 map.put(Constants.F_KEY_USER_AGE_RANGE,object.getString(Constants.FB_PROFILE_AGE_RANGE));
@@ -338,7 +346,7 @@ public class LoginActivity extends BaseActivity{
                     }
                 });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,gender");
+        parameters.putString("fields", "id,name,email,gender,link");
         request.setParameters(parameters);
         request.executeAsync();
     }
