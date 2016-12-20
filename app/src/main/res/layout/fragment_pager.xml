@@ -18,32 +18,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
     tools:context="in.parapluie.app.PagerActivity$PlaceholderFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
 
         <ImageView
             android:id="@+id/section_img"
-            android:layout_width="192dp"
-            android:layout_height="192dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:alpha="1"
-            android:scaleType="fitCenter" />
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/onboarding_image_height"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_narrow" />
 
         <TextView
             android:id="@+id/section_label"
-            style="@style/TextAppearance.AppCompat.Headline"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorSecondary"
+            android:layout_below="@id/section_img"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
             tools:text="Page One" />
 
         <TextView
@@ -51,12 +50,14 @@
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin_extremely_narrow"
+            android:layout_below="@id/section_label"
             android:alpha="0.7"
             android:gravity="center"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@color/colorDisabled" />
 
 
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -146,7 +146,12 @@ public class MainActivity extends BaseActivity {
 
         //Setting UI elements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setLogo(R.drawable.high_res_logo);
         setSupportActionBar(toolbar);
+        //if(getSupportActionBar()!=null){
+          //  getSupportActionBar().setDisplayShowHomeEnabled(true);
+            //getSupportActionBar().setDisplayShowTitleEnabled(true);
+        //}
 
         //Finding title in the toolbar
         TextView title;
@@ -609,7 +614,7 @@ public class MainActivity extends BaseActivity {
                 case Constants.REQUEST_SHARE:
                     Log.d(TAG, "Shared successfully");
                     String key = intent.getExtras().getString("key");
-                    Log.d("key for story onactivityresult",key);
+                    Log.d("onActivityResult","story Key:" + key);
                     //FirebaseUtils.getInstance().increaseShareCount(key);
                     break;
             }
