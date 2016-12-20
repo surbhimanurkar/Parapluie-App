@@ -29,6 +29,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by surbhimanurkar on 29-07-2016.
@@ -145,6 +148,7 @@ public class FirebaseUtils {
                                 mChatRef.push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        new BatchNotificationUtils().execute();
                                         //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                                         //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                                         if(!isActive() && userTriggered){
@@ -318,6 +322,30 @@ public class FirebaseUtils {
 
     public boolean isActive(){
         return mConfig.isActive();
+    }
+
+    public String getTokens() {
+        HashMap<String, String> tokens = mConfig.getStylistTokens();
+        String[] keys = new String[tokens.size()];
+        String[] values = new String[tokens.size()];
+        int index = 0;
+        for (HashMap.Entry<String, String> mapEntry : tokens.entrySet()) {
+            keys[index] = mapEntry.getKey();
+            values[index] = mapEntry.getValue();
+            index++;
+        }
+        //Object[] tokensArray = tokens.values().toArray();
+        String tokensString = Arrays.toString(values);
+        StringBuilder builder = new StringBuilder();
+        for(int i=0;i<values.length;i++) {
+            if(i == 0) {
+                builder.append(values[i]);
+            } else {
+                builder.append("\", \""+ values[i]);
+            }
+        }
+        Log.d("tokens1", builder.toString());
+        return "\"" + builder.toString() + "\"";
     }
 
     public String getInactiveMessage(){
