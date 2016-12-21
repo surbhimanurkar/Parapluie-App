@@ -26,7 +26,7 @@
     <string name="onboarding_section_3">Look gorgeous!</string>
 
     <string name="onboarding_section_1_desc">Not sure what’s in trend? Not sure what looks good on you? Not sure where to find your perfect outfit?</string>
-    <string name="onboarding_section_2_desc">Log into Parapluie and chat live with your personal stylist. Just a few questions and your stylist will find that perfect outfit.</string>
+    <string name="onboarding_section_2_desc">Log into Parapluie and chat with your personal stylist. Get shopping assistance and trendy outfit ideas!</string>
     <string name="onboarding_section_3_desc">Become a fashionista with the help of your personal fashion stylist at Parapluie!</string>
 
     <string name="login_with_facebook">Sign in with Facebook</string>
@@ -36,7 +36,8 @@
     <string name="signup_with_email">Sign Up</string>
     <string name="com_facebook_loginview_log_in_button">Log in</string>
     <string name="com_facebook_loginview_log_in_button_long">Sign in with Facebook</string>
-    <string name="login_privacy_promise">By logging in, you agree to Parapluie\'s Terms of Service and Privacy Policy</string>
+    <string name="login_privacy_promise">I agree to Parapluie\'s Terms and Privacy Policy</string>
+    <string name="login_subscription_message">Login and get FREE subscription for a year!</string>
 
     <string name="title_activity_send_image">Send Image</string>
     <string name="dummy_button">Dummy Button</string>
