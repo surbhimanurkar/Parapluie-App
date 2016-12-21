@@ -194,7 +194,7 @@ public class AndroidUtils {
         sharingIntent.putExtra(Intent.EXTRA_TEXT, text);
         sharingIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         sharingIntent.putExtra("key",key);
-        Log.d("key for story sharestory",key);
+        Log.d("keysharestory",key);
         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         activity.startActivityForResult(Intent.createChooser(sharingIntent, "Share"),Constants.REQUEST_SHARE);
         //activity.setResult(Activity.RESULT_OK, sharingIntent);

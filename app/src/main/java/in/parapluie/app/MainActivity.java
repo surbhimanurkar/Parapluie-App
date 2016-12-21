@@ -613,8 +613,8 @@ public class MainActivity extends BaseActivity {
                     break;
                 case Constants.REQUEST_SHARE:
                     Log.d(TAG, "Shared successfully");
-                    String key = intent.getExtras().getString("key");
-                    Log.d("onActivityResult","story Key:" + key);
+//                    String key = intent.getExtras().getString("key");
+  //                  Log.d("onActivityResult","story Key:" + key);
                     //FirebaseUtils.getInstance().increaseShareCount(key);
                     break;
             }
