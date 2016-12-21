@@ -46,6 +46,7 @@ public class FirebaseUtils {
     private static DatabaseReference mFirebaseDatabase;
     private DatabaseReference mChatRef;
     private static DatabaseReference mUserRef;
+    private static DatabaseReference mResolvedRef;
     private DatabaseReference mQueryRef;
     private static FirebaseUser mFirebaseUser;
     private static String mUID;
@@ -73,7 +74,7 @@ public class FirebaseUtils {
         if(mFirebaseUser!=null) {
             mUID = mFirebaseUser.getUid();
             Log.d(TAG, "Retrieve UID: " + mUID);
-            mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID).child("resolved");
+            mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID);
             mUserRef.keepSynced(true);
         }
         return mFirebaseUtils;
@@ -118,7 +119,8 @@ public class FirebaseUtils {
                 }
             }
         });*/
-        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mResolvedRef = mUserRef.child("resolved");
+        mResolvedRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean[] resolved = {true};
