@@ -122,7 +122,9 @@ public class FirebaseUtils {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean[] resolved = {true};
-                resolved[0] = (boolean) dataSnapshot.getValue();
+                if(dataSnapshot!=null && dataSnapshot.getValue()!=null){
+                    resolved[0] = (boolean) dataSnapshot.getValue();
+                }
                 if (resolved[0] == true){
                     sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true, mUsageAnalytics);
                 } else {
