@@ -130,7 +130,7 @@ public class FirebaseUtils {
                 if (resolved[0] == true){
                     sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true, mUsageAnalytics);
                 } else {
-                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false, null);
+                    sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false, mUsageAnalytics);
                 }
             }
 
@@ -250,7 +250,8 @@ public class FirebaseUtils {
 
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReferenceFromUrl(activity.getResources().getString(in.parapluie.app.R.string.firebase_storage_url));
-
+        mUsageAnalytics = new UsageAnalytics();
+        mUsageAnalytics.initTracker(activity);
         AndroidUtils androidUtils = new AndroidUtils();
         String fileName = androidUtils.getImageFileNameSentbyUser();
         String firebaseFilePath = Constants.F_NODE_CHAT + "/" + mUID + "/" + fileName;
@@ -282,9 +283,9 @@ public class FirebaseUtils {
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
                     if(caption!=null && !caption.equals("")){
-                        sendMessagebyUser(caption, downloadUrl.toString(), null, null);
+                        sendMessagebyUser(caption, downloadUrl.toString(), null, mUsageAnalytics);
                     }else{
-                        sendMessagebyUser(null, downloadUrl.toString(), null, null);
+                        sendMessagebyUser(null, downloadUrl.toString(), null, mUsageAnalytics);
                     }
                 }
                 Log.d(TAG,"Send image 5 t=" + (System.currentTimeMillis()-t));

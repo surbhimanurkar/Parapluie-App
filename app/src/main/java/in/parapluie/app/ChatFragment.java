@@ -166,7 +166,7 @@ public class ChatFragment extends Fragment {
                 if (actionId == EditorInfo.IME_NULL && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     String messageText = inputText.getText().toString().trim();
                     if (messageText.length() != 0) {
-                        FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText, null);
+                        FirebaseUtils.getInstance().sendMessagebyUser(messageText, null, inputText, mUsageAnalytics);
 
                     }
                 }
