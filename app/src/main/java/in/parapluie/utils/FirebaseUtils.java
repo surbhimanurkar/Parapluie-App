@@ -45,8 +45,7 @@ public class FirebaseUtils {
     private static FirebaseUtils mFirebaseUtils;
     private static DatabaseReference mFirebaseDatabase;
     private DatabaseReference mChatRef;
-    private DatabaseReference mUserRef;
-    private DatabaseReference mResolvedRef;
+    private static DatabaseReference mUserRef;
     private DatabaseReference mQueryRef;
     private static FirebaseUser mFirebaseUser;
     private static String mUID;
@@ -70,6 +69,13 @@ public class FirebaseUtils {
             mFirebaseUtils = new FirebaseUtils();
             mFirebaseDatabase = FirebaseDatabase.getInstance().getReference();
         }
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mFirebaseUser!=null) {
+            mUID = mFirebaseUser.getUid();
+            Log.d(TAG, "Retrieve UID: " + mUID);
+            mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID).child("resolved");
+            mUserRef.keepSynced(true);
+        }
         return mFirebaseUtils;
     }
 
@@ -79,15 +85,14 @@ public class FirebaseUtils {
         mInputText = inputText;*/
         String queryId = "";
         //final boolean[] resolved = {true};//new boolean[1];
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        /*mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null) {
             mUID = mFirebaseUser.getUid();
             Log.d(TAG, "Retrieve UID: " + mUID);
             mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID).child("resolved");
             mUserRef.keepSynced(true);
-            mResolvedRef = mUserRef;
-        }
-        mUserRef.runTransaction(new Transaction.Handler() {
+        }*/
+        /*mUserRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 // Return passed in data
@@ -110,8 +115,8 @@ public class FirebaseUtils {
                     }
                 }
             }
-        });
-        /*mResolvedRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        });*/
+        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean[] resolved = {true};
@@ -127,7 +132,7 @@ public class FirebaseUtils {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
         /*Log.d("12", "23");
         Log.d("resolved",""+ resolved[0]);*/
 
@@ -146,7 +151,7 @@ public class FirebaseUtils {
 
     private void sendMessage(final String messageText, final String messageImage, final EditText inputText, final int sender, final boolean userTriggered, final boolean markUnResolved, final UsageAnalytics mUsageAnalytics) {
         Log.d(TAG, "SendMessage started");
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null){
             mUID = mFirebaseUser.getUid();
             Log.d(TAG, "Retrieve UID: " + mUID);
@@ -300,22 +305,22 @@ public class FirebaseUtils {
     }
 
     public void increaseShareCount(final String key){
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(firebaseUser!=null){
+        //final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mFirebaseUser!=null){
             final DatabaseReference sharesRef = mFirebaseDatabase.child(Constants.F_NODE_SOCIAL)
                     .child(Constants.F_NODE_STORIES).child(key)
                     .child(Constants.F_KEY_STORIES_SHARES)
-                    .child(firebaseUser.getUid());
+                    .child(mFirebaseUser.getUid());
             sharesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot!=null && firebaseUser!=null) {
+                    if(dataSnapshot!=null && mFirebaseUser!=null) {
                         long newShares = 0;
                         if(dataSnapshot.getValue()!=null)
                             newShares = ((long) dataSnapshot.getValue());
                         newShares++;
                         sharesRef.setValue(newShares);
-                        mFirebaseDatabase.child(Constants.F_NODE_USER).child(firebaseUser.getUid())
+                        mFirebaseDatabase.child(Constants.F_NODE_USER).child(mFirebaseUser.getUid())
                                 .child(Constants.F_KEY_USER_ACTIVITY).child(Constants.F_KEY_STORIES_SHARES)
                                 .child(key).setValue(newShares);
                     }
@@ -382,7 +387,7 @@ public class FirebaseUtils {
 
     public void increaseUnreadChatMessageCount(Activity activity){
         unreadChatMessages++;
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null) {
             mUID = mFirebaseUser.getUid();
             DatabaseReference ref = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID);
@@ -392,7 +397,7 @@ public class FirebaseUtils {
     }
 
     public void setUnreadChatMessages(final Activity activity) {
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null) {
             mUID = mFirebaseUser.getUid();
             DatabaseReference ref = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID);
@@ -419,7 +424,7 @@ public class FirebaseUtils {
 
     public void readAllChatMessages(Activity activity){
         unreadChatMessages = 0;
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(mFirebaseUser!=null) {
             ((MainActivity) activity).setUnreadChatMessagesBadge(unreadChatMessages);
             mUID = mFirebaseUser.getUid();
