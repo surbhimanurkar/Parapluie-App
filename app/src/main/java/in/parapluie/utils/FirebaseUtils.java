@@ -22,7 +22,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -44,6 +46,7 @@ public class FirebaseUtils {
     private static DatabaseReference mFirebaseDatabase;
     private DatabaseReference mChatRef;
     private DatabaseReference mUserRef;
+    private DatabaseReference mResolvedRef;
     private DatabaseReference mQueryRef;
     private static FirebaseUser mFirebaseUser;
     private static String mUID;
@@ -82,8 +85,33 @@ public class FirebaseUtils {
             Log.d(TAG, "Retrieve UID: " + mUID);
             mUserRef = mFirebaseDatabase.child(Constants.F_NODE_USER).child(mUID).child("resolved");
             mUserRef.keepSynced(true);
+            mResolvedRef = mUserRef;
         }
-        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mUserRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                // Return passed in data
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                if (databaseError != null || !b || dataSnapshot == null) {
+                    System.out.println("Failed to get DataSnapshot");
+                } else {
+                    System.out.println("Successfully get DataSnapshot");
+                    //handle data here
+                    boolean[] resolved = {true};
+                    resolved[0] = (boolean) dataSnapshot.getValue();
+                    if (resolved[0] == true){
+                        sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,true, mUsageAnalytics);
+                    } else {
+                        sendMessage(messageText,messageImage,inputText,Constants.SENDER_USER,true,false, null);
+                    }
+                }
+            }
+        });
+        /*mResolvedRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean[] resolved = {true};
@@ -99,7 +127,7 @@ public class FirebaseUtils {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
         /*Log.d("12", "23");
         Log.d("resolved",""+ resolved[0]);*/
 
