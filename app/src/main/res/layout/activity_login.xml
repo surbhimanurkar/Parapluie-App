@@ -63,6 +63,20 @@
         android:drawableStart="@drawable/facebook_white_logo"/>
 
     <TextView
+        android:id="@+id/login_subscription_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/login_subscription_message"
+        android:textSize="@dimen/login_subscription_message_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"/>
+
+    <TextView
         android:id="@+id/login_privacy_promise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,8 +88,8 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin_broad"
         android:layout_marginLeft="@dimen/activity_horizontal_margin_broad"
         android:layout_marginRight="@dimen/activity_horizontal_margin_broad"
-        android:layout_marginTop="@dimen/activity_vertical_margin_broad"
-        android:layout_marginBottom="@dimen/activity_vertical_margin_narrow"/>
+        android:layout_marginTop="@dimen/activity_vertical_margin_extremely_broad"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_extremely_narrow"/>
 
     <!--
     <com.google.android.gms.common.SignInButton

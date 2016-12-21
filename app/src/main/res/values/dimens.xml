@@ -40,6 +40,7 @@
     <dimen name="google_login_padding">5dp</dimen>
     <dimen name="word_spacing">2dp</dimen>
     <dimen name="login_privacy_promise_size">12sp</dimen>
+    <dimen name="login_subscription_message_size">15sp</dimen>
     <dimen name="app_name_login_width">240dp</dimen>
 
     <dimen name="high_elevation">4dp</dimen>
@@ -57,7 +58,7 @@
 
     <dimen name="onboarding_button">56dp</dimen>
     <dimen name="onboarding_navigation">24dp</dimen>
-    <dimen name="onboarding_bottom">80dp</dimen>
+    <dimen name="onboarding_bottom">60dp</dimen>
 
     <!--Tab Dimensions-->
     <dimen name="tab_bar_height">56dp</dimen>
