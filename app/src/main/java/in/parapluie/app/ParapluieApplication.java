@@ -4,6 +4,7 @@ import android.app.Application;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.batch.android.Batch;
 import com.batch.android.Config;
@@ -13,7 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * Created by surbhimanurkar on 03-03-2016.
  */
-public class ParapluieApplication extends Application{
+public class ParapluieApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {

@@ -152,7 +152,7 @@ public class FirebaseUtils {
     public void sendMessageChatRelatedtoStories(Activity activity, Story story, String key){
         AndroidUtils androidUtils = new AndroidUtils();
         String messageText = androidUtils.getShareStoryBody(activity,story,key, false);
-        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,false,null);
+        sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,false,mUsageAnalytics);
     }
 
     private void sendMessage(final String messageText, final String messageImage, final EditText inputText, final int sender, final boolean userTriggered, final boolean markUnResolved, final UsageAnalytics mUsageAnalytics) {
