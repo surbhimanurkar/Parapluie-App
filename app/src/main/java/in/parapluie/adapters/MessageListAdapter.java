@@ -6,6 +6,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -415,7 +417,7 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
             }else{
                 imageView = (ImageView) mView.findViewById(R.id.replyImage);
             }
-            Glide.with(activity).load(imageUrl).centerCrop().dontAnimate().placeholder(ContextCompat.getDrawable(activity,R.drawable.placeholder_image_loading)).into(imageView);
+            Glide.with(activity).load(imageUrl).centerCrop().dontAnimate().placeholder(new ColorDrawable(Color.parseColor("#9ACCCD"))).into(imageView);
             imageView.setOnClickListener(onClickListener);
         }
 

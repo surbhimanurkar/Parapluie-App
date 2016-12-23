@@ -95,6 +95,7 @@ public class MainActivity extends BaseActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client2;
+    private boolean isKeyboardUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -332,14 +333,19 @@ public class MainActivity extends BaseActivity {
                 }*/
 
                 if (keyboardHeight <= 0) {
-                    Log.d("1", "" + rootView.getRootView().getHeight());
-                    Log.d("1", "" + (statusBarHeight + navigationBarHeight + rect.height()));
+                    /*Log.d("1", "" + rootView.getRootView().getHeight());
+                    Log.d("1", "" + (statusBarHeight + navigationBarHeight + rect.height()));*/
                     Log.d("keyboard", "keyboard DOWN");
                     mTabLayout.setVisibility(View.VISIBLE);
+                    if (chatFragment != null && isKeyboardUp) {
+                        isKeyboardUp = false;
+                        chatFragment.scrollToBottom();
+                    }
                 } else {
                     Log.d("2", "" + rootView.getRootView().getHeight());
                     Log.d("2", "" + statusBarHeight + navigationBarHeight + rect.height());
                     Log.d("keyboard", "keyboard UP");
+                    isKeyboardUp = true;
                     mTabLayout.setVisibility(View.GONE);
                 }
             }
@@ -441,11 +447,14 @@ public class MainActivity extends BaseActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
+
+    public ChatFragment chatFragment = null;
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {
@@ -453,7 +462,8 @@ public class MainActivity extends BaseActivity {
             if (position == 0) {
                 return new StoriesFragment();
             } else if (position == 1) {
-                return new ChatFragment();
+                chatFragment = new ChatFragment();
+                return chatFragment;
             } else {
                 return new ProfileFragment();
             }
