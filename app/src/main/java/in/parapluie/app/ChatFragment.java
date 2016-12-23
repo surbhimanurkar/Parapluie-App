@@ -114,14 +114,15 @@ public class ChatFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView RecyclerView, int dx, int dy) {
                 Log.d("Scrolled", "Yes");
-                Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
-                Log.d("total count", "" + mMessageListAdapter.getItemCount());
+                Log.d(TAG, "findLastVisibleItemPosition" + mLayoutManager.findLastVisibleItemPosition());
+                Log.d(TAG, "getItemCount" + mMessageListAdapter.getItemCount());
 
                 lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                Log.d(TAG,"lastVisibleItem " +lastVisibleItem);
                 super.onScrolled(RecyclerView, dx, dy);
             }
         });*/
-        /*if (mLayoutManager.findLastVisibleItemPosition() == (mMessageListAdapter.getItemCount() - 1)) {
+        /*if (lastVisibleItem == (mMessageListAdapter.getItemCount() - 1)) {
             mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
                 public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
@@ -135,10 +136,10 @@ public class ChatFragment extends Fragment {
             @Override
             public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 Log.d("Last visible item", "" + mLayoutManager.findLastVisibleItemPosition());
-                Log.d("layout changed", "yes");
+                //Log.d("layout changed", "yes");
                 //mRecyclerView.scrollToPosition(mLayoutManager.findLastVisibleItemPosition());
                 //mRecyclerView.scrollToPosition(lastVisibleItem);
-                //mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount()-1);
+                mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount()-1);
             }
         });*/
 
@@ -245,32 +246,51 @@ public class ChatFragment extends Fragment {
                     //}
                 }
                 super.onItemRangeInserted(positionStart, itemCount);
-                int lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition();
+                /*int lastVisibleItem = mLayoutManager.findLastCompletelyVisibleItemPosition();
                 if (lastVisibleItem != -1) {
                     if (!getUserVisibleHint()) {
                         FirebaseUtils.getInstance().increaseUnreadChatMessageCount(getActivity());
                     }
                     mAndroidUtils.playNotificationSound(getActivity());
                 }
-                Log.d("onItemRangeInserted ", "yes");
+                Log.d("onItemRangeInserted ", "yes");*/
                 mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
+                lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
             }
 
         });
         mRecyclerView.setAdapter(mMessageListAdapter);
-        lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView RecyclerView, int dx, int dy) {
+                //Log.d("Scrolled", "Yes");
+                Log.d(TAG, "addOnScrollListener : " + mLayoutManager.findLastVisibleItemPosition());
+                Log.d(TAG, "addOnScrollListener : " + mMessageListAdapter.getItemCount());
 
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                Log.d("addOnScrollListener","lastVisibleItem: " +lastVisibleItem);
+                super.onScrolled(RecyclerView, dx, dy);
+            }
+        });
+        //lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
+        Log.d("getItemCount", " " + (mMessageListAdapter.getItemCount() - 1));
+        Log.d("","lastVisibleItem :" + lastVisibleItem);
 
-            mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                    //mRecyclerView.scrollToPosition(mLayoutManager.findLastCompletelyVisibleItemPosition());
+        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                //mRecyclerView.scrollToPosition(mLayoutManager.findLastCompletelyVisibleItemPosition());
+                //mRecyclerView.scrollToPosition(lastVisibleItem);
+                Log.d("addOnLayoutChangeListener: findLastVisibleItemPosition", "" + mLayoutManager.findLastVisibleItemPosition());
+                Log.d("addOnLayoutChangeListener: findLastCompletelyVisibleItemPosition ", " " + mLayoutManager.findLastCompletelyVisibleItemPosition());
+                Log.d("addOnLayoutChangeListener: getItemCount", " " + (mMessageListAdapter.getItemCount() - 1));
+                Log.d("addOnLayoutChangeListener","lastVisibleItem :" + lastVisibleItem);
+                if (lastVisibleItem == (mMessageListAdapter.getItemCount() - 1)) {
                     //mRecyclerView.scrollToPosition(lastVisibleItem);
-                    if (mLayoutManager.findLastCompletelyVisibleItemPosition() == (mMessageListAdapter.getItemCount() - 1)) {
-                        mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
-                    }
                 }
-            });
+                //mRecyclerView.scrollToPosition(lastVisibleItem);
+            }
+        });
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
@@ -327,6 +347,10 @@ public class ChatFragment extends Fragment {
                 FirebaseUtils.getInstance().readAllChatMessages(getActivity());
             }
         }
+    }
+
+    public void scrollToBottom() {
+        mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
     }
 
 }
