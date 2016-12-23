@@ -96,6 +96,7 @@ public class MainActivity extends BaseActivity {
      */
     private GoogleApiClient client2;
     private boolean isKeyboardUp;
+    private boolean isKeyboardDown = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,13 +340,20 @@ public class MainActivity extends BaseActivity {
                     mTabLayout.setVisibility(View.VISIBLE);
                     if (chatFragment != null && isKeyboardUp) {
                         isKeyboardUp = false;
+                        isKeyboardDown = true;
                         chatFragment.scrollToBottom();
+                        Log.d("keyboard", "keyboard DOWN!!!");
                     }
                 } else {
                     Log.d("2", "" + rootView.getRootView().getHeight());
                     Log.d("2", "" + statusBarHeight + navigationBarHeight + rect.height());
+                    if (chatFragment != null && isKeyboardDown) {
+                        isKeyboardDown = false;
+                        isKeyboardUp = true;
+                        chatFragment.scrollToBottom();
+                        Log.d("keyboard", "keyboard UP!!!");
+                    }
                     Log.d("keyboard", "keyboard UP");
-                    isKeyboardUp = true;
                     mTabLayout.setVisibility(View.GONE);
                 }
             }

@@ -273,7 +273,7 @@ public class ChatFragment extends Fragment {
             }
         });
         //lastVisibleItem = mMessageListAdapter.getItemCount() - 1;
-        Log.d("getItemCount", " " + (mMessageListAdapter.getItemCount() - 1));
+        /*Log.d("getItemCount", " " + (mMessageListAdapter.getItemCount() - 1));
         Log.d("","lastVisibleItem :" + lastVisibleItem);
 
         mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -290,7 +290,7 @@ public class ChatFragment extends Fragment {
                 }
                 //mRecyclerView.scrollToPosition(lastVisibleItem);
             }
-        });
+        });*/
 
         // Finally, a little indication of connection status
         mConnectedListener = mChatRef.getRoot().child(".info/connected").addValueEventListener(new ValueEventListener() {
@@ -352,5 +352,17 @@ public class ChatFragment extends Fragment {
     public void scrollToBottom() {
         mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
     }
+
+    public void scrollToBottomOnKeyboardUp() {
+        /*Log.d(TAG,"scrollToBottomOnKeyboardUp : getItemCount : "+ (mMessageListAdapter.getItemCount() - 1));
+        Log.d(TAG,"scrollToBottomOnKeyboardUp : lastVisibleItem : "+ lastVisibleItem);
+        if (lastVisibleItem == (mMessageListAdapter.getItemCount() - 1)) {
+            mRecyclerView.scrollToPosition(lastVisibleItem);
+        }*/
+        if (lastVisibleItem == (mMessageListAdapter.getItemCount() - 1)) {
+            mRecyclerView.scrollToPosition(mMessageListAdapter.getItemCount() - 1);
+        }
+    }
+
 
 }
