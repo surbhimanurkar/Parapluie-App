@@ -112,7 +112,7 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
                         }
                         if(image.attr("class") == "thumbnails-selected-image") {
                             Log.d("2","");
-                            Log.d("thumbnails-selected-image",image.attr("src"));
+                            Log.d("thumbnails-slcted-image",image.attr("src"));
                             imageUrl = image.attr("src");
                         }
                     }
@@ -417,7 +417,7 @@ public class MessageListAdapter extends FirebaseRecyclerAdapter<Message,MessageL
             }else{
                 imageView = (ImageView) mView.findViewById(R.id.replyImage);
             }
-            Glide.with(activity).load(imageUrl).centerCrop().dontAnimate().placeholder(new ColorDrawable(Color.parseColor("#9ACCCD"))).into(imageView);
+            Glide.with(activity).load(imageUrl).centerCrop().dontAnimate().placeholder(new ColorDrawable(ContextCompat.getColor(activity,R.color.light_brown))).into(imageView);
             imageView.setOnClickListener(onClickListener);
         }
 
