@@ -152,6 +152,8 @@ public class FirebaseUtils {
     public void sendMessageChatRelatedtoStories(Activity activity, Story story, String key){
         AndroidUtils androidUtils = new AndroidUtils();
         String messageText = androidUtils.getShareStoryBody(activity,story,key, false);
+        mUsageAnalytics = new UsageAnalytics();
+        mUsageAnalytics.initTracker(activity);
         sendMessage(messageText,null,null,Constants.SENDER_PARAPLUIE,true,true,mUsageAnalytics);
     }
 
