@@ -29,7 +29,7 @@ public class FullscreenImageActivity extends BaseActivity {
         mFullscreenImage = (ImageView) findViewById(R.id.fullscreen_image);
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_IMAGE, MODE_PRIVATE);
         String imageURL = sharedPreferences.getString(Constants.IMAGE_URL, null);
-        Glide.with(this).load(imageURL).placeholder(new ColorDrawable(Color.parseColor("#9ACCCD"))).fitCenter().into(mFullscreenImage);
+        Glide.with(this).load(imageURL).placeholder(new ColorDrawable(ContextCompat.getColor(this,R.color.light_brown))).fitCenter().into(mFullscreenImage);
         //.onLoadStarted(ContextCompat.getDrawable(this,R.drawable.placeholder_image_loading));
     }
 }
