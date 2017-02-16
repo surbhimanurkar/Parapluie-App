@@ -204,6 +204,7 @@ public class MainActivity extends BaseActivity {
             }
             Log.d(TAG, "Setting custom view for Tab:" + i);
         }
+        mViewPager.setCurrentItem(Constants.FRAGMENT_POSITION_CHAT);
 
         //Changing icon color on selection
         mTabLayout.addOnTabSelectedListener(

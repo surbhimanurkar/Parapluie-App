@@ -56,7 +56,7 @@ public class StoriesFragment extends Fragment {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRootFirebaseRef = mFirebaseDatabase.getReference();
         mStoriesRef = mRootFirebaseRef.child(Constants.F_NODE_STORIES).child(Constants.F_NODE_STORIES_PUBLISHED);
-
+        //mStoriesRef = mRootFirebaseRef.child(Constants.F_NODE_STORIES).child(Constants.F_NODE_STORIES_UNPUBLISHED);
         mStoriesRecyclerView = (RecyclerView) rootView.findViewById(R.id.storiesList);
         mLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,true);
         mLayoutManager.setStackFromEnd(true);
