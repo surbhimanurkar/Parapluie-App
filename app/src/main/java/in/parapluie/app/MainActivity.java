@@ -204,7 +204,6 @@ public class MainActivity extends BaseActivity {
             }
             Log.d(TAG, "Setting custom view for Tab:" + i);
         }
-        mViewPager.setCurrentItem(Constants.FRAGMENT_POSITION_CHAT);
 
         //Changing icon color on selection
         mTabLayout.addOnTabSelectedListener(
@@ -272,7 +271,7 @@ public class MainActivity extends BaseActivity {
 
         //Selecting the correct tab
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCE_HISTORY, Context.MODE_PRIVATE);
-        int selectTabPosition = sharedPreferences.getInt(Constants.HISTORY_PREF_SELECTED_TAB, 0);
+        int selectTabPosition = sharedPreferences.getInt(Constants.HISTORY_PREF_SELECTED_TAB, 1);
         Log.d(TAG, "Select Tab Position:" + selectTabPosition);
         mViewPager.setCurrentItem(selectTabPosition);
 
