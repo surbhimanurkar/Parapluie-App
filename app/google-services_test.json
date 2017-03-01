@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "635577908948",
+    "firebase_url": "https://testproject-96732.firebaseio.com",
+    "project_id": "testproject-96732",
+    "storage_bucket": "testproject-96732.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635577908948:android:820ca32f1fcabced",
+        "android_client_info": {
+          "package_name": "in.parapluie.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635577908948-3mfjo5spfqou3rjp0n94qpe53vqn2ibb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.parapluie.app",
+            "certificate_hash": "ce07a7af81a124866ea66eccc3191540f0dc8387"
+          }
+        },
+        {
+          "client_id": "635577908948-a3h1k4ktr2m52qfvm29e694o2hr7l9ok.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key":"AIzaSyBJsoRcG5kwdXbxSsJKfaaa0-7lqK4xxzQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635577908948-a3h1k4ktr2m52qfvm29e694o2hr7l9ok.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

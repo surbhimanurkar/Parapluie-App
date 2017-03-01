@@ -22,12 +22,12 @@
     <string name="image_confirmation_title">Send image</string>
 
     <string name="onboarding_section_1">Confused what to wear?</string>
-    <string name="onboarding_section_2">Ask your personal stylist</string>
-    <string name="onboarding_section_3">Look gorgeous!</string>
+    <string name="onboarding_section_2">Chat with fashion stylist</string>
+    <string name="onboarding_section_3">Look fabulous!</string>
 
     <string name="onboarding_section_1_desc">Not sure what’s in trend? Not sure what looks good on you? Not sure where to find your perfect outfit?</string>
-    <string name="onboarding_section_2_desc">Log into Parapluie and chat with your personal stylist. Get shopping assistance and trendy outfit ideas!</string>
-    <string name="onboarding_section_3_desc">Become a fashionista with the help of your personal fashion stylist at Parapluie!</string>
+    <string name="onboarding_section_2_desc">Log into Parapluie and chat with your fashion stylist. Get shopping assistance and trendy outfit ideas!</string>
+    <string name="onboarding_section_3_desc">Become a trendsetter with the help of your personal fashion stylist at Parapluie!</string>
 
     <string name="login_with_facebook">Sign in with Facebook</string>
     <string name="login_with_google">Sign in with Google</string>
@@ -37,7 +37,7 @@
     <string name="com_facebook_loginview_log_in_button">Log in</string>
     <string name="com_facebook_loginview_log_in_button_long">Sign in with Facebook</string>
     <string name="login_privacy_promise">I agree to Parapluie\'s Terms and Privacy Policy</string>
-    <string name="login_subscription_message">Login and get FREE subscription for a year!</string>
+    <string name="login_subscription_message">Login and get FREE subscription for 6 months!</string>
 
     <string name="title_activity_send_image">Send Image</string>
     <string name="dummy_button">Dummy Button</string>
@@ -75,5 +75,7 @@
     <string name="profile_shares">Shares</string>
     <string name="profile_loves">Loves</string>
     <string name="profile_queries">Queries</string>
+    <string name="profile_free_trial">Free Trial</string>
+    <string name="profile_trial_ends">Your free trial will end on</string>
 
 </resources>

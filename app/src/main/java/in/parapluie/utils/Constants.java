@@ -49,10 +49,20 @@ public class Constants {
     public static final String F_KEY_USER_LOVES = "loves";
     public static final String F_KEY_USER_SHARES = "shares";
     public static final String F_KEY_USER_UNREAD_CHAT_MESSAGES = "unreadChatMessages";
+    public static final String F_KEY_USER_TRACKING = "tracking";
+    public static final String F_KEY_USER_TIMESTAMP_FIRST = "firstTimestamp";
+    public static final String F_KEY_USER_TIMESTAMP_START = "startTimestamp";
+    public static final String F_KEY_USER_SUBSCRIPTION_PERIOD = "subscriptionPeriod";
+    public static final String F_KEY_USER_TIMESTAMP_LAST_LOGIN = "lastLoginTimestamp";
     public static final String F_VALUE_USER__OPEN = "OPEN";
     public static final String TIME = "time";
     public static final String HELP_QUESTIONS_RELEVANCE = "relevance";
     public static final String F_NODE_CONFIG = "config";
+
+    //Firebase bot constants
+    public static final String F_NODE_BOT = "bot";
+    public static final String F_KEY_BOT_MESSAGES = "messages";
+    public static final String F_KEY_BOT_MESSAGES_INITIAL = "1";
 
     //Firebase Stories Constants
     public static final String F_NODE_STORIES = "stories";

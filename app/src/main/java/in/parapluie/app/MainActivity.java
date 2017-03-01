@@ -97,6 +97,7 @@ public class MainActivity extends BaseActivity {
     private GoogleApiClient client2;
     private boolean isKeyboardUp;
     private boolean isKeyboardDown = true;
+    private String mDisplayName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,6 @@ public class MainActivity extends BaseActivity {
 
         Log.d(TAG, "Activity Launched");
 
-        //isUserFirstTime = Boolean.valueOf(OnboardingUtils.readSharedSetting(MainActivity.this, PREF_USER_FIRST_TIME, "true"));
         isUserFirstTime = true;
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -122,15 +122,24 @@ public class MainActivity extends BaseActivity {
             }
             //redirectUserToLogin();
         }*/
+
+        //Populating Config variables
+        FirebaseUtils.getInstance().populatingConfigVariables();
+        //Sending Initial Chat Message
+
+        if(mFirebaseUser!=null){
+            if(mFirebaseUser.getDisplayName()!=null)
+                mDisplayName = mFirebaseUser.getDisplayName();
+            FirebaseUtils.getInstance().sendInitialMessage(mDisplayName,mFirebaseUser.getUid());
+        }
+
+
         if (mFirebaseUser == null) {
             Intent introIntent = new Intent(MainActivity.this, PagerActivity.class);
             introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
             startActivity(introIntent);
             finish();
         }
-
-        //Populating Config variables
-        FirebaseUtils.getInstance().populatingConfigVariables();
 
         //Setting unread Chat message
         FirebaseUtils.getInstance().setUnreadChatMessages(this);

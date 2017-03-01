@@ -4,17 +4,21 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -25,7 +29,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import in.parapluie.utils.Constants;
+import in.parapluie.utils.FirebaseUtils;
 
 
 /**
@@ -72,15 +81,29 @@ public class ProfileFragment extends Fragment {
 
             //Populating display picture
             final ImageView displayPicture = (ImageView)mRootView.findViewById(R.id.display_image);
-            Glide.with(getActivity()).load(displayPictureUrl).asBitmap().centerCrop().into(new BitmapImageViewTarget(displayPicture) {
-                @Override
-                protected void setResource(Bitmap resource) {
-                    RoundedBitmapDrawable circularBitmapDrawable =
-                            RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
-                    circularBitmapDrawable.setCircular(true);
-                    displayPicture.setImageDrawable(circularBitmapDrawable);
-                }
-            });
+            if(displayPictureUrl!=null){
+                Glide.with(getActivity()).load(displayPictureUrl).asBitmap().listener(new RequestListener<Uri, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e, Uri model, Target<Bitmap> target, boolean isFirstResource) {
+                        e.printStackTrace();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Uri model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        return false;
+                    }
+                }).centerCrop().into(new BitmapImageViewTarget(displayPicture) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        displayPicture.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
+
+            }
 
             //Populating display name
             TextView displayName = (TextView) mRootView.findViewById(R.id.display_name);
@@ -90,18 +113,30 @@ public class ProfileFragment extends Fragment {
             if(mUID!=null){
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                 DatabaseReference rootReference = firebaseDatabase.getReference();
-                DatabaseReference queryDatabaseReference = rootReference.child(Constants.F_NODE_QUERY).child(mUID);
-                queryDatabaseReference.addValueEventListener(new ValueEventListener() {
+                final String profileTrialEnds = getActivity().getResources().getString(R.string.profile_trial_ends);
+
+                //Get subscription end date
+                DatabaseReference trackingReference = rootReference.child(Constants.F_NODE_USER).child(mUID).child(Constants.F_KEY_USER_TRACKING);
+                trackingReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Long totalQueries = dataSnapshot.getChildrenCount();
-                        TextView queryTextView = (TextView) mRootView.findViewById(R.id.totalqueries);
-                        queryTextView.setText(totalQueries+"");
+                        if(dataSnapshot.exists() && dataSnapshot.child(Constants.F_KEY_USER_TIMESTAMP_START).exists() && dataSnapshot.child(Constants.F_KEY_USER_SUBSCRIPTION_PERIOD).exists()){
+                            Long startTimestamp = (Long) dataSnapshot.child(Constants.F_KEY_USER_TIMESTAMP_START).getValue();
+                            Long subscriptionPeriod = (Long) dataSnapshot.child(Constants.F_KEY_USER_SUBSCRIPTION_PERIOD).getValue();
+                            Long endTimestamp = startTimestamp + subscriptionPeriod;
+                            SimpleDateFormat sfd = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+                            String endDate = sfd.format(new Date(endTimestamp));
+                            String endString = profileTrialEnds + " " + endDate;
+                            TextView endTextView = (TextView) mRootView.findViewById(R.id.subscriptionEndDate);
+                            endTextView.setText(endString);
+                        }else{
+                            FirebaseUtils.getInstance().saveUserTrackingWithDefault();
+                        }
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.e(TAG,databaseError.getMessage());
+
                     }
                 });
 
@@ -147,7 +182,6 @@ public class ProfileFragment extends Fragment {
                 });
             }
         }
-
 
 
         return mRootView;

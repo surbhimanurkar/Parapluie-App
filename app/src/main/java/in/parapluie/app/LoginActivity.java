@@ -1,5 +1,6 @@
 package in.parapluie.app;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import in.parapluie.utils.Constants;
+import in.parapluie.utils.FirebaseUtils;
 import in.parapluie.utils.TitleFont;
 import in.parapluie.utils.UsageAnalytics;
 import com.batch.android.Batch;
@@ -38,11 +40,16 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +96,8 @@ public class LoginActivity extends BaseActivity{
     private AccessTokenTracker mFacebookAccessTokenTracker;
     /*Login Manager*/
     private LoginManager mFacebookLoginManager;
+    /*Sent initial message*/
+    private boolean haveSentInitialMessage = false;
 
     private UsageAnalytics mUsageAnalytics;
 
@@ -373,9 +382,11 @@ public class LoginActivity extends BaseActivity{
      * Save User data in firebase
      */
     public void saveUserData(){
+       //Saving basic user info
         Map<String, Object> map = new HashMap<String, Object>();
         if(mFirebaseUser.getDisplayName()!=null) {
-            map.put(Constants.F_KEY_USER_USERNAME, mFirebaseUser.getDisplayName());
+            mDisplayName = mFirebaseUser.getDisplayName();
+            map.put(Constants.F_KEY_USER_USERNAME, mDisplayName);
         }else if(mFirebaseUser.getProviderData()!=null){
             for (UserInfo userInfo : mFirebaseUser.getProviderData()) {
                 if (mDisplayName == null && userInfo.getDisplayName() != null) {
@@ -387,7 +398,14 @@ public class LoginActivity extends BaseActivity{
         }
         Log.d(TAG,"Tracking Login UID:" + mFirebaseUser.getUid());
         mUserRef.child(mFirebaseUser.getUid()).updateChildren(map);
+
+        //Saving user tracking
+        FirebaseUtils.getInstance().saveUserTracking();
     }
+
+
+
+
 
     public void setLoadingScreen(boolean show){
         if(show){

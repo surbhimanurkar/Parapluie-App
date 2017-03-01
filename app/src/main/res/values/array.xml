@@ -11,12 +11,11 @@
     <string-array name="hint_text_list">
         <item>Howdy Partner!</item>
         <item>How you doin\'?</item>
-        <item>Hola Bonita!</item>
         <item>What\'s on your mind?</item>
         <item>I\'m Batman!</item>
         <item>Knock, Knock!</item>
         <item>What does the fox say?</item>
-        <item>Ms. Potts? This is Jarvis</item>
+        <item>Mr. Stark? This is Jarvis</item>
     </string-array>
     <array name="random_bg_colors">
         <!--<item>@color/light_cyan</item>

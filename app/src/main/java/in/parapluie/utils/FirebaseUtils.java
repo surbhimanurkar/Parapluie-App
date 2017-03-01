@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by surbhimanurkar on 29-07-2016.
@@ -53,6 +54,8 @@ public class FirebaseUtils {
     private boolean mSuccess;
     private UsageAnalytics mUsageAnalytics;
 
+    private static Long defaultSubscriptionPeriod = 25920000000L;
+
     /*private static String mMessageText;
     private static String mMessageImage;
     private static EditText mInputText;*/
@@ -61,6 +64,8 @@ public class FirebaseUtils {
      */
     private static Config mConfig;
     private static long unreadChatMessages;
+    private static long lastInactiveMessageTime = 0;
+    private final static long inactiveMessagePeriod = 3600000;
 
     private FirebaseUtils() {
     }
@@ -78,6 +83,118 @@ public class FirebaseUtils {
             mUserRef.keepSynced(true);
         }
         return mFirebaseUtils;
+    }
+
+    public Long getTrialSubscriptionPeriod(){
+        long trialSubscriptionPeriod = 0;
+        if(mConfig!=null){
+            trialSubscriptionPeriod = mConfig.getTrialSubscriptionPeriod();
+        }
+        return trialSubscriptionPeriod;
+    }
+
+    /*
+    Send Initial Message
+     */
+    public void sendInitialMessage(final String name, String userID){
+        DatabaseReference chatMessagesRef = mFirebaseDatabase.child(Constants.F_NODE_CHAT).child(userID);
+        chatMessagesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    sendBotMessages(Constants.F_KEY_BOT_MESSAGES_INITIAL,name,getStylistName());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG,databaseError.getDetails());
+            }
+        });
+    }
+
+    /*
+   Save user tracking information
+    */
+    public void saveUserTracking(){
+        mUserRef.child(Constants.F_KEY_USER_TRACKING).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                if(dataSnapshot.exists()){
+                    //Not a new user
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_LAST_LOGIN, ServerValue.TIMESTAMP);
+                }else{
+                    //New user
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_FIRST, ServerValue.TIMESTAMP);
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_START, ServerValue.TIMESTAMP);
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_LAST_LOGIN, ServerValue.TIMESTAMP);
+                    FirebaseUtils firebaseUtils = FirebaseUtils.getInstance();
+                    long subscriptionPeriod = firebaseUtils.getTrialSubscriptionPeriod();
+                    map.put(Constants.F_KEY_USER_SUBSCRIPTION_PERIOD,subscriptionPeriod);
+                }
+                mUserRef.child(Constants.F_KEY_USER_TRACKING).updateChildren(map);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG,databaseError.getMessage());
+            }
+        });
+    }
+
+    /*
+  Save user tracking information
+   */
+    public void saveUserTrackingWithDefault(){
+        mUserRef.child(Constants.F_KEY_USER_TRACKING).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                if(dataSnapshot.exists() && dataSnapshot.child(Constants.F_KEY_USER_TIMESTAMP_START).exists() && dataSnapshot.child(Constants.F_KEY_USER_SUBSCRIPTION_PERIOD).exists()){
+                    //Not a new user
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_LAST_LOGIN, ServerValue.TIMESTAMP);
+                }else{
+                    //New user
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_FIRST, ServerValue.TIMESTAMP);
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_START, ServerValue.TIMESTAMP);
+                    map.put(Constants.F_KEY_USER_TIMESTAMP_LAST_LOGIN, ServerValue.TIMESTAMP);
+                    map.put(Constants.F_KEY_USER_SUBSCRIPTION_PERIOD,defaultSubscriptionPeriod);
+                }
+                mUserRef.child(Constants.F_KEY_USER_TRACKING).updateChildren(map);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG,databaseError.getMessage());
+            }
+        });
+    }
+
+
+    /*
+    Send Bot messages
+     */
+    public void sendBotMessages(String node, final String name, final String stylist){
+        DatabaseReference botMessageRef = mFirebaseDatabase.child(Constants.F_NODE_BOT).child(Constants.F_KEY_BOT_MESSAGES).child(node);
+        botMessageRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String message = (String) dataSnapshot.getValue();
+                String firstName = name.substring(0, name.lastIndexOf(' '));
+                message = message.replace("<name>",firstName);
+                message = message.replace("<stylist>",stylist);
+                //Send Message
+                if(message!=null){
+                    sendMessage(message,null,null,Constants.SENDER_PARAPLUIE,false,false,null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(TAG,"Error in sending bot messages:" + databaseError);
+            }
+        });
     }
 
     public void sendMessagebyUser( final String messageText, final String messageImage, final EditText inputText, final UsageAnalytics mUsageAnalytics){
@@ -183,7 +300,8 @@ public class FirebaseUtils {
                                 System.out.println("Data saved successfully.");
                                 String[] queryId = {""};
                                 queryId[0] = databaseReference.getKey();
-                                mUsageAnalytics.trackQDAU(queryId[0]);
+                                if(mUsageAnalytics!=null)
+                                    mUsageAnalytics.trackQDAU(queryId[0]);
                                 mUserRef.child(Constants.F_KEY_USER_ACTIVEQID).setValue(queryId[0]);
                                 Message message = new Message(messageText, messageImage, sender, ServerValue.TIMESTAMP, true, queryId[0]);
                                 mChatRef.push().setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -193,7 +311,12 @@ public class FirebaseUtils {
                                         //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                                         //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                                         if(!isActive() && userTriggered){
-                                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
+                                            long timeLapsedInactiveMessage = System.currentTimeMillis() - lastInactiveMessageTime;
+                                            Log.d(TAG,"InactiveMessage timeLapsed:" + timeLapsedInactiveMessage + " inactiveMessagePeriod" + inactiveMessagePeriod);
+                                            if(timeLapsedInactiveMessage>inactiveMessagePeriod){
+                                                sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
+                                                lastInactiveMessageTime = System.currentTimeMillis();
+                                            }
                                         }
                                     }
                                 });
@@ -215,7 +338,12 @@ public class FirebaseUtils {
                                     //mUserRef.child(Constants.F_KEY_USER_RESOLVED).setValue(false);
                                     //mUserRef.child(Constants.F_KEY_USER_STATUS).setValue(Constants.F_VALUE_USER__OPEN);
                                     if(!isActive() && userTriggered){
-                                        sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
+                                        long timeLapsedInactiveMessage = System.currentTimeMillis() - lastInactiveMessageTime;
+                                        Log.d(TAG,"InactiveMessage timeLapsed:" + timeLapsedInactiveMessage + " inactiveMessagePeriod" + inactiveMessagePeriod);
+                                        if(timeLapsedInactiveMessage>inactiveMessagePeriod){
+                                            sendMessage(getInactiveMessage(),null,null,Constants.SENDER_PARAPLUIE,false,false,null);
+                                            lastInactiveMessageTime = System.currentTimeMillis();
+                                        }
                                     }
                                 }
                             });
@@ -392,6 +520,10 @@ public class FirebaseUtils {
 
     public String getInactiveMessage(){
         return mConfig.getInactiveMessage();
+    }
+
+    public String getStylistName(){
+        return mConfig.getStylistName();
     }
 
     public void increaseUnreadChatMessageCount(Activity activity){

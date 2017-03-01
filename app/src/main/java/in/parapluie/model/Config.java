@@ -9,6 +9,25 @@ public class Config {
     private boolean active;
     private String inactiveMessage;
     private HashMap<String,String> stylistTokens;
+    private Long trialSubscriptionPeriod;
+    private String stylistName;
+
+    public String getStylistName() {
+        return stylistName;
+    }
+
+    public void setStylistName(String stylistName) {
+        this.stylistName = stylistName;
+    }
+
+
+    public Long getTrialSubscriptionPeriod() {
+        return trialSubscriptionPeriod;
+    }
+
+    public void setTrialSubscriptionPeriod(Long trialSubscriptionPeriod) {
+        this.trialSubscriptionPeriod = trialSubscriptionPeriod;
+    }
 
 
     public boolean isActive() {

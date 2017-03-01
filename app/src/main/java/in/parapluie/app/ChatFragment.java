@@ -240,7 +240,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 if (mMessageListAdapter.getItemCount() > 0){
-                    (mRootView.findViewById(R.id.empty_message)).setVisibility(View.GONE);
+                    //(mRootView.findViewById(R.id.empty_message)).setVisibility(View.GONE);
                     //if (isChatAllowed()) {
                         mRecyclerView.setVisibility(View.VISIBLE);
                     //}
